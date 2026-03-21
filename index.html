@@ -25,7 +25,11 @@
     .total-card.expense { background: #e07050; }
     .total-card .label { font-size: 13px; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
     .total-card .amount { font-size: 38px; font-weight: 700; color: #fff; }
-    .total-card .change { font-size: 13px; color: rgba(255,255,255,0.9); margin-top: 4px; }
+    .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .total-card .change-pill { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .pill-good { background: rgba(255,255,255,0.3); color: #fff; }
+    .pill-bad { background: rgba(0,0,0,0.15); color: #fff; }
+    .total-card .change-label { font-size: 12px; color: rgba(255,255,255,0.75); }
     .sources-title { font-size: 11px; font-weight: 600; color: #bbb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
     .chart-wrap { display: flex; align-items: center; gap: 20px; }
     .donut-container { position: relative; width: 150px; height: 150px; flex-shrink: 0; }
@@ -99,7 +103,10 @@
   <div class="total-card income" id="total-card">
     <div class="label" id="total-label">Total income</div>
     <div class="amount" id="total-amount">$8,420</div>
-    <div class="change" id="total-change">+12% vs last month</div>
+    <div class="change-row">
+      <span class="change-pill pill-good" id="change-pill">+12%</span>
+      <span class="change-label" id="change-label">vs last month</span>
+    </div>
   </div>
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
@@ -182,42 +189,54 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
-  // ---- DEFAULT DATA ----
   const DEFAULT_MONTHS = {
     "0": { label: "March 2026",
-      income:  { change: "+12% vs last month", items: [
+      income:  { items: [
         { name: "YouTube", amount: 3800 }, { name: "Venmo", amount: 2150 },
         { name: "Direct deposit", amount: 1600 }, { name: "Cash App", amount: 870 },
       ]},
-      expense: { change: "+4% vs last month", items: [
+      expense: { items: [
         { name: "Rent", amount: 2200 }, { name: "Software", amount: 1100 },
         { name: "Food", amount: 950 }, { name: "Other", amount: 1000 },
       ]},
     },
     "-1": { label: "February 2026",
-      income:  { change: "+6% vs last month", items: [
+      income:  { items: [
         { name: "YouTube", amount: 3200 }, { name: "Venmo", amount: 1980 },
         { name: "Direct deposit", amount: 1600 }, { name: "Cash App", amount: 730 },
       ]},
-      expense: { change: "-2% vs last month", items: [
+      expense: { items: [
         { name: "Rent", amount: 2200 }, { name: "Software", amount: 1000 },
         { name: "Food", amount: 850 }, { name: "Other", amount: 1000 },
       ]},
     },
+    "-2": { label: "January 2026",
+      income:  { items: [
+        { name: "YouTube", amount: 2900 }, { name: "Venmo", amount: 1850 },
+        { name: "Direct deposit", amount: 1600 }, { name: "Cash App", amount: 730 },
+      ]},
+      expense: { items: [
+        { name: "Rent", amount: 2200 }, { name: "Software", amount: 1050 },
+        { name: "Food", amount: 900 }, { name: "Other", amount: 1000 },
+      ]},
+    },
   };
 
-  // ---- LOCALSTORAGE SAVE/LOAD ----
-  function saveData() {
-    localStorage.setItem('filo_months', JSON.stringify(months));
-  }
-
+  function saveData() { localStorage.setItem('filo_months', JSON.stringify(months)); }
   function loadData() {
     try {
       const saved = localStorage.getItem('filo_months');
       return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MONTHS));
-    } catch(e) {
-      return JSON.parse(JSON.stringify(DEFAULT_MONTHS));
-    }
+    } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_MONTHS)); }
+  }
+
+  function calcChange(current, previous, type) {
+    if (!previous || previous === 0) return null;
+    const pct = Math.round(((current - previous) / previous) * 100);
+    // for income: up = good. for expense: down = good
+    const isGood = type === "income" ? pct >= 0 : pct <= 0;
+    const sign = pct >= 0 ? "+" : "";
+    return { text: sign + pct + "%", isGood };
   }
 
   const INCOME_SOURCES = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
@@ -225,7 +244,6 @@
 
   let months = loadData();
   let offset = 0, mode = "income", entryType = "income", selectedSource = null;
-
   function getTotal(items) { return items.reduce((s, x) => s + x.amount, 0); }
 
   function buildSourceGrid() {
@@ -262,8 +280,6 @@
     svg.innerHTML = "";
     const cx = 75, cy = 75, r = 55, sw = 26;
     let angle = -Math.PI / 2;
-
-    // invisible overlay to reset on mouse leave from entire donut
     const resetZone = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     resetZone.setAttribute("cx", cx);
     resetZone.setAttribute("cy", cy);
@@ -275,7 +291,6 @@
       document.getElementById("center-lbl").textContent = "total";
     });
     svg.appendChild(resetZone);
-
     items.forEach((s, i) => {
       const color = getBrand(s.name).color;
       const sweep = (s.amount / total) * 2 * Math.PI;
@@ -317,19 +332,15 @@
   }
 
   function deleteItem(name) {
-    const d = months[offset] || months["0"];
+    const d = months[String(offset)] || months["0"];
     const list = d[mode].items;
     const idx = list.findIndex(x => x.name === name);
-    if (idx > -1) {
-      list.splice(idx, 1);
-      saveData();
-      render();
-      showToast(name + " removed");
-    }
+    if (idx > -1) { list.splice(idx, 1); saveData(); render(); showToast(name + " removed"); }
   }
 
   function render() {
     const d = months[String(offset)] || months["0"];
+    const prev = months[String(offset - 1)];
     const data = d[mode];
     const items = data.items;
     const total = getTotal(items);
@@ -337,16 +348,33 @@
 
     document.getElementById("month-label").textContent = d.label;
     document.getElementById("total-amount").textContent = "$" + total.toLocaleString();
-    document.getElementById("total-change").textContent = data.change;
-    document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
-    document.getElementById("center-lbl").textContent = "total";
     document.getElementById("total-card").className = "total-card " + mode;
     document.getElementById("total-label").textContent = mode === "income" ? "Total income" : "Total expenses";
     document.getElementById("breakdown-title").textContent = mode === "income" ? "Income breakdown" : "Expense breakdown";
 
+    // calculate % change vs previous month
+    const pill = document.getElementById("change-pill");
+    const label = document.getElementById("change-label");
+    if (prev) {
+      const prevTotal = getTotal(prev[mode].items);
+      const change = calcChange(total, prevTotal, mode);
+      if (change) {
+        pill.textContent = change.text;
+        pill.className = "change-pill " + (change.isGood ? "pill-good" : "pill-bad");
+        label.textContent = "vs last month";
+      }
+    } else {
+      pill.textContent = "—";
+      pill.className = "change-pill pill-good";
+      label.textContent = "no prior data";
+    }
+
     const netEl = document.getElementById("net-amount");
     netEl.textContent = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toLocaleString();
     netEl.className = net >= 0 ? "net-positive" : "net-negative";
+
+    document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
+    document.getElementById("center-lbl").textContent = "total";
 
     drawDonut(items, total);
     renderLegend(items, total);
@@ -393,7 +421,6 @@
     const existing = list.find(x => x.name.toLowerCase() === name.toLowerCase());
     if (existing) { existing.amount += amount; }
     else { list.push({ name, amount }); }
-    mo[entryType].change = "updated manually";
     saveData();
     closeSheet();
     if (mode !== entryType) setMode(entryType);
