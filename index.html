@@ -2,84 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Filo — Your money, layered.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="theme-color" content="#fffdf7"/>
+  <title>Filo</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; min-height: 100vh; padding: 1.5rem 1rem 6rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; overscroll-behavior: none; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; min-height: 100vh; padding: env(safe-area-inset-top, 1.5rem) 1rem calc(env(safe-area-inset-bottom, 0px) + 6rem) 1rem; }
     .wrap { max-width: 480px; margin: 0 auto; }
-    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .header-left p { font-size: 13px; color: #bbb; margin-bottom: 4px; }
     .toggle-row { display: flex; margin-bottom: 1.25rem; gap: 8px; }
-    .toggle-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 600; border: 2px solid; border-radius: 10px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .toggle-btn { flex: 1; padding: 13px 10px; font-size: 15px; font-weight: 600; border: 2px solid; border-radius: 12px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+    .toggle-btn:active { transform: scale(0.97); }
     .toggle-btn.income-active { background: #e8b84b; color: #fff; border-color: #e8b84b; }
     .toggle-btn.expense-active { background: #e07050; color: #fff; border-color: #e07050; }
     .toggle-btn.inactive-income { background: #fff; color: #c49a3a; border-color: #e8b84b; }
     .toggle-btn.inactive-expense { background: #fff; color: #c05030; border-color: #e07050; }
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; }
-    .month-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #444; }
-    .month-nav button:hover { background: #eee; }
-    .month-nav span { font-size: 14px; font-weight: 500; flex: 1; text-align: center; color: #222; }
-    .total-card { border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .month-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 10px; padding: 10px 18px; font-size: 14px; cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; }
+    .month-nav button:active { transform: scale(0.95); background: #eee; }
+    .month-nav span { font-size: 15px; font-weight: 600; flex: 1; text-align: center; color: #222; }
+    .total-card { border-radius: 18px; padding: 1.5rem; margin-bottom: 1.25rem; }
     .total-card.income { background: #e8b84b; }
     .total-card.expense { background: #e07050; }
-    .total-card .label { font-size: 13px; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
-    .total-card .amount { font-size: 38px; font-weight: 700; color: #fff; }
-    .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-    .total-card .change-pill { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .total-card .label { font-size: 14px; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
+    .total-card .amount { font-size: 42px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+    .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    .total-card .change-pill { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
     .pill-good { background: rgba(255,255,255,0.3); color: #fff; }
     .pill-bad { background: rgba(0,0,0,0.15); color: #fff; }
-    .total-card .change-label { font-size: 12px; color: rgba(255,255,255,0.75); }
+    .total-card .change-label { font-size: 13px; color: rgba(255,255,255,0.75); }
     .sources-title { font-size: 11px; font-weight: 600; color: #bbb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
     .chart-wrap { display: flex; align-items: center; gap: 20px; }
-    .donut-container { position: relative; width: 150px; height: 150px; flex-shrink: 0; }
-    .donut-container svg { width: 150px; height: 150px; }
+    .donut-container { position: relative; width: 155px; height: 155px; flex-shrink: 0; }
+    .donut-container svg { width: 155px; height: 155px; }
     .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
-    .donut-center .amt { font-size: 15px; font-weight: 700; color: #222; }
-    .donut-center .lbl { font-size: 10px; color: #aaa; margin-top: 2px; }
+    .donut-center .amt { font-size: 16px; font-weight: 700; color: #222; }
+    .donut-center .lbl { font-size: 11px; color: #aaa; margin-top: 2px; }
     .legend { flex: 1; }
-    .legend-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid #f0f0f0; }
+    .legend-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid #f0f0f0; }
     .legend-item:last-child { border-bottom: none; }
-    .source-icon { width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; overflow: hidden; }
-    .source-icon img { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
-    .legend-name { font-size: 12px; color: #333; flex: 1; }
-    .legend-pct { font-size: 11px; color: #bbb; margin-right: 2px; }
-    .legend-amt { font-size: 12px; font-weight: 600; color: #222; }
-    .legend-del { font-size: 15px; color: #e07050; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; }
+    .source-icon { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; }
+    .source-icon img { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; }
+    .legend-name { font-size: 13px; color: #333; flex: 1; }
+    .legend-pct { font-size: 12px; color: #bbb; margin-right: 2px; }
+    .legend-amt { font-size: 13px; font-weight: 600; color: #222; }
+    .legend-del { font-size: 18px; color: #e07050; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 4px; }
     .legend-item:hover .legend-del { opacity: 1; }
-    .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1.25rem; border: 0.5px solid #eee; }
-    .net-label { font-size: 13px; color: #aaa; }
-    .net-positive { color: #6a9e40; font-size: 20px; font-weight: 700; }
-    .net-negative { color: #e07050; font-size: 20px; font-weight: 700; }
-    .add-btn { position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px; border-radius: 50%; background: #e8b84b; color: #fff; font-size: 28px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(232,184,75,0.5); transition: background 0.2s, transform 0.1s; z-index: 100; }
-    .add-btn:hover { background: #c49a3a; transform: scale(1.08); }
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 200; align-items: flex-end; justify-content: center; }
-    .overlay.open { display: flex; }
-    .sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; }
-    .sheet h2 { font-size: 18px; font-weight: 600; color: #222; margin-bottom: 1.25rem; }
+    .legend-item:active .legend-del { opacity: 1; }
+    .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 14px; padding: 1.1rem 1.25rem; margin-top: 1.25rem; border: 0.5px solid #eee; }
+    .net-label { font-size: 14px; color: #aaa; }
+    .net-positive { color: #6a9e40; font-size: 22px; font-weight: 700; }
+    .net-negative { color: #e07050; font-size: 22px; font-weight: 700; }
+    .add-btn { position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 28px); right: 24px; width: 60px; height: 60px; border-radius: 50%; background: #e8b84b; color: #fff; font-size: 30px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(232,184,75,0.5); transition: background 0.2s, transform 0.1s; z-index: 100; }
+    .add-btn:active { transform: scale(0.93); background: #c49a3a; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
+    .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 2rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .sheet-handle { width: 36px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 1.25rem; }
+    .sheet h2 { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 1.25rem; }
     .form-row { margin-bottom: 14px; }
-    .form-row label { font-size: 12px; color: #aaa; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-row label { font-size: 12px; color: #aaa; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
     .type-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
-    .type-btn { flex: 1; padding: 10px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #f7f7f7; color: #888; }
+    .type-btn { flex: 1; padding: 12px; border: 0.5px solid #e0e0e0; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; background: #f7f7f7; color: #888; transition: background 0.15s, transform 0.1s; }
+    .type-btn:active { transform: scale(0.97); }
     .type-btn.active.income { background: #fff8e6; color: #a07010; border-color: #e8b84b; }
     .type-btn.active.expense { background: #ffeee8; color: #c04020; border-color: #e07050; }
     .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-    .source-chip { padding: 8px 6px; border: 0.5px solid #e8e8e8; border-radius: 10px; font-size: 11px; font-weight: 500; cursor: pointer; background: #fafafa; color: #444; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: background 0.15s; }
+    .source-chip { padding: 10px 6px; border: 0.5px solid #e8e8e8; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; background: #fafafa; color: #444; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.15s, transform 0.1s; }
+    .source-chip:active { transform: scale(0.95); }
     .source-chip:hover { background: #fff8e6; border-color: #e8b84b; }
     .source-chip.selected { background: #fff8e6; border-color: #e8b84b; color: #a07010; }
-    .chip-icon { width: 28px; height: 28px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
-    .chip-icon img { width: 28px; height: 28px; object-fit: cover; border-radius: 8px; }
-    .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 12px; }
+    .chip-icon { width: 32px; height: 32px; border-radius: 9px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .chip-icon img { width: 32px; height: 32px; object-fit: cover; border-radius: 9px; }
+    .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 13px; }
     .custom-input-row { display: none; margin-bottom: 10px; }
     .custom-input-row.show { display: block; }
-    .form-row input { width: 100%; padding: 10px 12px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 15px; color: #222; background: #fafafa; outline: none; }
-    .form-row input:focus { border-color: #e8b84b; }
+    .form-row input { width: 100%; padding: 14px; border: 0.5px solid #e0e0e0; border-radius: 12px; font-size: 17px; color: #222; background: #fafafa; outline: none; }
+    .form-row input:focus { border-color: #e8b84b; background: #fff; }
     .sheet-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
-    .btn-cancel { flex: 1; padding: 12px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: #888; }
-    .btn-add { flex: 2; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #e8b84b; color: #fff; }
-    .btn-add:hover { background: #c49a3a; }
-    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
+    .btn-cancel { flex: 1; padding: 14px; border: 0.5px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; background: transparent; color: #888; }
+    .btn-add { flex: 2; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; background: #e8b84b; color: #fff; transition: background 0.15s, transform 0.1s; }
+    .btn-add:active { transform: scale(0.97); background: #c49a3a; }
+    .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 90px); left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
+    @media (min-width: 480px) {
+      .wrap { padding-top: 1rem; }
+      .total-card .amount { font-size: 46px; }
+    }
   </style>
 </head>
 <body>
@@ -111,7 +126,7 @@
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
     <div class="donut-container">
-      <svg viewBox="0 0 150 150" id="donut-svg"></svg>
+      <svg viewBox="0 0 155 155" id="donut-svg"></svg>
       <div class="donut-center">
         <div class="amt" id="center-amt"></div>
         <div class="lbl" id="center-lbl">total</div>
@@ -130,6 +145,7 @@
 
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
   <div class="sheet">
+    <div class="sheet-handle"></div>
     <h2>Add transaction</h2>
     <div class="type-toggle">
       <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
@@ -144,7 +160,7 @@
     </div>
     <div class="form-row">
       <label>Amount ($)</label>
-      <input type="number" id="input-amount" placeholder="0.00" min="0" />
+      <input type="number" id="input-amount" placeholder="0.00" min="0" inputmode="decimal" />
     </div>
     <div class="sheet-actions">
       <button class="btn-cancel" onclick="closeSheet()">Cancel</button>
@@ -154,7 +170,6 @@
 </div>
 
 <script>
-  localStorage.clear();
   const SOURCE_BRANDS = {
     "YouTube":        { color: "#FF0000", initials: "YT", logo: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
     "Venmo":          { color: "#3D95CE", initials: "V",  logo: "https://www.google.com/s2/favicons?domain=venmo.com&sz=64" },
@@ -180,7 +195,7 @@
     return SOURCE_BRANDS[name] || { color: "#e8b84b", initials: name.slice(0,2).toUpperCase(), logo: null };
   }
 
-  function iconHTML(name, size = 26) {
+  function iconHTML(name, size = 30) {
     const b = getBrand(name);
     if (b.logo) {
       return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};">
@@ -234,7 +249,6 @@
   function calcChange(current, previous, type) {
     if (!previous || previous === 0) return null;
     const pct = Math.round(((current - previous) / previous) * 100);
-    // for income: up = good. for expense: down = good
     const isGood = type === "income" ? pct >= 0 : pct <= 0;
     const sign = pct >= 0 ? "+" : "";
     return { text: sign + pct + "%", isGood };
@@ -279,7 +293,7 @@
   function drawDonut(items, total, highlightIdx = -1) {
     const svg = document.getElementById("donut-svg");
     svg.innerHTML = "";
-    const cx = 75, cy = 75, r = 55, sw = 26;
+    const cx = 77, cy = 77, r = 57, sw = 27;
     let angle = -Math.PI / 2;
     const resetZone = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     resetZone.setAttribute("cx", cx);
@@ -314,6 +328,16 @@
         document.getElementById("center-amt").textContent = "$" + s.amount.toLocaleString();
         document.getElementById("center-lbl").textContent = s.name;
       });
+      path.addEventListener("click", () => {
+        drawDonut(items, total, i);
+        document.getElementById("center-amt").textContent = "$" + s.amount.toLocaleString();
+        document.getElementById("center-lbl").textContent = s.name;
+        setTimeout(() => {
+          drawDonut(items, total, -1);
+          document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
+          document.getElementById("center-lbl").textContent = "total";
+        }, 1800);
+      });
       svg.appendChild(path);
       angle += sweep;
     });
@@ -323,7 +347,7 @@
     document.getElementById("legend").innerHTML = items.map(s => {
       const pct = Math.round(s.amount / total * 100);
       return `<div class="legend-item">
-        ${iconHTML(s.name, 26)}
+        ${iconHTML(s.name, 30)}
         <span class="legend-name">${s.name}</span>
         <span class="legend-pct">${pct}%</span>
         <span class="legend-amt">$${s.amount.toLocaleString()}</span>
@@ -353,7 +377,6 @@
     document.getElementById("total-label").textContent = mode === "income" ? "Total income" : "Total expenses";
     document.getElementById("breakdown-title").textContent = mode === "income" ? "Income breakdown" : "Expense breakdown";
 
-    // calculate % change vs previous month
     const pill = document.getElementById("change-pill");
     const label = document.getElementById("change-label");
     if (prev) {
