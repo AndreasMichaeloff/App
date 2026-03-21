@@ -134,7 +134,7 @@
   </div>
   <div class="month-nav">
     <button onclick="changeMonth(-1)">&#8592;</button>
-    <span id="month-label">March 2026</span>
+    <span id="month-label"></span>
     <button onclick="changeMonth(1)">&#8594;</button>
   </div>
   <div class="toggle-row">
@@ -143,10 +143,10 @@
   </div>
   <div class="total-card income" id="total-card">
     <div class="label" id="total-label">Total income</div>
-    <div class="amount" id="total-amount">$8,420</div>
+    <div class="amount" id="total-amount">$0</div>
     <div class="change-row">
-      <span class="change-pill pill-good" id="change-pill">+12%</span>
-      <span class="change-label" id="change-label">vs last month</span>
+      <span class="change-pill pill-good" id="change-pill">—</span>
+      <span class="change-label" id="change-label">no prior data</span>
     </div>
   </div>
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
@@ -162,7 +162,7 @@
   </div>
   <div class="net-card">
     <span class="net-label">Net this month</span>
-    <span class="net-positive" id="net-amount">+$3,170</span>
+    <span class="net-positive" id="net-amount">$0</span>
   </div>
 </div>
 
@@ -331,10 +331,25 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
+  // ---- DATE HELPERS ----
+  function getMonthLabel(off) {
+    const now = new Date();
+    const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
+    return d.toLocaleString('default', { month: 'long', year: 'numeric' });
+  }
+
+  function ensureCurrentMonth() {
+    if (!months["0"]) {
+      months["0"] = { label: getMonthLabel(0), income: { items: [] }, expense: { items: [] } };
+      saveData();
+    }
+    months["0"].label = getMonthLabel(0);
+  }
+
+  // ---- DEFAULT DATA (sample history only, no current month hardcoded) ----
   const DEFAULT_MONTHS = {
-    "0":  { label: "March 2026",    income: { items: [{name:"YouTube",amount:3800},{name:"Venmo",amount:2150},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:870}]},  expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1100},{name:"Food",amount:950},{name:"Other",amount:1000}]}},
-    "-1": { label: "February 2026", income: { items: [{name:"YouTube",amount:3200},{name:"Venmo",amount:1980},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]},  expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1000},{name:"Food",amount:850},{name:"Other",amount:1000}]}},
-    "-2": { label: "January 2026",  income: { items: [{name:"YouTube",amount:2900},{name:"Venmo",amount:1850},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]},  expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1050},{name:"Food",amount:900},{name:"Other",amount:1000}]}},
+    "-1": { label: getMonthLabel(-1), income: { items: [{name:"YouTube",amount:3200},{name:"Venmo",amount:1980},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1000},{name:"Food",amount:850},{name:"Other",amount:1000}]}},
+    "-2": { label: getMonthLabel(-2), income: { items: [{name:"YouTube",amount:2900},{name:"Venmo",amount:1850},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1050},{name:"Food",amount:900},{name:"Other",amount:1000}]}},
   };
 
   function saveData() { localStorage.setItem('filo_months', JSON.stringify(months)); localStorage.setItem('filo_goals', JSON.stringify(goals)); }
@@ -383,7 +398,7 @@
       const income = getTotal(d.income.items);
       const expense = getTotal(d.expense.items);
       const net = income - expense;
-      const pct = Math.round((income / maxIncome) * 100);
+      const pct = maxIncome > 0 ? Math.round((income / maxIncome) * 100) : 0;
       return `<div class="trend-card">
         <div class="trend-month">${d.label}</div>
         <div class="trend-row">
@@ -397,8 +412,8 @@
   }
 
   function renderGoals() {
-    const currentIncome = getTotal((months[String(offset)] || months["0"]).income.items);
-    document.getElementById('goals-list').innerHTML = goals.map((g, i) => {
+    const currentIncome = getTotal((months[String(offset)] || months["0"] || {income:{items:[]}}).income.items);
+    document.getElementById('goals-list').innerHTML = goals.map((g) => {
       const pct = Math.min(100, Math.round((currentIncome / g.target) * 100));
       return `<div class="goal-card">
         <div class="goal-header">
@@ -436,6 +451,12 @@
   function drawDonut(items, total, highlightIdx = -1) {
     const svg = document.getElementById("donut-svg");
     svg.innerHTML = "";
+    if (!items.length || total === 0) {
+      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+      text.setAttribute("x","77"); text.setAttribute("y","82"); text.setAttribute("text-anchor","middle");
+      text.setAttribute("font-size","12"); text.setAttribute("fill","#ccc"); text.textContent="No data yet";
+      svg.appendChild(text); return;
+    }
     const cx = 77, cy = 77, r = 57, sw = 27;
     let angle = -Math.PI / 2;
     const resetZone = document.createElementNS("http://www.w3.org/2000/svg","circle");
@@ -461,6 +482,7 @@
   }
 
   function renderLegend(items, total) {
+    if (!items.length) { document.getElementById("legend").innerHTML = `<div style="font-size:13px;color:#ccc;padding:8px 0;">Add your first transaction</div>`; return; }
     document.getElementById("legend").innerHTML = items.map(s => {
       const pct = Math.round(s.amount/total*100);
       return `<div class="legend-item">${iconHTML(s.name,30)}<span class="legend-name">${s.name}</span><span class="legend-pct">${pct}%</span><span class="legend-amt">$${s.amount.toLocaleString()}</span><span class="legend-del" onclick="deleteItem('${s.name}')">&#215;</span></div>`;
@@ -475,7 +497,8 @@
   }
 
   function render() {
-    const d = months[String(offset)]||months["0"];
+    const d = months[String(offset)];
+    if (!d) return;
     const prev = months[String(offset-1)];
     const data = d[mode];
     const items = data.items;
@@ -488,7 +511,7 @@
     document.getElementById("breakdown-title").textContent = mode==="income"?"Income breakdown":"Expense breakdown";
     const pill = document.getElementById("change-pill");
     const lbl = document.getElementById("change-label");
-    if (prev) { const change = calcChange(total, getTotal(prev[mode].items), mode); if(change){pill.textContent=change.text;pill.className="change-pill "+(change.isGood?"pill-good":"pill-bad");lbl.textContent="vs last month";} }
+    if (prev) { const change = calcChange(total, getTotal(prev[mode].items), mode); if(change){pill.textContent=change.text;pill.className="change-pill "+(change.isGood?"pill-good":"pill-bad");lbl.textContent="vs last month";} else {pill.textContent="—";pill.className="change-pill pill-good";lbl.textContent="vs last month";} }
     else { pill.textContent="—"; pill.className="change-pill pill-good"; lbl.textContent="no prior data"; }
     const netEl = document.getElementById("net-amount");
     netEl.textContent=(net>=0?"+":"-")+"$"+Math.abs(net).toLocaleString();
@@ -506,7 +529,16 @@
     render();
   }
 
-  function changeMonth(dir) { const next=offset+dir; if(months[String(next)]){offset=next;render();} }
+  function changeMonth(dir) {
+    const next = offset + dir;
+    if (dir > 0 && next > 0) return;
+    if (!months[String(next)]) {
+      months[String(next)] = { label: getMonthLabel(next), income: { items: [] }, expense: { items: [] } };
+      saveData();
+    }
+    offset = next;
+    render();
+  }
 
   function openSheet() { entryType=mode; document.getElementById("type-income").className="type-btn"+(entryType==="income"?" active income":""); document.getElementById("type-expense").className="type-btn"+(entryType==="expense"?" active expense":""); buildSourceGrid(); document.getElementById("input-amount").value=""; document.getElementById("overlay").classList.add("open"); }
   function closeSheet() { document.getElementById("overlay").classList.remove("open"); }
@@ -518,7 +550,7 @@
     if(name==="__custom__")name=document.getElementById("input-custom").value.trim();
     const amount=parseFloat(document.getElementById("input-amount").value);
     if(!name||!amount||amount<=0){showToast("Pick a source and enter an amount");return;}
-    const mo=months[String(offset)]||months["0"];
+    const mo=months[String(offset)];
     const list=mo[entryType].items;
     const existing=list.find(x=>x.name.toLowerCase()===name.toLowerCase());
     if(existing){existing.amount+=amount;}else{list.push({name,amount});}
@@ -538,11 +570,22 @@
   }
 
   function confirmReset() {
-    if(confirm("Reset all data? This cannot be undone.")) { localStorage.clear(); months=JSON.parse(JSON.stringify(DEFAULT_MONTHS)); goals=[{name:"Monthly income",target:10000}]; render(); showToast("Data reset"); }
+    if(confirm("Reset all data? This cannot be undone.")) {
+      localStorage.clear();
+      months = JSON.parse(JSON.stringify(DEFAULT_MONTHS));
+      goals = [{name:"Monthly income",target:10000}];
+      ensureCurrentMonth();
+      offset = 0;
+      render();
+      showToast("Data reset");
+    }
   }
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
+  // ---- INIT ----
+  ensureCurrentMonth();
+  offset = 0;
   render();
   switchPage('home');
 </script>
