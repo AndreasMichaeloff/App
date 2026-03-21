@@ -6,7 +6,7 @@
   <title>Creator Finance Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f7ff; min-height: 100vh; padding: 1.5rem 1rem; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f7ff; min-height: 100vh; padding: 1.5rem 1rem 6rem; }
     .wrap { max-width: 480px; margin: 0 auto; }
     .header p { font-size: 13px; color: #3a8fd1; }
     .header h1 { font-size: 22px; font-weight: 500; color: #0a3d6b; margin-bottom: 1.25rem; }
@@ -39,6 +39,8 @@
     .legend-name { font-size: 13px; color: #0a3d6b; flex: 1; }
     .legend-pct { font-size: 12px; color: #3a8fd1; margin-right: 2px; }
     .legend-amt { font-size: 13px; font-weight: 500; color: #0a3d6b; }
+    .legend-del { font-size: 16px; color: #c0392b; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; }
+    .legend-item:hover .legend-del { opacity: 1; }
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #dbeeff; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1.25rem; }
     .net-label { font-size: 13px; color: #3a8fd1; }
     .net-amount { font-size: 20px; font-weight: 500; }
@@ -51,17 +53,26 @@
     .sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 480px; }
     .sheet h2 { font-size: 18px; font-weight: 500; color: #0a3d6b; margin-bottom: 1.25rem; }
     .form-row { margin-bottom: 14px; }
-    .form-row label { font-size: 12px; color: #3a8fd1; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-    .form-row input, .form-row select { width: 100%; padding: 10px 12px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 15px; color: #0a3d6b; background: #f0f7ff; outline: none; }
-    .form-row input:focus { border-color: #3a8fd1; }
-    .type-toggle { display: flex; gap: 8px; }
+    .form-row label { font-size: 12px; color: #3a8fd1; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .type-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
     .type-btn { flex: 1; padding: 10px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #f0f7ff; color: #3a8fd1; transition: background 0.2s, color 0.2s; }
     .type-btn.active.income { background: #dbeeff; color: #0a3d6b; border-color: #3a8fd1; }
     .type-btn.active.expense { background: #ffe8d6; color: #7c2d00; border-color: #f4a261; }
+    .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+    .source-chip { padding: 10px 6px; border: 0.5px solid #a8d4f5; border-radius: 10px; font-size: 12px; font-weight: 500; cursor: pointer; background: #f0f7ff; color: #0a3d6b; text-align: center; transition: background 0.15s, border 0.15s; }
+    .source-chip:hover { background: #dbeeff; }
+    .source-chip.selected { background: #0a3d6b; color: #fff; border-color: #0a3d6b; }
+    .source-chip.custom-chip { border-style: dashed; color: #3a8fd1; }
+    .custom-input-row { display: none; margin-bottom: 10px; }
+    .custom-input-row.show { display: block; }
+    .form-row input { width: 100%; padding: 10px 12px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 15px; color: #0a3d6b; background: #f0f7ff; outline: none; }
+    .form-row input:focus { border-color: #3a8fd1; }
     .sheet-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
     .btn-cancel { flex: 1; padding: 12px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: #3a8fd1; }
     .btn-add { flex: 2; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #0a3d6b; color: #fff; }
     .btn-add:hover { background: #3a8fd1; }
+    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #0a3d6b; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
@@ -103,20 +114,21 @@
 </div>
 
 <button class="add-btn" onclick="openSheet()">+</button>
+<div class="toast" id="toast"></div>
 
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
   <div class="sheet" id="sheet">
     <h2>Add transaction</h2>
-    <div class="form-row">
-      <label>Type</label>
-      <div class="type-toggle">
-        <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
-        <button class="type-btn expense" id="type-expense" onclick="setType('expense')">Expense</button>
-      </div>
+    <div class="type-toggle">
+      <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
+      <button class="type-btn expense" id="type-expense" onclick="setType('expense')">Expense</button>
     </div>
     <div class="form-row">
-      <label>Source / name</label>
-      <input type="text" id="input-name" placeholder="e.g. Venmo, YouTube, Rent" />
+      <label id="source-label">Source</label>
+      <div class="source-grid" id="source-grid"></div>
+      <div class="custom-input-row" id="custom-input-row">
+        <input type="text" id="input-custom" placeholder="Type source name..." />
+      </div>
     </div>
     <div class="form-row">
       <label>Amount ($)</label>
@@ -131,7 +143,10 @@
 
 <script>
   const INCOME_COLORS = ["#0a3d6b","#3a8fd1","#7ec8e3","#f4a261","#5bb8f5","#1a6fa8","#f5d97a"];
-  const EXPENSE_COLORS = ["#c0392b","#e07b5a","#f5c97a","#7c2d00","#f4a261","#e8b86d","#888"];
+  const EXPENSE_COLORS = ["#c0392b","#e07b5a","#f5c97a","#7c2d00","#f4a261","#e8b86d","#aaa"];
+
+  const INCOME_SOURCES = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
+  const EXPENSE_SOURCES = ["Rent","Food","Software","Equipment","Ads","Transport","Utilities","Subscriptions","Other"];
 
   const months = {
     0: { label: "March 2026",
@@ -156,11 +171,33 @@
     },
   };
 
-  let offset = 0, mode = "income", entryType = "income";
+  let offset = 0, mode = "income", entryType = "income", selectedSource = null;
 
-  function getItems() { return (months[offset] || months[0])[mode].items; }
-  function getTotal(items) { return items.reduce((s, x) => s + x.amount, 0); }
   function getColors() { return mode === "income" ? INCOME_COLORS : EXPENSE_COLORS; }
+  function getTotal(items) { return items.reduce((s, x) => s + x.amount, 0); }
+
+  function buildSourceGrid() {
+    const sources = entryType === "income" ? INCOME_SOURCES : EXPENSE_SOURCES;
+    document.getElementById("source-label").textContent = entryType === "income" ? "Source" : "Category";
+    selectedSource = null;
+    document.getElementById("custom-input-row").classList.remove("show");
+    document.getElementById("input-custom").value = "";
+    document.getElementById("source-grid").innerHTML =
+      sources.map(s => `<div class="source-chip" onclick="selectSource('${s}', this)">${s}</div>`).join("") +
+      `<div class="source-chip custom-chip" onclick="selectSource('__custom__', this)">+ Custom</div>`;
+  }
+
+  function selectSource(name, el) {
+    selectedSource = name;
+    document.querySelectorAll(".source-chip").forEach(c => c.classList.remove("selected"));
+    el.classList.add("selected");
+    if (name === "__custom__") {
+      document.getElementById("custom-input-row").classList.add("show");
+      document.getElementById("input-custom").focus();
+    } else {
+      document.getElementById("custom-input-row").classList.remove("show");
+    }
+  }
 
   function drawDonut(items, total, highlightIdx = -1) {
     const svg = document.getElementById("donut-svg");
@@ -208,8 +245,16 @@
         <span class="legend-name">${s.name}</span>
         <span class="legend-pct">${pct}%</span>
         <span class="legend-amt">$${s.amount.toLocaleString()}</span>
+        <span class="legend-del" onclick="deleteItem('${s.name}')">&#215;</span>
       </div>`;
     }).join("");
+  }
+
+  function deleteItem(name) {
+    const d = months[offset] || months[0];
+    const list = d[mode].items;
+    const idx = list.findIndex(x => x.name === name);
+    if (idx > -1) { list.splice(idx, 1); render(); showToast(name + " removed"); }
   }
 
   function render() {
@@ -217,9 +262,7 @@
     const data = d[mode];
     const items = data.items;
     const total = getTotal(items);
-    const incomeTotal = getTotal(d.income.items);
-    const expenseTotal = getTotal(d.expense.items);
-    const net = incomeTotal - expenseTotal;
+    const net = getTotal(d.income.items) - getTotal(d.expense.items);
 
     document.getElementById("month-label").textContent = d.label;
     document.getElementById("total-amount").textContent = "$" + total.toLocaleString();
@@ -250,24 +293,30 @@
     if (months[next]) { offset = next; render(); }
   }
 
-  function openSheet() { document.getElementById("overlay").classList.add("open"); }
-  function closeSheet() {
-    document.getElementById("overlay").classList.remove("open");
-    document.getElementById("input-name").value = "";
+  function openSheet() {
+    entryType = mode;
+    document.getElementById("type-income").className = "type-btn" + (entryType === "income" ? " active income" : "");
+    document.getElementById("type-expense").className = "type-btn" + (entryType === "expense" ? " active expense" : "");
+    buildSourceGrid();
     document.getElementById("input-amount").value = "";
+    document.getElementById("overlay").classList.add("open");
   }
+
+  function closeSheet() { document.getElementById("overlay").classList.remove("open"); }
   function closeIfOutside(e) { if (e.target === document.getElementById("overlay")) closeSheet(); }
 
   function setType(t) {
     entryType = t;
     document.getElementById("type-income").className = "type-btn" + (t === "income" ? " active income" : "");
     document.getElementById("type-expense").className = "type-btn" + (t === "expense" ? " active expense" : "");
+    buildSourceGrid();
   }
 
   function addTransaction() {
-    const name = document.getElementById("input-name").value.trim();
+    let name = selectedSource;
+    if (name === "__custom__") name = document.getElementById("input-custom").value.trim();
     const amount = parseFloat(document.getElementById("input-amount").value);
-    if (!name || !amount || amount <= 0) return;
+    if (!name || !amount || amount <= 0) { showToast("Pick a source and enter an amount"); return; }
     const mo = months[offset] || months[0];
     const list = mo[entryType].items;
     const existing = list.find(x => x.name.toLowerCase() === name.toLowerCase());
@@ -277,6 +326,14 @@
     closeSheet();
     if (mode !== entryType) setMode(entryType);
     else render();
+    showToast("$" + amount.toLocaleString() + " added to " + name);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
   }
 
   render();
