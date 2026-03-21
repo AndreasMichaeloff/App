@@ -31,7 +31,8 @@
     .toggle-btn.inactive-income { background: #fff; color: #c49a3a; border-color: #e8b84b; }
     .toggle-btn.inactive-expense { background: #fff; color: #c05030; border-color: #e07050; }
 
-    .total-card { border-radius: 16px; padding: clamp(8px, 1.2vh, 14px) clamp(12px, 3vw, 18px); margin-bottom: 1vh; flex-shrink: 0; }
+    .total-card-wrap { position: relative; margin-bottom: 1vh; flex-shrink: 0; }
+    .total-card { border-radius: 16px; padding: clamp(8px, 1.2vh, 14px) clamp(12px, 3vw, 18px); }
     .total-card.income { background: #e8b84b; }
     .total-card.expense { background: #e07050; }
     .total-card .label { font-size: clamp(11px, 1.3vh, 13px); color: rgba(255,255,255,0.85); margin-bottom: 1px; }
@@ -42,7 +43,10 @@
     .pill-bad { background: rgba(0,0,0,0.15); color: #fff; }
     .total-card .change-label { font-size: clamp(10px, 1.2vh, 12px); color: rgba(255,255,255,0.75); }
 
-    .sources-title { font-size: clamp(9px, 1.1vh, 11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px, 0.8vh, 8px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+    .add-btn { position: absolute; bottom: -16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e8b84b; color: #e8b84b; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(232,184,75,0.3); transition: background 0.15s, transform 0.1s; z-index: 10; line-height: 1; }
+    .add-btn:active { transform: scale(0.93); background: #fff8e6; }
+
+    .sources-title { font-size: clamp(9px, 1.1vh, 11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px, 0.8vh, 8px); margin-top: clamp(10px, 1.5vh, 18px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
 
     .chart-wrap { display: flex; align-items: center; gap: 14px; flex: 1; min-height: 0; }
     .donut-container { position: relative; flex-shrink: 0; width: clamp(100px, 16vh, 145px); height: clamp(100px, 16vh, 145px); }
@@ -102,6 +106,7 @@
       .chart-wrap { gap: 48px; flex: none; }
       .legend-item { padding: 8px 0; }
       .net-card { margin-top: 1.25rem; }
+      .add-btn { bottom: -18px; right: 20px; width: 38px; height: 38px; }
     }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: #fff; border-top: 0.5px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -110,9 +115,6 @@
     .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .nav-label { font-size: 10px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
-
-    .add-btn { display: none !important;
-    .add-btn:active { transform: scale(0.93); background: #c49a3a; }
 
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
@@ -167,14 +169,20 @@
     <button class="toggle-btn income-active" id="btn-income" onclick="setMode('income')">Income</button>
     <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
   </div>
-  <div class="total-card income" id="total-card">
-    <div class="label" id="total-label">Total income</div>
-    <div class="amount" id="total-amount">$0</div>
-    <div class="change-row">
-      <span class="change-pill pill-good" id="change-pill">—</span>
-      <span class="change-label" id="change-label">no prior data</span>
+
+  <!-- total card with + button tucked below right corner -->
+  <div class="total-card-wrap">
+    <div class="total-card income" id="total-card">
+      <div class="label" id="total-label">Total income</div>
+      <div class="amount" id="total-amount">$0</div>
+      <div class="change-row">
+        <span class="change-pill pill-good" id="change-pill">—</span>
+        <span class="change-label" id="change-label">no prior data</span>
+      </div>
     </div>
+    <button class="add-btn" id="add-btn" onclick="openSheet()">+</button>
   </div>
+
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
     <div class="donut-container">
@@ -189,7 +197,6 @@
   <div class="net-card">
     <span class="net-label">Net this month</span>
     <span class="net-positive" id="net-amount">$0</span>
-    <button onclick="openSheet()" style="margin-left:12px;width:32px;height:32px;border-radius:50%;background:#e8b84b;border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>
   </div>
 </div>
 
@@ -278,7 +285,6 @@
   </div>
 </nav>
 
-<button class="add-btn" id="add-btn" onclick="openSheet()">+</button>
 <div class="toast" id="toast"></div>
 
 <!-- ADD TRANSACTION SHEET -->
@@ -410,7 +416,6 @@
       if (el.getAttribute('fill') && el.getAttribute('fill') !== 'none') el.setAttribute('fill', '#e8b84b');
       if (el.getAttribute('stroke') && el.getAttribute('stroke') !== 'none') el.setAttribute('stroke', '#e8b84b');
     });
-    document.getElementById('add-btn').style.display = page === 'home' ? 'flex' : 'none';
     if (page === 'trends') renderTrends();
     if (page === 'goals') renderGoals();
   }
