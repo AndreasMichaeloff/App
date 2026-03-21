@@ -64,7 +64,7 @@
     .source-chip:hover { background: #fff8e6; border-color: #e8b84b; }
     .source-chip.selected { background: #fff8e6; border-color: #e8b84b; color: #a07010; }
     .chip-icon { width: 28px; height: 28px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
-    .chip-icon img { width: 28px; height: 28px; object-fit: cover; }
+    .chip-icon img { width: 28px; height: 28px; object-fit: cover; border-radius: 8px; }
     .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 12px; }
     .custom-input-row { display: none; margin-bottom: 10px; }
     .custom-input-row.show { display: block; }
@@ -87,24 +87,20 @@
       <img src="logo.png" alt="filo" height="44" />
     </div>
   </div>
-
   <div class="month-nav">
     <button onclick="changeMonth(-1)">&#8592;</button>
     <span id="month-label">March 2026</span>
     <button onclick="changeMonth(1)">&#8594;</button>
   </div>
-
   <div class="toggle-row">
     <button class="toggle-btn income-active" id="btn-income" onclick="setMode('income')">Income</button>
     <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
   </div>
-
   <div class="total-card income" id="total-card">
     <div class="label" id="total-label">Total income</div>
     <div class="amount" id="total-amount">$8,420</div>
     <div class="change" id="total-change">+12% vs last month</div>
   </div>
-
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
     <div class="donut-container">
@@ -116,7 +112,6 @@
     </div>
     <div class="legend" id="legend"></div>
   </div>
-
   <div class="net-card">
     <span class="net-label">Net this month</span>
     <span class="net-positive" id="net-amount">+$3,170</span>
@@ -153,14 +148,14 @@
 
 <script>
   const SOURCE_BRANDS = {
-    "YouTube":        { color: "#FF0000", initials: "YT", logo: "https://logo.clearbit.com/youtube.com" },
-    "Venmo":          { color: "#3D95CE", initials: "V",  logo: "https://logo.clearbit.com/venmo.com" },
-    "Cash App":       { color: "#00D632", initials: "CA", logo: "https://logo.clearbit.com/cash.app" },
-    "PayPal":         { color: "#003087", initials: "PP", logo: "https://logo.clearbit.com/paypal.com" },
-    "Stripe":         { color: "#635BFF", initials: "S",  logo: "https://logo.clearbit.com/stripe.com" },
+    "YouTube":        { color: "#FF0000", initials: "YT", logo: "https://www.google.com/s2/favicons?domain=youtube.com&sz=64" },
+    "Venmo":          { color: "#3D95CE", initials: "V",  logo: "https://www.google.com/s2/favicons?domain=venmo.com&sz=64" },
+    "Cash App":       { color: "#00D632", initials: "CA", logo: "https://www.google.com/s2/favicons?domain=cash.app&sz=64" },
+    "PayPal":         { color: "#003087", initials: "PP", logo: "https://www.google.com/s2/favicons?domain=paypal.com&sz=64" },
+    "Stripe":         { color: "#635BFF", initials: "S",  logo: "https://www.google.com/s2/favicons?domain=stripe.com&sz=64" },
     "Sponsorship":    { color: "#F7931E", initials: "SP", logo: null },
     "Merch":          { color: "#E8B84B", initials: "M",  logo: null },
-    "Patreon":        { color: "#FF424D", initials: "P",  logo: "https://logo.clearbit.com/patreon.com" },
+    "Patreon":        { color: "#FF424D", initials: "P",  logo: "https://www.google.com/s2/favicons?domain=patreon.com&sz=64" },
     "Direct deposit": { color: "#2ECC71", initials: "DD", logo: null },
     "Rent":           { color: "#E07050", initials: "R",  logo: null },
     "Food":           { color: "#F39C12", initials: "F",  logo: null },
