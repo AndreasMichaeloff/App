@@ -117,7 +117,7 @@
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 5rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; transition: transform 0.3s ease; }
+    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 5rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; }
     @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .sheet-handle { width: 48px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 1.25rem; cursor: pointer; transition: background 0.15s; }
     .sheet-handle:hover { background: #bbb; }
@@ -314,7 +314,7 @@
 <!-- ADD GOAL SHEET -->
 <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
   <div class="sheet" id="sheet-goal">
-    <div class="sheet-handle" id="handle-goal" onclick="closeGoalSheet()"></div>
+    <div class="sheet-handle" onclick="closeGoalSheet()"></div>
     <h2>Add a goal</h2>
     <div class="form-row">
       <label>Goal name</label>
@@ -399,13 +399,11 @@
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
 
-  // ---- SWIPE TO DISMISS ----
   function addSwipeToDismiss(sheetEl, closeFn) {
     let startY = 0;
     sheetEl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
     sheetEl.addEventListener('touchend', e => {
-      const diff = e.changedTouches[0].clientY - startY;
-      if (diff > 80) closeFn();
+      if (e.changedTouches[0].clientY - startY > 80) closeFn();
     }, { passive: true });
   }
 
@@ -627,7 +625,6 @@
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
-  // init swipe to dismiss
   addSwipeToDismiss(document.getElementById("sheet-main"), closeSheet);
   addSwipeToDismiss(document.getElementById("sheet-goal"), closeGoalSheet);
 
