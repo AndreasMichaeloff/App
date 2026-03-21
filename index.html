@@ -3,75 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Creator Finance Dashboard</title>
+  <title>Filo — Your money, layered.</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f7ff; min-height: 100vh; padding: 1.5rem 1rem 6rem; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; min-height: 100vh; padding: 1.5rem 1rem 6rem; }
     .wrap { max-width: 480px; margin: 0 auto; }
-    .header p { font-size: 13px; color: #3a8fd1; }
-    .header h1 { font-size: 22px; font-weight: 500; color: #0a3d6b; margin-bottom: 1.25rem; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .header-left p { font-size: 13px; color: #bbb; }
+    .header-left h1 { font-size: 30px; font-weight: 700; letter-spacing: -1px; color: #e8b84b; }
+    .logo-box { width: 42px; height: 42px; border-radius: 12px; background: #fff8e6; border: 0.5px solid #e8c96a; display: flex; align-items: center; justify-content: center; }
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; }
-    .month-nav button { background: #dbeeff; border: 0.5px solid #a8d4f5; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #0a3d6b; }
-    .month-nav button:hover { background: #c5e4ff; }
-    .month-nav span { font-size: 14px; font-weight: 500; flex: 1; text-align: center; color: #0a3d6b; }
-    .toggle-row { display: flex; background: #dbeeff; border-radius: 10px; padding: 4px; margin-bottom: 1.25rem; gap: 4px; }
-    .toggle-btn { flex: 1; padding: 8px; font-size: 14px; font-weight: 500; border: none; border-radius: 7px; cursor: pointer; background: transparent; color: #3a8fd1; transition: background 0.2s, color 0.2s; }
-    .toggle-btn.active { background: #ffffff; color: #0a3d6b; border: 0.5px solid #a8d4f5; }
-    .total-card { border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; background: #dbeeff; }
-    .total-card.expense { background: #ffe8d6; }
-    .total-card .label { font-size: 13px; color: #3a8fd1; margin-bottom: 4px; }
-    .total-card.expense .label { color: #c4622a; }
-    .total-card .amount { font-size: 36px; font-weight: 500; color: #0a3d6b; }
-    .total-card.expense .amount { color: #7c2d00; }
-    .total-card .change { font-size: 13px; color: #3a8fd1; margin-top: 4px; }
-    .total-card.expense .change { color: #c0392b; }
-    .sources-title { font-size: 11px; font-weight: 500; color: #3a8fd1; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .chart-wrap { display: flex; align-items: center; gap: 24px; }
+    .month-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #444; }
+    .month-nav button:hover { background: #eee; }
+    .month-nav span { font-size: 14px; font-weight: 500; flex: 1; text-align: center; color: #222; }
+    .toggle-row { display: flex; margin-bottom: 1.25rem; gap: 8px; }
+    .toggle-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 600; border: 2px solid; border-radius: 10px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+    .toggle-btn.income-active { background: #e8b84b; color: #fff; border-color: #e8b84b; }
+    .toggle-btn.expense-active { background: #e07050; color: #fff; border-color: #e07050; }
+    .toggle-btn.inactive-income { background: #fff; color: #c49a3a; border-color: #e8b84b; }
+    .toggle-btn.inactive-expense { background: #fff; color: #c05030; border-color: #e07050; }
+    .total-card { border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .total-card.income { background: #e8b84b; }
+    .total-card.expense { background: #e07050; }
+    .total-card .label { font-size: 13px; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
+    .total-card .amount { font-size: 38px; font-weight: 700; color: #fff; }
+    .total-card .change { font-size: 13px; color: rgba(255,255,255,0.9); margin-top: 4px; }
+    .sources-title { font-size: 11px; font-weight: 600; color: #bbb; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .chart-wrap { display: flex; align-items: center; gap: 20px; }
     .donut-container { position: relative; width: 150px; height: 150px; flex-shrink: 0; }
     .donut-container svg { width: 150px; height: 150px; }
     .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
-    .donut-center .amt { font-size: 16px; font-weight: 500; color: #0a3d6b; }
-    .donut-center .lbl { font-size: 11px; color: #3a8fd1; margin-top: 2px; }
+    .donut-center .amt { font-size: 15px; font-weight: 700; color: #222; }
+    .donut-center .lbl { font-size: 10px; color: #aaa; margin-top: 2px; }
     .legend { flex: 1; }
-    .legend-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid #a8d4f5; }
+    .legend-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid #f0f0f0; }
     .legend-item:last-child { border-bottom: none; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .legend-name { font-size: 13px; color: #0a3d6b; flex: 1; }
-    .legend-pct { font-size: 12px; color: #3a8fd1; margin-right: 2px; }
-    .legend-amt { font-size: 13px; font-weight: 500; color: #0a3d6b; }
-    .legend-del { font-size: 16px; color: #c0392b; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; }
+    .source-icon { width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; overflow: hidden; }
+    .source-icon img { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
+    .legend-name { font-size: 12px; color: #333; flex: 1; }
+    .legend-pct { font-size: 11px; color: #bbb; margin-right: 2px; }
+    .legend-amt { font-size: 12px; font-weight: 600; color: #222; }
+    .legend-del { font-size: 15px; color: #e07050; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; }
     .legend-item:hover .legend-del { opacity: 1; }
-    .net-card { display: flex; justify-content: space-between; align-items: center; background: #dbeeff; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1.25rem; }
-    .net-label { font-size: 13px; color: #3a8fd1; }
-    .net-amount { font-size: 20px; font-weight: 500; }
-    .net-positive { color: #0a3d6b; }
-    .net-negative { color: #c0392b; }
-    .add-btn { position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px; border-radius: 50%; background: #0a3d6b; color: #fff; font-size: 26px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(10,61,107,0.25); transition: background 0.2s, transform 0.1s; z-index: 100; }
-    .add-btn:hover { background: #3a8fd1; transform: scale(1.08); }
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(10,61,107,0.25); z-index: 200; align-items: flex-end; justify-content: center; }
+    .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; padding: 1rem 1.25rem; margin-top: 1.25rem; border: 0.5px solid #eee; }
+    .net-label { font-size: 13px; color: #aaa; }
+    .net-positive { color: #6a9e40; font-size: 20px; font-weight: 700; }
+    .net-negative { color: #e07050; font-size: 20px; font-weight: 700; }
+    .add-btn { position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px; border-radius: 50%; background: #e8b84b; color: #fff; font-size: 28px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(232,184,75,0.5); transition: background 0.2s, transform 0.1s; z-index: 100; }
+    .add-btn:hover { background: #c49a3a; transform: scale(1.08); }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; }
-    .sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 480px; }
-    .sheet h2 { font-size: 18px; font-weight: 500; color: #0a3d6b; margin-bottom: 1.25rem; }
+    .sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; }
+    .sheet h2 { font-size: 18px; font-weight: 600; color: #222; margin-bottom: 1.25rem; }
     .form-row { margin-bottom: 14px; }
-    .form-row label { font-size: 12px; color: #3a8fd1; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-row label { font-size: 12px; color: #aaa; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
     .type-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
-    .type-btn { flex: 1; padding: 10px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #f0f7ff; color: #3a8fd1; transition: background 0.2s, color 0.2s; }
-    .type-btn.active.income { background: #dbeeff; color: #0a3d6b; border-color: #3a8fd1; }
-    .type-btn.active.expense { background: #ffe8d6; color: #7c2d00; border-color: #f4a261; }
+    .type-btn { flex: 1; padding: 10px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #f7f7f7; color: #888; }
+    .type-btn.active.income { background: #fff8e6; color: #a07010; border-color: #e8b84b; }
+    .type-btn.active.expense { background: #ffeee8; color: #c04020; border-color: #e07050; }
     .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-    .source-chip { padding: 10px 6px; border: 0.5px solid #a8d4f5; border-radius: 10px; font-size: 12px; font-weight: 500; cursor: pointer; background: #f0f7ff; color: #0a3d6b; text-align: center; transition: background 0.15s, border 0.15s; }
-    .source-chip:hover { background: #dbeeff; }
-    .source-chip.selected { background: #0a3d6b; color: #fff; border-color: #0a3d6b; }
-    .source-chip.custom-chip { border-style: dashed; color: #3a8fd1; }
+    .source-chip { padding: 8px 6px; border: 0.5px solid #e8e8e8; border-radius: 10px; font-size: 11px; font-weight: 500; cursor: pointer; background: #fafafa; color: #444; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: background 0.15s; }
+    .source-chip:hover { background: #fff8e6; border-color: #e8b84b; }
+    .source-chip.selected { background: #fff8e6; border-color: #e8b84b; color: #a07010; }
+    .chip-icon { width: 28px; height: 28px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+    .chip-icon img { width: 28px; height: 28px; object-fit: cover; }
+    .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 12px; }
     .custom-input-row { display: none; margin-bottom: 10px; }
     .custom-input-row.show { display: block; }
-    .form-row input { width: 100%; padding: 10px 12px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 15px; color: #0a3d6b; background: #f0f7ff; outline: none; }
-    .form-row input:focus { border-color: #3a8fd1; }
+    .form-row input { width: 100%; padding: 10px 12px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 15px; color: #222; background: #fafafa; outline: none; }
+    .form-row input:focus { border-color: #e8b84b; }
     .sheet-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
-    .btn-cancel { flex: 1; padding: 12px; border: 0.5px solid #a8d4f5; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: #3a8fd1; }
-    .btn-add { flex: 2; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #0a3d6b; color: #fff; }
-    .btn-add:hover { background: #3a8fd1; }
-    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #0a3d6b; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
+    .btn-cancel { flex: 1; padding: 12px; border: 0.5px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: transparent; color: #888; }
+    .btn-add { flex: 2; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; background: #e8b84b; color: #fff; }
+    .btn-add:hover { background: #c49a3a; }
+    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
   </style>
 </head>
@@ -79,23 +84,36 @@
 
 <div class="wrap">
   <div class="header">
-    <p>Finance tracker</p>
-    <h1>Creator dashboard</h1>
+    <div class="header-left">
+      <p>Your money, layered.</p>
+      <h1>filo</h1>
+    </div>
+    <div class="logo-box">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <ellipse cx="12" cy="12" rx="9" ry="3.5" stroke="#e8b84b" stroke-width="1.5"/>
+        <ellipse cx="12" cy="12" rx="6" ry="2.2" stroke="#c49a3a" stroke-width="1.5"/>
+        <ellipse cx="12" cy="12" rx="3" ry="1" fill="#e8b84b"/>
+      </svg>
+    </div>
   </div>
+
   <div class="month-nav">
     <button onclick="changeMonth(-1)">&#8592;</button>
     <span id="month-label">March 2026</span>
     <button onclick="changeMonth(1)">&#8594;</button>
   </div>
+
   <div class="toggle-row">
-    <button class="toggle-btn active" id="btn-income" onclick="setMode('income')">Income</button>
-    <button class="toggle-btn" id="btn-expense" onclick="setMode('expense')">Expenses</button>
+    <button class="toggle-btn income-active" id="btn-income" onclick="setMode('income')">Income</button>
+    <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
   </div>
-  <div class="total-card" id="total-card">
+
+  <div class="total-card income" id="total-card">
     <div class="label" id="total-label">Total income</div>
     <div class="amount" id="total-amount">$8,420</div>
     <div class="change" id="total-change">+12% vs last month</div>
   </div>
+
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
     <div class="donut-container">
@@ -107,9 +125,10 @@
     </div>
     <div class="legend" id="legend"></div>
   </div>
+
   <div class="net-card">
     <span class="net-label">Net this month</span>
-    <span class="net-amount net-positive" id="net-amount">+$3,170</span>
+    <span class="net-positive" id="net-amount">+$3,170</span>
   </div>
 </div>
 
@@ -117,7 +136,7 @@
 <div class="toast" id="toast"></div>
 
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
-  <div class="sheet" id="sheet">
+  <div class="sheet">
     <h2>Add transaction</h2>
     <div class="type-toggle">
       <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
@@ -142,8 +161,40 @@
 </div>
 
 <script>
-  const INCOME_COLORS = ["#0a3d6b","#3a8fd1","#7ec8e3","#f4a261","#5bb8f5","#1a6fa8","#f5d97a"];
-  const EXPENSE_COLORS = ["#c0392b","#e07b5a","#f5c97a","#7c2d00","#f4a261","#e8b86d","#aaa"];
+  const SOURCE_BRANDS = {
+    "YouTube":        { color: "#FF0000", initials: "YT", logo: "https://logo.clearbit.com/youtube.com" },
+    "Venmo":          { color: "#3D95CE", initials: "V",  logo: "https://logo.clearbit.com/venmo.com" },
+    "Cash App":       { color: "#00D632", initials: "CA", logo: "https://logo.clearbit.com/cash.app" },
+    "PayPal":         { color: "#003087", initials: "PP", logo: "https://logo.clearbit.com/paypal.com" },
+    "Stripe":         { color: "#635BFF", initials: "S",  logo: "https://logo.clearbit.com/stripe.com" },
+    "Sponsorship":    { color: "#F7931E", initials: "SP", logo: null },
+    "Merch":          { color: "#E8B84B", initials: "M",  logo: null },
+    "Patreon":        { color: "#FF424D", initials: "P",  logo: "https://logo.clearbit.com/patreon.com" },
+    "Direct deposit": { color: "#2ECC71", initials: "DD", logo: null },
+    "Rent":           { color: "#E07050", initials: "R",  logo: null },
+    "Food":           { color: "#F39C12", initials: "F",  logo: null },
+    "Software":       { color: "#3498DB", initials: "SW", logo: null },
+    "Equipment":      { color: "#9B59B6", initials: "EQ", logo: null },
+    "Ads":            { color: "#1DA1F2", initials: "AD", logo: null },
+    "Transport":      { color: "#27AE60", initials: "TR", logo: null },
+    "Utilities":      { color: "#E74C3C", initials: "UT", logo: null },
+    "Subscriptions":  { color: "#8E44AD", initials: "SB", logo: null },
+    "Other":          { color: "#95A5A6", initials: "OT", logo: null },
+  };
+
+  function getBrand(name) {
+    return SOURCE_BRANDS[name] || { color: "#e8b84b", initials: name.slice(0,2).toUpperCase(), logo: null };
+  }
+
+  function iconHTML(name, size = 26) {
+    const b = getBrand(name);
+    if (b.logo) {
+      return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};">
+        <img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.38)}px';" />
+      </div>`;
+    }
+    return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
+  }
 
   const INCOME_SOURCES = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
   const EXPENSE_SOURCES = ["Rent","Food","Software","Equipment","Ads","Transport","Utilities","Subscriptions","Other"];
@@ -173,7 +224,6 @@
 
   let offset = 0, mode = "income", entryType = "income", selectedSource = null;
 
-  function getColors() { return mode === "income" ? INCOME_COLORS : EXPENSE_COLORS; }
   function getTotal(items) { return items.reduce((s, x) => s + x.amount, 0); }
 
   function buildSourceGrid() {
@@ -183,7 +233,13 @@
     document.getElementById("custom-input-row").classList.remove("show");
     document.getElementById("input-custom").value = "";
     document.getElementById("source-grid").innerHTML =
-      sources.map(s => `<div class="source-chip" onclick="selectSource('${s}', this)">${s}</div>`).join("") +
+      sources.map(s => {
+        const b = getBrand(s);
+        const icon = b.logo
+          ? `<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';" /></div>`
+          : `<div class="chip-icon" style="background:${b.color};">${b.initials}</div>`;
+        return `<div class="source-chip" onclick="selectSource('${s}', this)">${icon}${s}</div>`;
+      }).join("") +
       `<div class="source-chip custom-chip" onclick="selectSource('__custom__', this)">+ Custom</div>`;
   }
 
@@ -204,8 +260,8 @@
     svg.innerHTML = "";
     const cx = 75, cy = 75, r = 55, sw = 26;
     let angle = -Math.PI / 2;
-    const colors = getColors();
     items.forEach((s, i) => {
+      const color = getBrand(s.name).color;
       const sweep = (s.amount / total) * 2 * Math.PI;
       const gap = 0.03;
       const a1 = angle + gap / 2, a2 = angle + sweep - gap / 2;
@@ -215,7 +271,7 @@
       const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
       path.setAttribute("d", `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`);
       path.setAttribute("fill", "none");
-      path.setAttribute("stroke", colors[i % colors.length]);
+      path.setAttribute("stroke", color);
       path.setAttribute("stroke-width", highlightIdx === i ? sw + 5 : sw);
       path.setAttribute("stroke-linecap", "round");
       path.style.opacity = highlightIdx === -1 || highlightIdx === i ? "1" : "0.3";
@@ -237,11 +293,10 @@
   }
 
   function renderLegend(items, total) {
-    const colors = getColors();
-    document.getElementById("legend").innerHTML = items.map((s, i) => {
+    document.getElementById("legend").innerHTML = items.map(s => {
       const pct = Math.round(s.amount / total * 100);
       return `<div class="legend-item">
-        <div class="legend-dot" style="background:${colors[i % colors.length]};"></div>
+        ${iconHTML(s.name, 26)}
         <span class="legend-name">${s.name}</span>
         <span class="legend-pct">${pct}%</span>
         <span class="legend-amt">$${s.amount.toLocaleString()}</span>
@@ -269,13 +324,13 @@
     document.getElementById("total-change").textContent = data.change;
     document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
     document.getElementById("center-lbl").textContent = "total";
-    document.getElementById("total-card").className = "total-card" + (mode === "expense" ? " expense" : "");
+    document.getElementById("total-card").className = "total-card " + mode;
     document.getElementById("total-label").textContent = mode === "income" ? "Total income" : "Total expenses";
     document.getElementById("breakdown-title").textContent = mode === "income" ? "Income breakdown" : "Expense breakdown";
 
     const netEl = document.getElementById("net-amount");
     netEl.textContent = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toLocaleString();
-    netEl.className = "net-amount " + (net >= 0 ? "net-positive" : "net-negative");
+    netEl.className = net >= 0 ? "net-positive" : "net-negative";
 
     drawDonut(items, total);
     renderLegend(items, total);
@@ -283,8 +338,8 @@
 
   function setMode(m) {
     mode = m;
-    document.getElementById("btn-income").className = "toggle-btn" + (m === "income" ? " active" : "");
-    document.getElementById("btn-expense").className = "toggle-btn" + (m === "expense" ? " active" : "");
+    document.getElementById("btn-income").className = "toggle-btn" + (m === "income" ? " income-active" : " inactive-income");
+    document.getElementById("btn-expense").className = "toggle-btn" + (m === "expense" ? " expense-active" : " inactive-expense");
     render();
   }
 
