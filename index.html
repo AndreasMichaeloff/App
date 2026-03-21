@@ -71,7 +71,6 @@
     .net-positive { color: #6a9e40; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
     .net-negative { color: #e07050; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
 
-    /* non-home pages */
     #page-trends, #page-goals, #page-settings { height: auto; min-height: calc(100dvh - 64px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1.5rem; }
@@ -97,7 +96,6 @@
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
 
-    /* desktop */
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 64px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
@@ -119,9 +117,11 @@
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 2rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; }
+    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 5rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; transition: transform 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .sheet-handle { width: 36px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 1.25rem; }
+    .sheet-handle { width: 48px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 1.25rem; cursor: pointer; transition: background 0.15s; }
+    .sheet-handle:hover { background: #bbb; }
+    .sheet-handle:active { background: #999; }
     .sheet h2 { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 1.25rem; }
     .form-row { margin-bottom: 14px; }
     .form-row label { font-size: 12px; color: #aaa; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
@@ -169,8 +169,6 @@
     <button class="toggle-btn income-active" id="btn-income" onclick="setMode('income')">Income</button>
     <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
   </div>
-
-  <!-- total card with + button tucked below right corner -->
   <div class="total-card-wrap">
     <div class="total-card income" id="total-card">
       <div class="label" id="total-label">Total income</div>
@@ -182,7 +180,6 @@
     </div>
     <button class="add-btn" id="add-btn" onclick="openSheet()">+</button>
   </div>
-
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
     <div class="donut-container">
@@ -289,8 +286,8 @@
 
 <!-- ADD TRANSACTION SHEET -->
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
+  <div class="sheet" id="sheet-main">
+    <div class="sheet-handle" id="handle-main" onclick="closeSheet()"></div>
     <h2>Add transaction</h2>
     <div class="type-toggle">
       <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
@@ -316,8 +313,8 @@
 
 <!-- ADD GOAL SHEET -->
 <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
+  <div class="sheet" id="sheet-goal">
+    <div class="sheet-handle" id="handle-goal" onclick="closeGoalSheet()"></div>
     <h2>Add a goal</h2>
     <div class="form-row">
       <label>Goal name</label>
@@ -401,6 +398,16 @@
   let offset = 0, mode = "income", entryType = "income", selectedSource = null;
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
+
+  // ---- SWIPE TO DISMISS ----
+  function addSwipeToDismiss(sheetEl, closeFn) {
+    let startY = 0;
+    sheetEl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    sheetEl.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].clientY - startY;
+      if (diff > 80) closeFn();
+    }, { passive: true });
+  }
 
   function switchPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -570,7 +577,14 @@
     render();
   }
 
-  function openSheet() { entryType=mode; document.getElementById("type-income").className="type-btn"+(entryType==="income"?" active income":""); document.getElementById("type-expense").className="type-btn"+(entryType==="expense"?" active expense":""); buildSourceGrid(); document.getElementById("input-amount").value=""; document.getElementById("overlay").classList.add("open"); }
+  function openSheet() {
+    entryType=mode;
+    document.getElementById("type-income").className="type-btn"+(entryType==="income"?" active income":"");
+    document.getElementById("type-expense").className="type-btn"+(entryType==="expense"?" active expense":"");
+    buildSourceGrid();
+    document.getElementById("input-amount").value="";
+    document.getElementById("overlay").classList.add("open");
+  }
   function closeSheet() { document.getElementById("overlay").classList.remove("open"); }
   function closeIfOutside(e) { if(e.target===document.getElementById("overlay"))closeSheet(); }
   function setType(t) { entryType=t; document.getElementById("type-income").className="type-btn"+(t==="income"?" active income":""); document.getElementById("type-expense").className="type-btn"+(t==="expense"?" active expense":""); buildSourceGrid(); }
@@ -612,6 +626,10 @@
   }
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
+
+  // init swipe to dismiss
+  addSwipeToDismiss(document.getElementById("sheet-main"), closeSheet);
+  addSwipeToDismiss(document.getElementById("sheet-goal"), closeGoalSheet);
 
   ensureCurrentMonth();
   offset = 0;
