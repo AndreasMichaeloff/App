@@ -111,7 +111,7 @@
     .nav-label { font-size: 10px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
 
-    .add-btn { position: fixed; bottom: 76px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: #e8b84b; color: #fff; font-size: 26px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(232,184,75,0.5); transition: background 0.2s, transform 0.1s; z-index: 100; }
+    .add-btn { display: none !important;
     .add-btn:active { transform: scale(0.93); background: #c49a3a; }
 
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
@@ -189,6 +189,7 @@
   <div class="net-card">
     <span class="net-label">Net this month</span>
     <span class="net-positive" id="net-amount">$0</span>
+    <button onclick="openSheet()" style="margin-left:12px;width:32px;height:32px;border-radius:50%;background:#e8b84b;border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>
   </div>
 </div>
 
