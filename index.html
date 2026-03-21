@@ -399,14 +399,6 @@
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
 
-  function addSwipeToDismiss(sheetEl, closeFn) {
-    let startY = 0;
-    sheetEl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-    sheetEl.addEventListener('touchend', e => {
-      if (e.changedTouches[0].clientY - startY > 80) closeFn();
-    }, { passive: true });
-  }
-
   function switchPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -625,8 +617,6 @@
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
-  addSwipeToDismiss(document.getElementById("sheet-main"), closeSheet);
-  addSwipeToDismiss(document.getElementById("sheet-goal"), closeGoalSheet);
 
   ensureCurrentMonth();
   offset = 0;
