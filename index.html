@@ -12,18 +12,21 @@
     html, body { height: 100%; overscroll-behavior: none; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
     .page { display: none; min-height: 100vh; padding: 1.5rem 1rem 90px; max-width: 480px; margin: 0 auto; }
-@media (min-width: 768px) {
-  body { display: flex; flex-direction: column; }
-  .page { max-width: 100%; padding: 2rem 3rem 90px; }
-  .bottom-nav { max-width: 100%; padding: 0 3rem; justify-content: flex-start; gap: 2rem; }
-  .nav-item { flex: none; }
-  .chart-wrap { gap: 40px; }
-  .donut-container { width: 200px; height: 200px; }
-  .donut-container svg { width: 200px; height: 200px; }
-  .total-card .amount { font-size: 52px; }
-  .toggle-btn { padding: 14px 24px; }
-}
     .page.active { display: block; }
+    @media (min-width: 768px) {
+      .page { max-width: 100%; padding: 2rem 4rem 90px; }
+      .bottom-nav { padding: 0 4rem; justify-content: flex-start; gap: 2.5rem; }
+      .nav-item { flex: none; }
+      .chart-wrap { gap: 48px; }
+      .donut-container { width: 200px; height: 200px; }
+      .donut-container svg { width: 200px; height: 200px; }
+      .total-card .amount { font-size: 52px; }
+      .toggle-row { max-width: 400px; }
+      .month-nav { max-width: 400px; }
+      .total-card { max-width: 600px; }
+      .net-card { max-width: 600px; }
+      .chart-wrap { max-width: 600px; }
+    }
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 68px; background: #fff; border-top: 0.5px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 8px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
@@ -342,7 +345,6 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
-  // ---- DATE HELPERS ----
   function getMonthLabel(off) {
     const now = new Date();
     const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
@@ -357,7 +359,6 @@
     months["0"].label = getMonthLabel(0);
   }
 
-  // ---- DEFAULT DATA (sample history only, no current month hardcoded) ----
   const DEFAULT_MONTHS = {
     "-1": { label: getMonthLabel(-1), income: { items: [{name:"YouTube",amount:3200},{name:"Venmo",amount:1980},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1000},{name:"Food",amount:850},{name:"Other",amount:1000}]}},
     "-2": { label: getMonthLabel(-2), income: { items: [{name:"YouTube",amount:2900},{name:"Venmo",amount:1850},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1050},{name:"Food",amount:900},{name:"Other",amount:1000}]}},
@@ -594,7 +595,6 @@
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
 
-  // ---- INIT ----
   ensureCurrentMonth();
   offset = 0;
   render();
