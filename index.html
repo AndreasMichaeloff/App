@@ -182,11 +182,9 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
-  const INCOME_SOURCES = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
-  const EXPENSE_SOURCES = ["Rent","Food","Software","Equipment","Ads","Transport","Utilities","Subscriptions","Other"];
-
-  const months = {
-    0: { label: "March 2026",
+  // ---- DEFAULT DATA ----
+  const DEFAULT_MONTHS = {
+    "0": { label: "March 2026",
       income:  { change: "+12% vs last month", items: [
         { name: "YouTube", amount: 3800 }, { name: "Venmo", amount: 2150 },
         { name: "Direct deposit", amount: 1600 }, { name: "Cash App", amount: 870 },
@@ -208,7 +206,26 @@
     },
   };
 
+  // ---- LOCALSTORAGE SAVE/LOAD ----
+  function saveData() {
+    localStorage.setItem('filo_months', JSON.stringify(months));
+  }
+
+  function loadData() {
+    try {
+      const saved = localStorage.getItem('filo_months');
+      return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_MONTHS));
+    } catch(e) {
+      return JSON.parse(JSON.stringify(DEFAULT_MONTHS));
+    }
+  }
+
+  const INCOME_SOURCES = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
+  const EXPENSE_SOURCES = ["Rent","Food","Software","Equipment","Ads","Transport","Utilities","Subscriptions","Other"];
+
+  let months = loadData();
   let offset = 0, mode = "income", entryType = "income", selectedSource = null;
+
   function getTotal(items) { return items.reduce((s, x) => s + x.amount, 0); }
 
   function buildSourceGrid() {
@@ -245,6 +262,20 @@
     svg.innerHTML = "";
     const cx = 75, cy = 75, r = 55, sw = 26;
     let angle = -Math.PI / 2;
+
+    // invisible overlay to reset on mouse leave from entire donut
+    const resetZone = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    resetZone.setAttribute("cx", cx);
+    resetZone.setAttribute("cy", cy);
+    resetZone.setAttribute("r", r + sw);
+    resetZone.setAttribute("fill", "transparent");
+    resetZone.addEventListener("mouseleave", () => {
+      drawDonut(items, total, -1);
+      document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
+      document.getElementById("center-lbl").textContent = "total";
+    });
+    svg.appendChild(resetZone);
+
     items.forEach((s, i) => {
       const color = getBrand(s.name).color;
       const sweep = (s.amount / total) * 2 * Math.PI;
@@ -267,11 +298,6 @@
         document.getElementById("center-amt").textContent = "$" + s.amount.toLocaleString();
         document.getElementById("center-lbl").textContent = s.name;
       });
-      path.addEventListener("mouseleave", () => {
-        drawDonut(items, total, -1);
-        document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
-        document.getElementById("center-lbl").textContent = "total";
-      });
       svg.appendChild(path);
       angle += sweep;
     });
@@ -291,18 +317,24 @@
   }
 
   function deleteItem(name) {
-    const d = months[offset] || months[0];
+    const d = months[offset] || months["0"];
     const list = d[mode].items;
     const idx = list.findIndex(x => x.name === name);
-    if (idx > -1) { list.splice(idx, 1); render(); showToast(name + " removed"); }
+    if (idx > -1) {
+      list.splice(idx, 1);
+      saveData();
+      render();
+      showToast(name + " removed");
+    }
   }
 
   function render() {
-    const d = months[offset] || months[0];
+    const d = months[String(offset)] || months["0"];
     const data = d[mode];
     const items = data.items;
     const total = getTotal(items);
     const net = getTotal(d.income.items) - getTotal(d.expense.items);
+
     document.getElementById("month-label").textContent = d.label;
     document.getElementById("total-amount").textContent = "$" + total.toLocaleString();
     document.getElementById("total-change").textContent = data.change;
@@ -311,9 +343,11 @@
     document.getElementById("total-card").className = "total-card " + mode;
     document.getElementById("total-label").textContent = mode === "income" ? "Total income" : "Total expenses";
     document.getElementById("breakdown-title").textContent = mode === "income" ? "Income breakdown" : "Expense breakdown";
+
     const netEl = document.getElementById("net-amount");
     netEl.textContent = (net >= 0 ? "+" : "-") + "$" + Math.abs(net).toLocaleString();
     netEl.className = net >= 0 ? "net-positive" : "net-negative";
+
     drawDonut(items, total);
     renderLegend(items, total);
   }
@@ -327,7 +361,7 @@
 
   function changeMonth(dir) {
     const next = offset + dir;
-    if (months[next]) { offset = next; render(); }
+    if (months[String(next)]) { offset = next; render(); }
   }
 
   function openSheet() {
@@ -354,12 +388,13 @@
     if (name === "__custom__") name = document.getElementById("input-custom").value.trim();
     const amount = parseFloat(document.getElementById("input-amount").value);
     if (!name || !amount || amount <= 0) { showToast("Pick a source and enter an amount"); return; }
-    const mo = months[offset] || months[0];
+    const mo = months[String(offset)] || months["0"];
     const list = mo[entryType].items;
     const existing = list.find(x => x.name.toLowerCase() === name.toLowerCase());
     if (existing) { existing.amount += amount; }
     else { list.push({ name, amount }); }
     mo[entryType].change = "updated manually";
+    saveData();
     closeSheet();
     if (mode !== entryType) setMode(entryType);
     else render();
