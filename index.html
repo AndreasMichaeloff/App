@@ -19,23 +19,27 @@
     .pull-indicator.visible { height: 32px; }
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .header { margin-bottom: 1vh; flex-shrink: 0; display: flex; align-items: center; }
-    .header p { font-size: clamp(10px, 1.4vh, 12px); color: #bbb; margin-bottom: 1px; }
+
+    .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; }
+    .header p { font-size: clamp(12px, 1.6vh, 14px); color: #bbb; margin-bottom: 3px; }
+
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
     .month-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 10px; padding: clamp(5px, 0.9vh, 9px) clamp(10px, 2vw, 16px); font-size: clamp(12px, 1.5vh, 14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; }
     .month-nav button:active { transform: scale(0.95); }
     .month-nav span { font-size: clamp(13px, 1.7vh, 15px); font-weight: 600; flex: 1; text-align: center; color: #222; }
+
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px, 1vh, 11px) 10px; font-size: clamp(13px, 1.6vh, 15px); font-weight: 600; border: 2px solid; border-radius: 12px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
     .toggle-btn:active { transform: scale(0.97); }
     .toggle-btn.income-active { background: #e8b84b; color: #fff; border-color: #e8b84b; }
-    .toggle-btn.expense-active { background: #e07050; color: #fff; border-color: #e07050; }
+    .toggle-btn.expense-active { background: #a0622a; color: #fff; border-color: #a0622a; }
     .toggle-btn.inactive-income { background: #fff; color: #c49a3a; border-color: #e8b84b; }
-    .toggle-btn.inactive-expense { background: #fff; color: #c05030; border-color: #e07050; }
+    .toggle-btn.inactive-expense { background: #fff; color: #a0622a; border-color: #a0622a; }
+
     .total-card-wrap { position: relative; margin-bottom: 1vh; flex-shrink: 0; }
     .total-card { border-radius: 16px; padding: clamp(8px, 1.2vh, 14px) clamp(12px, 3vw, 18px); }
     .total-card.income { background: #e8b84b; }
-    .total-card.expense { background: #e07050; }
+    .total-card.expense { background: #a0622a; }
     .total-card .label { font-size: clamp(11px, 1.3vh, 13px); color: rgba(255,255,255,0.85); margin-bottom: 1px; }
     .total-card .amount { font-size: clamp(24px, 3.5vh, 36px); font-weight: 700; color: #fff; letter-spacing: -1px; }
     .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: clamp(3px, 0.6vh, 6px); }
@@ -43,34 +47,42 @@
     .pill-good { background: rgba(255,255,255,0.3); color: #fff; }
     .pill-bad { background: rgba(0,0,0,0.15); color: #fff; }
     .total-card .change-label { font-size: clamp(10px, 1.2vh, 12px); color: rgba(255,255,255,0.75); }
+
     .add-btn { position: absolute; bottom: -16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e8b84b; color: #e8b84b; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(232,184,75,0.3); transition: background 0.15s, transform 0.1s; z-index: 10; line-height: 1; }
     .add-btn:active { transform: scale(0.93); background: #fff8e6; }
+
     .goal-banner { background: linear-gradient(135deg, #fff8e6, #fff3d0); border: 1px solid #e8c96a; border-radius: 12px; padding: 9px 14px; margin-bottom: 1vh; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
     .goal-banner.hidden { display: none; }
     .goal-banner .banner-emoji { font-size: 16px; flex-shrink: 0; }
     .goal-banner .banner-text { font-size: clamp(10px, 1.3vh, 12px); color: #a07010; font-weight: 500; line-height: 1.4; }
     .goal-banner .banner-text strong { font-weight: 700; }
+
     .sources-title { font-size: clamp(9px, 1.1vh, 11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px, 0.8vh, 8px); margin-top: clamp(8px, 1.2vh, 14px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+
+    .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; padding: clamp(8px, 1.2vh, 14px); display: flex; flex-direction: column; }
     .chart-wrap { display: flex; align-items: center; gap: 14px; flex: 1; min-height: 0; }
     .donut-container { position: relative; flex-shrink: 0; width: clamp(100px, 16vh, 145px); height: clamp(100px, 16vh, 145px); }
     .donut-container svg { width: 100%; height: 100%; }
     .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
     .donut-center .amt { font-size: clamp(11px, 1.6vh, 15px); font-weight: 700; color: #222; }
     .donut-center .lbl { font-size: clamp(8px, 1vh, 10px); color: #aaa; margin-top: 2px; }
+
     .legend { flex: 1; overflow: hidden; min-width: 0; }
-    .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px, 0.6vh, 7px) 0; border-bottom: 0.5px solid #f0f0f0; }
+    .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px, 0.6vh, 7px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); }
     .legend-item:last-child { border-bottom: none; }
     .source-icon { width: clamp(20px, 3vh, 28px); height: clamp(20px, 3vh, 28px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px, 1vh, 10px); font-weight: 700; color: #fff; overflow: hidden; }
     .source-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .legend-name { font-size: clamp(10px, 1.4vh, 13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .legend-pct { font-size: clamp(9px, 1.2vh, 11px); color: #bbb; margin-right: 2px; }
     .legend-amt { font-size: clamp(10px, 1.4vh, 13px); font-weight: 600; color: #222; white-space: nowrap; }
-    .legend-del { font-size: clamp(13px, 1.8vh, 16px); color: #e07050; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
+    .legend-del { font-size: clamp(13px, 1.8vh, 16px); color: #a0622a; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
     .legend-item:hover .legend-del { opacity: 1; }
+
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; padding: clamp(7px, 1vh, 12px) clamp(12px, 3vw, 18px); margin-top: clamp(5px, 0.8vh, 10px); margin-bottom: 1vh; flex-shrink: 0; border: 0.5px solid #eee; }
     .net-label { font-size: clamp(11px, 1.4vh, 13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
-    .net-negative { color: #e07050; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
+    .net-negative { color: #a0622a; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
+
     #page-trends, #page-goals, #page-settings { height: auto; min-height: calc(100dvh - 64px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1rem; }
@@ -78,6 +90,7 @@
     .chart-legend span { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
     .chart-legend .dot { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
     .trends-chart-wrap { position: relative; width: 100%; height: 240px; margin-bottom: 1rem; }
+
     .goal-card { background: #fff; border: 0.5px solid #eee; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-name { font-size: 15px; font-weight: 600; color: #222; }
@@ -87,29 +100,34 @@
     .goal-bar-bg { height: 8px; background: #f5f5f5; border-radius: 4px; overflow: hidden; }
     .goal-bar-fill { height: 100%; border-radius: 4px; background: #e8b84b; transition: width 0.6s ease; }
     .add-goal-btn { width: 100%; padding: 14px; border: 2px dashed #e8c96a; border-radius: 14px; background: transparent; color: #c49a3a; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+
     .settings-section { margin-bottom: 1.5rem; }
     .settings-section-title { font-size: 11px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
     .settings-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 0.5px solid #eee; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 6px; cursor: pointer; }
     .settings-row-label { font-size: 15px; color: #222; }
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
+
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 64px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
       .total-card .amount { font-size: 52px; }
       .donut-container { width: 200px; height: 200px; }
-      .chart-wrap { gap: 48px; flex: none; }
+      .chart-section { flex: none; padding: 1.5rem; }
+      .chart-wrap { gap: 48px; }
       .legend-item { padding: 8px 0; }
       .net-card { margin-top: 1.25rem; }
       .add-btn { bottom: -18px; right: 20px; width: 38px; height: 38px; }
       .trends-chart-wrap { height: 320px; }
     }
+
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: #fff; border-top: 0.5px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 8px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
     .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .nav-label { font-size: 10px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
+
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -123,7 +141,7 @@
     .type-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
     .type-btn { flex: 1; padding: 12px; border: 0.5px solid #e0e0e0; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; background: #f7f7f7; color: #888; }
     .type-btn.active.income { background: #fff8e6; color: #a07010; border-color: #e8b84b; }
-    .type-btn.active.expense { background: #ffeee8; color: #c04020; border-color: #e07050; }
+    .type-btn.active.expense { background: #fdf0e6; color: #a0622a; border-color: #a0622a; }
     .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
     .source-chip { padding: 10px 6px; border: 0.5px solid #e8e8e8; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; background: #fafafa; color: #444; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: background 0.15s, transform 0.1s; }
     .source-chip:active { transform: scale(0.95); }
@@ -155,8 +173,8 @@
   <div class="header">
     <div>
       <p>Your money, layered.</p>
-      <img src="logo.png" alt="filo" height="36" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
-      <span style="display:none;font-size:24px;font-weight:700;color:#e8b84b;">filo</span>
+      <img src="logo.png" alt="filo" height="44" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span style="display:none;font-size:32px;font-weight:700;color:#e8b84b;">filo</span>
     </div>
   </div>
   <div class="month-nav">
@@ -184,15 +202,17 @@
     <span class="banner-text" id="banner-text"></span>
   </div>
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
-  <div class="chart-wrap">
-    <div class="donut-container" id="donut-container">
-      <svg id="donut-svg" viewBox="0 0 150 150"></svg>
-      <div class="donut-center">
-        <div class="amt" id="center-amt"></div>
-        <div class="lbl" id="center-lbl">total</div>
+  <div class="chart-section">
+    <div class="chart-wrap">
+      <div class="donut-container" id="donut-container">
+        <svg id="donut-svg" viewBox="0 0 150 150"></svg>
+        <div class="donut-center">
+          <div class="amt" id="center-amt"></div>
+          <div class="lbl" id="center-lbl">total</div>
+        </div>
       </div>
+      <div class="legend" id="legend"></div>
     </div>
-    <div class="legend" id="legend"></div>
   </div>
   <div class="net-card">
     <span class="net-label">Net this month</span>
@@ -206,7 +226,7 @@
   <div class="page-subtitle">Income, expenses & net over time</div>
   <div class="chart-legend">
     <span><span class="dot" style="background:#e8b84b;"></span>Income</span>
-    <span><span class="dot" style="background:#e07050;"></span>Expenses</span>
+    <span><span class="dot" style="background:#a0622a;"></span>Expenses</span>
     <span><span class="dot" style="background:#6a9e40;"></span>Net</span>
   </div>
   <div class="trends-chart-wrap">
@@ -233,7 +253,7 @@
       <span class="settings-row-value">USD $</span>
     </div>
     <div class="settings-row" onclick="confirmReset()">
-      <span class="settings-row-label" style="color:#e07050;">Reset all data</span>
+      <span class="settings-row-label" style="color:#a0622a;">Reset all data</span>
       <span class="settings-row-arrow">›</span>
     </div>
   </div>
@@ -353,7 +373,7 @@
     "Merch":          { color: "#E8B84B", initials: "M",  logo: null },
     "Patreon":        { color: "#FF424D", initials: "P",  logo: "https://www.google.com/s2/favicons?domain=patreon.com&sz=64" },
     "Direct deposit": { color: "#2ECC71", initials: "DD", logo: null },
-    "Rent":           { color: "#E07050", initials: "R",  logo: null },
+    "Rent":           { color: "#a0622a", initials: "R",  logo: null },
     "Food":           { color: "#F39C12", initials: "F",  logo: null },
     "Software":       { color: "#3498DB", initials: "SW", logo: null },
     "Equipment":      { color: "#9B59B6", initials: "EQ", logo: null },
@@ -425,20 +445,13 @@
   const pullSpinner = document.getElementById('pull-spinner');
 
   document.getElementById('page-home').addEventListener('touchstart', e => {
-    if (document.getElementById('page-home').scrollTop === 0) {
-      pullStartY = e.touches[0].clientY;
-      pulling = true;
-    }
+    if (document.getElementById('page-home').scrollTop === 0) { pullStartY = e.touches[0].clientY; pulling = true; }
   }, { passive: true });
 
   document.getElementById('page-home').addEventListener('touchmove', e => {
     if (!pulling) return;
     const dist = e.touches[0].clientY - pullStartY;
-    if (dist > 40) {
-      pullIndicator.classList.add('visible');
-      pullText.style.display = 'inline';
-      pullSpinner.style.display = 'none';
-    }
+    if (dist > 40) { pullIndicator.classList.add('visible'); pullText.style.display = 'inline'; pullSpinner.style.display = 'none'; }
   }, { passive: true });
 
   document.getElementById('page-home').addEventListener('touchend', e => {
@@ -446,24 +459,16 @@
     const dist = e.changedTouches[0].clientY - pullStartY;
     pulling = false;
     if (dist > 40) {
-      pullText.style.display = 'none';
-      pullSpinner.style.display = 'block';
+      pullText.style.display = 'none'; pullSpinner.style.display = 'block';
       setTimeout(() => {
-        months = loadData();
-        goals = loadGoals();
-        ensureCurrentMonth();
-        render();
-        pullIndicator.classList.remove('visible');
-        pullSpinner.style.display = 'none';
-        pullText.style.display = 'inline';
+        months = loadData(); goals = loadGoals(); ensureCurrentMonth(); render();
+        pullIndicator.classList.remove('visible'); pullSpinner.style.display = 'none'; pullText.style.display = 'inline';
         showToast('Refreshed');
       }, 600);
-    } else {
-      pullIndicator.classList.remove('visible');
-    }
+    } else { pullIndicator.classList.remove('visible'); }
   }, { passive: true });
 
-  // ---- DONUT RESET — works on both mobile tap and desktop click ----
+  // ---- DONUT RESET ----
   document.getElementById('page-home').addEventListener('click', (e) => {
     if (!donutFiltered) return;
     const container = document.getElementById('donut-container');
@@ -486,21 +491,10 @@
     const currentIncome = getTotal((months["0"] || {income:{items:[]}}).income.items);
     const topGoal = goals[0];
     const pct = Math.round((currentIncome / topGoal.target) * 100);
-    if (pct >= 100) {
-      banner.classList.remove("hidden");
-      bannerEmoji.textContent = "🎉";
-      bannerText.innerHTML = `<strong>Goal crushed!</strong> You hit $${topGoal.target.toLocaleString()} this month. Incredible!`;
-    } else if (pct >= 80) {
-      banner.classList.remove("hidden");
-      bannerEmoji.textContent = "🔥";
-      bannerText.innerHTML = `<strong>${pct}% to your goal</strong> — $${(topGoal.target - currentIncome).toLocaleString()} away from $${topGoal.target.toLocaleString()}. Keep going!`;
-    } else if (pct >= 50) {
-      banner.classList.remove("hidden");
-      bannerEmoji.textContent = "💪";
-      bannerText.innerHTML = `<strong>Halfway there!</strong> $${currentIncome.toLocaleString()} of $${topGoal.target.toLocaleString()} this month.`;
-    } else {
-      banner.classList.add("hidden");
-    }
+    if (pct >= 100) { banner.classList.remove("hidden"); bannerEmoji.textContent = "🎉"; bannerText.innerHTML = `<strong>Goal crushed!</strong> You hit $${topGoal.target.toLocaleString()} this month. Incredible!`; }
+    else if (pct >= 80) { banner.classList.remove("hidden"); bannerEmoji.textContent = "🔥"; bannerText.innerHTML = `<strong>${pct}% to your goal</strong> — $${(topGoal.target - currentIncome).toLocaleString()} away from $${topGoal.target.toLocaleString()}. Keep going!`; }
+    else if (pct >= 50) { banner.classList.remove("hidden"); bannerEmoji.textContent = "💪"; bannerText.innerHTML = `<strong>Halfway there!</strong> $${currentIncome.toLocaleString()} of $${topGoal.target.toLocaleString()} this month.`; }
+    else { banner.classList.add("hidden"); }
   }
 
   function renderTrends() {
@@ -516,7 +510,7 @@
         labels,
         datasets: [
           { label: 'Income', data: incomeData, borderColor: '#e8b84b', borderWidth: 2.5, pointBackgroundColor: '#e8b84b', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
-          { label: 'Expenses', data: expenseData, borderColor: '#e07050', borderWidth: 2.5, pointBackgroundColor: '#e07050', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
+          { label: 'Expenses', data: expenseData, borderColor: '#a0622a', borderWidth: 2.5, pointBackgroundColor: '#a0622a', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
           { label: 'Net', data: netData, borderColor: '#6a9e40', borderWidth: 2, pointBackgroundColor: '#6a9e40', pointRadius: 4, pointHoverRadius: 6, tension: 0.35, fill: false, borderDash: [5,3] }
         ]
       },
@@ -576,7 +570,7 @@
     if (!items.length || total === 0) {
       const text = document.createElementNS("http://www.w3.org/2000/svg","text");
       text.setAttribute("x","75"); text.setAttribute("y","80"); text.setAttribute("text-anchor","middle");
-      text.setAttribute("font-size","11"); text.setAttribute("fill","#ccc"); text.textContent="No data yet";
+      text.setAttribute("font-size","11"); text.setAttribute("fill","#bbb"); text.textContent="No data yet";
       svg.appendChild(text); return;
     }
     const cx = 75, cy = 75, r = 55, sw = 24;
@@ -600,29 +594,19 @@
       path.style.cursor="pointer";
       path.style.transition="stroke-width 0.15s, opacity 0.15s";
       path.addEventListener("mouseenter",()=>{
-        if (!donutFiltered) {
-          drawDonut(items,total,i);
-          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
-          document.getElementById("center-lbl").textContent=s.name;
-        }
+        if (!donutFiltered) { drawDonut(items,total,i); document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString(); document.getElementById("center-lbl").textContent=s.name; }
       });
       path.addEventListener("mouseleave",()=>{
-        if (!donutFiltered) {
-          drawDonut(items,total,-1);
-          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-          document.getElementById("center-lbl").textContent="total";
-        }
+        if (!donutFiltered) { drawDonut(items,total,-1); document.getElementById("center-amt").textContent="$"+total.toLocaleString(); document.getElementById("center-lbl").textContent="total"; }
       });
       path.addEventListener("click",(e)=>{
         e.stopPropagation();
         if (donutFiltered && highlightIdx === i) {
-          donutFiltered = false;
-          drawDonut(items,total,-1);
+          donutFiltered = false; drawDonut(items,total,-1);
           document.getElementById("center-amt").textContent="$"+total.toLocaleString();
           document.getElementById("center-lbl").textContent="total";
         } else {
-          donutFiltered = true;
-          drawDonut(items,total,i);
+          donutFiltered = true; drawDonut(items,total,i);
           document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
           document.getElementById("center-lbl").textContent=s.name;
         }
@@ -633,7 +617,7 @@
   }
 
   function renderLegend(items, total) {
-    if (!items.length) { document.getElementById("legend").innerHTML = `<div style="font-size:13px;color:#ccc;padding:8px 0;">Add your first transaction</div>`; return; }
+    if (!items.length) { document.getElementById("legend").innerHTML = `<div style="font-size:13px;color:#bbb;padding:8px 0;">Add your first transaction</div>`; return; }
     document.getElementById("legend").innerHTML = items.map(s => {
       const pct = Math.round(s.amount/total*100);
       return `<div class="legend-item">${iconHTML(s.name,24)}<span class="legend-name">${s.name}</span><span class="legend-pct">${pct}%</span><span class="legend-amt">$${s.amount.toLocaleString()}</span><span class="legend-del" onclick="deleteItem('${s.name}')">&#215;</span></div>`;
@@ -749,13 +733,8 @@
 
   function confirmReset() {
     if(confirm("Reset all data? This cannot be undone.")) {
-      localStorage.clear();
-      months = JSON.parse(JSON.stringify(DEFAULT_MONTHS));
-      goals = [{name:"Monthly income",target:10000}];
-      ensureCurrentMonth();
-      offset = 0;
-      render();
-      showToast("Data reset");
+      localStorage.clear(); months = JSON.parse(JSON.stringify(DEFAULT_MONTHS)); goals = [{name:"Monthly income",target:10000}];
+      ensureCurrentMonth(); offset = 0; render(); showToast("Data reset");
     }
   }
 
