@@ -367,7 +367,7 @@
   function getMonthLabel(off) {
     const now = new Date();
     const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
-    return d.toLocaleString('default', { month: 'short', year: '2-digit' });
+    return d.toLocaleString('default', { month: 'short', year: 'numeric' });
   }
 
   function getMonthLabelFull(off) {
@@ -406,8 +406,19 @@
   let months = loadData(), goals = loadGoals();
   let offset = 0, mode = "income", entryType = "income", selectedSource = null;
   let trendsChart = null;
+  let donutFiltered = false;
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
+
+  function resetDonut() {
+    const svg = document.getElementById('donut-svg');
+    if (svg._currentItems && donutFiltered) {
+      donutFiltered = false;
+      drawDonut(svg._currentItems, svg._currentTotal, -1);
+      document.getElementById("center-amt").textContent = "$" + svg._currentTotal.toLocaleString();
+      document.getElementById("center-lbl").textContent = "total";
+    }
+  }
 
   function updateGoalBanner() {
     const banner = document.getElementById("goal-banner");
@@ -452,7 +463,6 @@
             label: 'Income',
             data: incomeData,
             borderColor: '#e8b84b',
-            backgroundColor: 'rgba(232,184,75,0.08)',
             borderWidth: 2.5,
             pointBackgroundColor: '#e8b84b',
             pointRadius: 5,
@@ -464,7 +474,6 @@
             label: 'Expenses',
             data: expenseData,
             borderColor: '#e07050',
-            backgroundColor: 'rgba(224,112,80,0.06)',
             borderWidth: 2.5,
             pointBackgroundColor: '#e07050',
             pointRadius: 5,
@@ -476,7 +485,6 @@
             label: 'Net',
             data: netData,
             borderColor: '#6a9e40',
-            backgroundColor: 'rgba(106,158,64,0.06)',
             borderWidth: 2,
             pointBackgroundColor: '#6a9e40',
             pointRadius: 4,
@@ -523,6 +531,13 @@
         }
       }
     });
+
+    document.getElementById('page-trends').onclick = (e) => {
+      if (!e.target.closest('canvas') && trendsChart) {
+        trendsChart.tooltip.setActiveElements([], {});
+        trendsChart.update();
+      }
+    };
   }
 
   function renderGoals() {
@@ -565,6 +580,9 @@
   function drawDonut(items, total, highlightIdx = -1) {
     const svg = document.getElementById("donut-svg");
     svg.innerHTML = "";
+    svg._currentItems = items;
+    svg._currentTotal = total;
+
     if (!items.length || total === 0) {
       const text = document.createElementNS("http://www.w3.org/2000/svg","text");
       text.setAttribute("x","75"); text.setAttribute("y","80"); text.setAttribute("text-anchor","middle");
@@ -578,6 +596,7 @@
     resetZone.setAttribute("cx",cx); resetZone.setAttribute("cy",cy);
     resetZone.setAttribute("r", r + sw); resetZone.setAttribute("fill","transparent");
     resetZone.addEventListener("mouseleave",()=>{
+      donutFiltered = false;
       drawDonut(items,total,-1);
       document.getElementById("center-amt").textContent="$"+total.toLocaleString();
       document.getElementById("center-lbl").textContent="total";
@@ -605,15 +624,12 @@
         document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
         document.getElementById("center-lbl").textContent=s.name;
       });
-      path.addEventListener("click",()=>{
+      path.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        donutFiltered = true;
         drawDonut(items,total,i);
         document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
         document.getElementById("center-lbl").textContent=s.name;
-        setTimeout(()=>{
-          drawDonut(items,total,-1);
-          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-          document.getElementById("center-lbl").textContent="total";
-        },1800);
       });
       svg.appendChild(path);
       angle += sweep + gap;
@@ -747,6 +763,8 @@
   }
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
+
+  document.getElementById('page-home').addEventListener('click', resetDonut);
 
   ensureCurrentMonth();
   offset = 0;
