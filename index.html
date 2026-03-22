@@ -15,6 +15,10 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
     .page { display: none; height: calc(100dvh - 64px); overflow: hidden; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; }
     .page.active { display: flex; flex-direction: column; }
+    .pull-indicator { text-align: center; font-size: 12px; color: #bbb; height: 0; overflow: hidden; transition: height 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pull-indicator.visible { height: 32px; }
+    .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .header { margin-bottom: 1vh; flex-shrink: 0; display: flex; align-items: center; }
     .header p { font-size: clamp(10px, 1.4vh, 12px); color: #bbb; margin-bottom: 1px; }
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
@@ -144,6 +148,10 @@
 
 <!-- HOME PAGE -->
 <div class="page active" id="page-home">
+  <div class="pull-indicator" id="pull-indicator">
+    <div class="pull-spinner" id="pull-spinner" style="display:none;"></div>
+    <span id="pull-text">Pull to refresh</span>
+  </div>
   <div class="header">
     <div>
       <p>Your money, layered.</p>
@@ -177,7 +185,7 @@
   </div>
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-wrap">
-    <div class="donut-container">
+    <div class="donut-container" id="donut-container">
       <svg id="donut-svg" viewBox="0 0 150 150"></svg>
       <div class="donut-center">
         <div class="amt" id="center-amt"></div>
@@ -410,15 +418,65 @@
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
 
-  function resetDonut() {
-    const svg = document.getElementById('donut-svg');
-    if (svg._currentItems && donutFiltered) {
-      donutFiltered = false;
-      drawDonut(svg._currentItems, svg._currentTotal, -1);
-      document.getElementById("center-amt").textContent = "$" + svg._currentTotal.toLocaleString();
-      document.getElementById("center-lbl").textContent = "total";
+  // ---- PULL TO REFRESH ----
+  let pullStartY = 0, pulling = false;
+  const pullIndicator = document.getElementById('pull-indicator');
+  const pullText = document.getElementById('pull-text');
+  const pullSpinner = document.getElementById('pull-spinner');
+
+  document.getElementById('page-home').addEventListener('touchstart', e => {
+    if (document.getElementById('page-home').scrollTop === 0) {
+      pullStartY = e.touches[0].clientY;
+      pulling = true;
     }
-  }
+  }, { passive: true });
+
+  document.getElementById('page-home').addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dist = e.touches[0].clientY - pullStartY;
+    if (dist > 40) {
+      pullIndicator.classList.add('visible');
+      pullText.style.display = 'inline';
+      pullSpinner.style.display = 'none';
+    }
+  }, { passive: true });
+
+  document.getElementById('page-home').addEventListener('touchend', e => {
+    if (!pulling) return;
+    const dist = e.changedTouches[0].clientY - pullStartY;
+    pulling = false;
+    if (dist > 40) {
+      pullText.style.display = 'none';
+      pullSpinner.style.display = 'block';
+      setTimeout(() => {
+        months = loadData();
+        goals = loadGoals();
+        ensureCurrentMonth();
+        render();
+        pullIndicator.classList.remove('visible');
+        pullSpinner.style.display = 'none';
+        pullText.style.display = 'inline';
+        showToast('Refreshed');
+      }, 600);
+    } else {
+      pullIndicator.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  // ---- DONUT RESET — works on both mobile tap and desktop click ----
+  document.getElementById('page-home').addEventListener('click', (e) => {
+    if (!donutFiltered) return;
+    const container = document.getElementById('donut-container');
+    if (!container.contains(e.target)) {
+      donutFiltered = false;
+      const svg = document.getElementById('donut-svg');
+      if (svg._currentItems) {
+        drawDonut(svg._currentItems, svg._currentTotal, -1);
+        document.getElementById("center-amt").textContent = "$" + svg._currentTotal.toLocaleString();
+        document.getElementById("center-lbl").textContent = "total";
+      }
+    }
+  });
 
   function updateGoalBanner() {
     const banner = document.getElementById("goal-banner");
@@ -451,92 +509,32 @@
     const incomeData = keys.map(k => getTotal(months[String(k)].income.items));
     const expenseData = keys.map(k => getTotal(months[String(k)].expense.items));
     const netData = keys.map(k => getTotal(months[String(k)].income.items) - getTotal(months[String(k)].expense.items));
-
     if (trendsChart) { trendsChart.destroy(); trendsChart = null; }
-
     trendsChart = new Chart(document.getElementById('trends-canvas'), {
       type: 'line',
       data: {
         labels,
         datasets: [
-          {
-            label: 'Income',
-            data: incomeData,
-            borderColor: '#e8b84b',
-            borderWidth: 2.5,
-            pointBackgroundColor: '#e8b84b',
-            pointRadius: 5,
-            pointHoverRadius: 7,
-            tension: 0.35,
-            fill: false,
-          },
-          {
-            label: 'Expenses',
-            data: expenseData,
-            borderColor: '#e07050',
-            borderWidth: 2.5,
-            pointBackgroundColor: '#e07050',
-            pointRadius: 5,
-            pointHoverRadius: 7,
-            tension: 0.35,
-            fill: false,
-          },
-          {
-            label: 'Net',
-            data: netData,
-            borderColor: '#6a9e40',
-            borderWidth: 2,
-            pointBackgroundColor: '#6a9e40',
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            tension: 0.35,
-            fill: false,
-            borderDash: [5, 3],
-          }
+          { label: 'Income', data: incomeData, borderColor: '#e8b84b', borderWidth: 2.5, pointBackgroundColor: '#e8b84b', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
+          { label: 'Expenses', data: expenseData, borderColor: '#e07050', borderWidth: 2.5, pointBackgroundColor: '#e07050', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
+          { label: 'Net', data: netData, borderColor: '#6a9e40', borderWidth: 2, pointBackgroundColor: '#6a9e40', pointRadius: 4, pointHoverRadius: 6, tension: 0.35, fill: false, borderDash: [5,3] }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: {
-            backgroundColor: '#fff',
-            titleColor: '#222',
-            bodyColor: '#555',
-            borderColor: '#eee',
-            borderWidth: 1,
-            padding: 10,
-            callbacks: {
-              label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`
-            }
-          }
+          tooltip: { backgroundColor: '#fff', titleColor: '#222', bodyColor: '#555', borderColor: '#eee', borderWidth: 1, padding: 10, callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } }
         },
         scales: {
-          x: {
-            grid: { display: false },
-            ticks: { color: '#aaa', font: { size: 11 }, autoSkip: false, maxRotation: 45 },
-            border: { color: '#eee' }
-          },
-          y: {
-            grid: { color: '#f5f5f5' },
-            ticks: {
-              color: '#aaa',
-              font: { size: 11 },
-              callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v)
-            },
-            border: { display: false }
-          }
+          x: { grid: { display: false }, ticks: { color: '#aaa', font: { size: 11 }, autoSkip: false, maxRotation: 45 }, border: { color: '#eee' } },
+          y: { grid: { color: '#f5f5f5' }, ticks: { color: '#aaa', font: { size: 11 }, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }, border: { display: false } }
         }
       }
     });
-
     document.getElementById('page-trends').onclick = (e) => {
-      if (!e.target.closest('canvas') && trendsChart) {
-        trendsChart.tooltip.setActiveElements([], {});
-        trendsChart.update();
-      }
+      if (!e.target.closest('canvas') && trendsChart) { trendsChart.tooltip.setActiveElements([], {}); trendsChart.update(); }
     };
   }
 
@@ -544,14 +542,7 @@
     const currentIncome = getTotal((months[String(offset)] || months["0"] || {income:{items:[]}}).income.items);
     document.getElementById('goals-list').innerHTML = goals.map((g) => {
       const pct = Math.min(100, Math.round((currentIncome / g.target) * 100));
-      return `<div class="goal-card">
-        <div class="goal-header">
-          <span class="goal-name">${g.name}</span>
-          <span class="goal-pct">${pct}%</span>
-        </div>
-        <div class="goal-amounts">$<span>${currentIncome.toLocaleString()}</span> of $<span>${g.target.toLocaleString()}</span></div>
-        <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;"></div></div>
-      </div>`;
+      return `<div class="goal-card"><div class="goal-header"><span class="goal-name">${g.name}</span><span class="goal-pct">${pct}%</span></div><div class="goal-amounts">$<span>${currentIncome.toLocaleString()}</span> of $<span>${g.target.toLocaleString()}</span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;"></div></div></div>`;
     }).join('');
   }
 
@@ -582,7 +573,6 @@
     svg.innerHTML = "";
     svg._currentItems = items;
     svg._currentTotal = total;
-
     if (!items.length || total === 0) {
       const text = document.createElementNS("http://www.w3.org/2000/svg","text");
       text.setAttribute("x","75"); text.setAttribute("y","80"); text.setAttribute("text-anchor","middle");
@@ -592,16 +582,6 @@
     const cx = 75, cy = 75, r = 55, sw = 24;
     let angle = -Math.PI / 2;
     const gap = 0.04;
-    const resetZone = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    resetZone.setAttribute("cx",cx); resetZone.setAttribute("cy",cy);
-    resetZone.setAttribute("r", r + sw); resetZone.setAttribute("fill","transparent");
-    resetZone.addEventListener("mouseleave",()=>{
-      donutFiltered = false;
-      drawDonut(items,total,-1);
-      document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-      document.getElementById("center-lbl").textContent="total";
-    });
-    svg.appendChild(resetZone);
     items.forEach((s,i) => {
       const color = getBrand(s.name).color;
       const sweep = (s.amount/total)*2*Math.PI - gap;
@@ -620,16 +600,32 @@
       path.style.cursor="pointer";
       path.style.transition="stroke-width 0.15s, opacity 0.15s";
       path.addEventListener("mouseenter",()=>{
-        drawDonut(items,total,i);
-        document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
-        document.getElementById("center-lbl").textContent=s.name;
+        if (!donutFiltered) {
+          drawDonut(items,total,i);
+          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
+          document.getElementById("center-lbl").textContent=s.name;
+        }
+      });
+      path.addEventListener("mouseleave",()=>{
+        if (!donutFiltered) {
+          drawDonut(items,total,-1);
+          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
+          document.getElementById("center-lbl").textContent="total";
+        }
       });
       path.addEventListener("click",(e)=>{
         e.stopPropagation();
-        donutFiltered = true;
-        drawDonut(items,total,i);
-        document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
-        document.getElementById("center-lbl").textContent=s.name;
+        if (donutFiltered && highlightIdx === i) {
+          donutFiltered = false;
+          drawDonut(items,total,-1);
+          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
+          document.getElementById("center-lbl").textContent="total";
+        } else {
+          donutFiltered = true;
+          drawDonut(items,total,i);
+          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
+          document.getElementById("center-lbl").textContent=s.name;
+        }
       });
       svg.appendChild(path);
       angle += sweep + gap;
@@ -673,6 +669,7 @@
     netEl.className=net>=0?"net-positive":"net-negative";
     document.getElementById("center-amt").textContent="$"+total.toLocaleString();
     document.getElementById("center-lbl").textContent="total";
+    donutFiltered = false;
     updateGoalBanner();
     drawDonut(items,total);
     renderLegend(items,total);
@@ -763,8 +760,6 @@
   }
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
-
-  document.getElementById('page-home').addEventListener('click', resetDonut);
 
   ensureCurrentMonth();
   offset = 0;
