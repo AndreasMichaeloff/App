@@ -619,6 +619,15 @@
 
   function drawDonut(items, total, highlightIdx = -1) {
   const svg = document.getElementById("donut-svg");
+  // background ring
+const bg = document.createElementNS("http://www.w3.org/2000/svg","circle");
+bg.setAttribute("cx", cx);
+bg.setAttribute("cy", cy);
+bg.setAttribute("r", r);
+bg.setAttribute("fill", "none");
+bg.setAttribute("stroke", "#eee");
+bg.setAttribute("stroke-width", strokeWidth);
+svg.appendChild(bg);  
   svg.innerHTML = "";
   svg._currentItems = items;
   svg._currentTotal = total;
@@ -665,7 +674,31 @@
     );
 
     path.setAttribute("fill", "none");
-    path.setAttribute("stroke", color);
+    const gradId = `grad-${i}`;
+const defs = svg.querySelector("defs") || document.createElementNS("http://www.w3.org/2000/svg","defs");
+
+if (!svg.querySelector("defs")) svg.appendChild(defs);
+
+const grad = document.createElementNS("http://www.w3.org/2000/svg","linearGradient");
+grad.setAttribute("id", gradId);
+grad.setAttribute("x1", "0%");
+grad.setAttribute("y1", "0%");
+grad.setAttribute("x2", "100%");
+grad.setAttribute("y2", "100%");
+
+const stop1 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+stop1.setAttribute("offset", "0%");
+stop1.setAttribute("stop-color", color);
+
+const stop2 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+stop2.setAttribute("offset", "100%");
+stop2.setAttribute("stop-color", "#ffffff");
+
+grad.appendChild(stop1);
+grad.appendChild(stop2);
+defs.appendChild(grad);
+
+path.setAttribute("stroke", `url(#${gradId})`);
     path.setAttribute("stroke-width", highlightIdx === i ? strokeWidth + 6 : strokeWidth);
 
     // 🔥 rounded edges (huge visual upgrade)
@@ -686,6 +719,8 @@
         drawDonut(items, total, i);
         document.getElementById("center-amt").textContent = "$" + s.amount.toLocaleString();
         document.getElementById("center-lbl").textContent = s.name;
+        path.style.transform = "scale(1.05)";
+        path.style.transformOrigin = "center";
       }
     });
 
@@ -694,6 +729,7 @@
         drawDonut(items, total, -1);
         document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
         document.getElementById("center-lbl").textContent = "total";
+        path.style.transform = "scale(1)";
       }
     });
 
@@ -718,6 +754,15 @@
     svg.appendChild(path);
     angle += rawSweep;
   });
+    const pathLength = path.getTotalLength();
+
+path.style.strokeDasharray = pathLength;
+path.style.strokeDashoffset = pathLength;
+
+// trigger animation
+setTimeout(() => {
+  path.style.strokeDashoffset = "0";
+}, i * 80); // stagger effect
 }
 
   function renderLegend(items, total) {
