@@ -473,7 +473,7 @@
       donutFilteredIdx = -1;
       const svg = document.getElementById('donut-svg');
       if (svg._currentItems) {
-        drawDonut(svg._currentItems, svg._currentTotal, -1);
+        t(svg._currentItems, svg._currentTotal, -1);
         document.getElementById("center-amt").textContent = "$" + svg._currentTotal.toLocaleString();
         document.getElementById("center-lbl").textContent = "total";
       }
@@ -618,16 +618,124 @@
   }
 
   function drawDonut(items, total, highlightIdx = -1) {
-    const svg = document.getElementById("donut-svg");
-    svg.innerHTML = "";
-    svg._currentItems = items;
-    svg._currentTotal = total;
-    if (!items.length || total === 0) {
-      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-      text.setAttribute("x","75"); text.setAttribute("y","80"); text.setAttribute("text-anchor","middle");
-      text.setAttribute("font-size","11"); text.setAttribute("fill","#bbb"); text.textContent="No data yet";
-      svg.appendChild(text); return;
-    }
+  const svg = document.getElementById("donut-svg");
+  svg.innerHTML = "";
+  svg._currentItems = items;
+  svg._currentTotal = total;
+
+  // 🔥 POP-IN animation (mobile friendly)
+  svg.style.transform = "scale(0.96)";
+  svg.style.opacity = "0";
+  setTimeout(() => {
+    svg.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+    svg.style.transform = "scale(1)";
+    svg.style.opacity = "1";
+  }, 10);
+
+  if (!items.length || total === 0) {
+    const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+    text.setAttribute("x","75");
+    text.setAttribute("y","80");
+    text.setAttribute("text-anchor","middle");
+    text.setAttribute("font-size","11");
+    text.setAttribute("fill","#bbb");
+    text.textContent="No data yet";
+    svg.appendChild(text);
+    return;
+  }
+
+  const cx = 75, cy = 75, r = 55, sw = 24;
+  let angle = -Math.PI / 2;
+  const gap = 0.04;
+
+  items.forEach((s,i) => {
+    const color = getBrand(s.name).color;
+    const sweep = (s.amount/total)*2*Math.PI - gap;
+
+    const a1 = angle + gap/2;
+    const a2 = angle + sweep + gap/2;
+
+    const x1 = cx + r*Math.cos(a1);
+    const y1 = cy + r*Math.sin(a1);
+    const x2 = cx + r*Math.cos(a2);
+    const y2 = cy + r*Math.sin(a2);
+
+    const large = sweep > Math.PI ? 1 : 0;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+
+    path.setAttribute("d",`M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`);
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke", color);
+
+    // 🎯 ACTIVE STATE (selected slice)
+    const isActive = highlightIdx === i;
+    path.setAttribute("stroke-width", isActive ? sw + 6 : sw);
+    path.style.opacity = highlightIdx === -1 || isActive ? "1" : "0.25";
+    path.style.filter = isActive ? "drop-shadow(0 4px 6px rgba(0,0,0,0.15))" : "none";
+
+    // 🔥 DRAW ANIMATION
+    const length = 2 * Math.PI * r;
+    path.setAttribute("stroke-dasharray", length);
+    path.setAttribute("stroke-dashoffset", length);
+
+    // smooth transitions
+    path.style.transition = `
+      stroke-dashoffset 0.8s ease,
+      stroke-width 0.25s ease,
+      opacity 0.25s ease,
+      filter 0.25s ease,
+      transform 0.1s ease
+    `;
+
+    setTimeout(() => {
+      path.setAttribute("stroke-dashoffset", 0);
+    }, 10);
+
+    path.style.cursor = "pointer";
+
+    // 📱 TAP INTERACTION (mobile optimized)
+    path.addEventListener("click",(e)=>{
+      e.stopPropagation();
+
+      // 👇 TAP BOUNCE FEEDBACK
+      path.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        path.style.transform = "scale(1)";
+      }, 100);
+
+      if (donutFiltered && donutFilteredIdx === i) {
+        // deselect
+        donutFiltered = false;
+        donutFilteredIdx = -1;
+
+        drawDonut(items,total,-1);
+        document.getElementById("center-amt").textContent = "$" + total.toLocaleString();
+        document.getElementById("center-lbl").textContent = "total";
+
+      } else {
+        // select slice
+        donutFiltered = true;
+        donutFilteredIdx = i;
+
+        drawDonut(items,total,i);
+        document.getElementById("center-amt").textContent = "$" + s.amount.toLocaleString();
+        document.getElementById("center-lbl").textContent = s.name;
+
+        // ✨ center text pop
+        const amtEl = document.getElementById("center-amt");
+        amtEl.style.transition = "transform 0.15s ease";
+        amtEl.style.transform = "scale(1.1)";
+        setTimeout(() => {
+          amtEl.style.transform = "scale(1)";
+        }, 150);
+      }
+    });
+
+    svg.appendChild(path);
+    angle += sweep + gap;
+  });
+}
     const cx = 75, cy = 75, r = 55, sw = 24;
     let angle = -Math.PI / 2;
     const gap = 0.04;
