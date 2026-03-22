@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-  <meta name="theme-color" content="#fffdf7"/>
+  <meta name="theme-color" content="#e8b84b"/>
   <title>Filo</title>
+  <link rel="apple-touch-icon" href="filo.png"/>
+  <link rel="icon" href="filo.png"/>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; overscroll-behavior: none; }
@@ -287,7 +289,7 @@
 <!-- ADD TRANSACTION SHEET -->
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
   <div class="sheet" id="sheet-main">
-    <div class="sheet-handle" id="handle-main" onclick="closeSheet()"></div>
+    <div class="sheet-handle" onclick="closeSheet()"></div>
     <h2>Add transaction</h2>
     <div class="type-toggle">
       <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
@@ -616,7 +618,6 @@
   }
 
   function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
-
 
   ensureCurrentMonth();
   offset = 0;
