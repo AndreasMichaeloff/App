@@ -15,14 +15,6 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
     .page { display: none; height: calc(100dvh - 72px); overflow: hidden; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; }
     .page.active { display: flex; flex-direction: column; }
-    .chart-section { border: 1.5px solid #e0e0e0; }
-    .total-card.income { border: 1.5px solid #d4a843; }
-    .total-card.expense { border: 1.5px solid #8a5222; }
-    .net-card { border: 1.5px solid #e0e0e0; }
-    .goal-banner { border: 1.5px solid #d4b84a; }
-    .goal-card { border: 1.5px solid #e0e0e0; }
-    .stat-card { border: 1.5px solid #e0e0e0; }
-    .settings-row { border: 1.5px solid #e0e0e0; }
     .pull-indicator { text-align: center; font-size: 12px; color: #bbb; height: 0; overflow: hidden; transition: height 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pull-indicator.visible { height: 32px; }
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -42,8 +34,8 @@
     .toggle-btn.inactive-expense { background: #fff; color: #a0622a; border-color: #a0622a; }
     .total-card-wrap { position: relative; margin-bottom: 1vh; flex-shrink: 0; }
     .total-card { border-radius: 16px; padding: clamp(8px, 1.2vh, 14px) clamp(12px, 3vw, 18px); }
-    .total-card.income { background: #e8b84b; }
-    .total-card.expense { background: #a0622a; }
+    .total-card.income { background: #e8b84b; border: 1.5px solid #d4a843; }
+    .total-card.expense { background: #a0622a; border: 1.5px solid #8a5222; }
     .total-card .label { font-size: clamp(11px, 1.3vh, 13px); color: rgba(255,255,255,0.85); margin-bottom: 1px; }
     .total-card .amount { font-size: clamp(24px, 3.5vh, 36px); font-weight: 700; color: #fff; letter-spacing: -1px; }
     .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: clamp(3px, 0.6vh, 6px); }
@@ -53,13 +45,13 @@
     .total-card .change-label { font-size: clamp(10px, 1.2vh, 12px); color: rgba(255,255,255,0.75); }
     .add-btn { position: absolute; bottom: -16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e8b84b; color: #e8b84b; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(232,184,75,0.3); transition: background 0.15s, transform 0.1s; z-index: 10; line-height: 1; }
     .add-btn:active { transform: scale(0.93); background: #fff8e6; }
-    .goal-banner { background: linear-gradient(135deg, #fff8e6, #fff3d0); border: 1px solid #e8c96a; border-radius: 12px; padding: 9px 14px; margin-bottom: 1vh; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
+    .goal-banner { background: linear-gradient(135deg, #fff8e6, #fff3d0); border: 1.5px solid #d4b84a; border-radius: 12px; padding: 9px 14px; margin-bottom: 1vh; flex-shrink: 0; display: flex; align-items: center; gap: 10px; }
     .goal-banner.hidden { display: none; }
     .goal-banner .banner-emoji { font-size: 16px; flex-shrink: 0; }
     .goal-banner .banner-text { font-size: clamp(10px, 1.3vh, 12px); color: #a07010; font-weight: 500; line-height: 1.4; }
     .goal-banner .banner-text strong { font-weight: 700; }
     .sources-title { font-size: clamp(9px, 1.1vh, 11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px, 0.8vh, 8px); margin-top: clamp(8px, 1.2vh, 14px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
-    .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; padding: clamp(8px, 1.2vh, 14px); display: flex; flex-direction: column; justify-content: center; }
+    .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; border: 1.5px solid #e0e0e0; padding: clamp(8px, 1.2vh, 14px); display: flex; flex-direction: column; justify-content: center; }
     .chart-wrap { display: flex; align-items: center; gap: 14px; min-height: 0; }
     .donut-container { position: relative; flex-shrink: 0; width: clamp(100px, 16vh, 145px); height: clamp(100px, 16vh, 145px); }
     .donut-container svg { width: 100%; height: 100%; }
@@ -76,7 +68,7 @@
     .legend-amt { font-size: clamp(10px, 1.4vh, 13px); font-weight: 600; color: #222; white-space: nowrap; }
     .legend-del { font-size: clamp(13px, 1.8vh, 16px); color: #a0622a; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
     .legend-item:hover .legend-del { opacity: 1; }
-    .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; padding: clamp(7px, 1vh, 12px) clamp(12px, 3vw, 18px); margin-top: clamp(5px, 0.8vh, 10px); margin-bottom: 1vh; flex-shrink: 0; border: 0.5px solid #eee; }
+    .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px, 1vh, 12px) clamp(12px, 3vw, 18px); margin-top: clamp(5px, 0.8vh, 10px); margin-bottom: 1vh; flex-shrink: 0; }
     .net-label { font-size: clamp(11px, 1.4vh, 13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
@@ -89,14 +81,14 @@
     .trends-chart-wrap { position: relative; width: 100%; height: 240px; margin-bottom: 1.5rem; }
     .highlights-title { font-size: 11px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
     .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .stat-card { background: #fff; border: 0.5px solid #eee; border-radius: 14px; padding: 14px; }
+    .stat-card { background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 14px; }
     .stat-card .stat-label { font-size: 11px; color: #bbb; margin-bottom: 6px; }
     .stat-card .stat-value { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
     .stat-card .stat-sub { font-size: 11px; color: #bbb; margin-top: 3px; }
     .stat-gold { color: #e8b84b; }
     .stat-green { color: #6a9e40; }
     .stat-dark { color: #222; }
-    .goal-card { background: #fff; border: 0.5px solid #eee; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
+    .goal-card { background: #fff; border: 1.5px solid #e0e0e0; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-name { font-size: 15px; font-weight: 600; color: #222; }
     .goal-pct { font-size: 13px; font-weight: 700; color: #e8b84b; }
@@ -107,12 +99,12 @@
     .add-goal-btn { width: 100%; padding: 14px; border: 2px dashed #e8c96a; border-radius: 14px; background: transparent; color: #c49a3a; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
     .settings-section { margin-bottom: 1.5rem; }
     .settings-section-title { font-size: 11px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .settings-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 0.5px solid #eee; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 6px; cursor: pointer; }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 6px; cursor: pointer; }
     .settings-row-label { font-size: 15px; color: #222; }
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
     @media (min-width: 768px) {
-      .page { max-width: 100%; height: auto; min-height: calc(100dvh - 64px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
+      .page { max-width: 100%; height: auto; min-height: calc(100dvh - 72px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
       .total-card .amount { font-size: 52px; }
       .donut-container { width: 200px; height: 200px; }
@@ -129,12 +121,13 @@
     .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .nav-label { font-size: 10px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; transition: opacity 0.2s; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 5rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; }
+    .sheet { background: #fff; border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 5rem); width: 100%; max-width: 480px; border-top: 3px solid #e8b84b; animation: slideUp 0.25s ease; transition: transform 0.25s ease; }
+    .sheet.dragging { animation: none; transition: none; }
     @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .sheet-handle { width: 48px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 1.25rem; cursor: pointer; transition: background 0.15s; }
+    .sheet-handle { width: 48px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 1.25rem; cursor: grab; transition: background 0.15s; touch-action: none; }
     .sheet-handle:hover { background: #bbb; }
     .sheet h2 { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 1.25rem; }
     .form-row { margin-bottom: 14px; }
@@ -320,7 +313,7 @@
 <!-- ADD TRANSACTION SHEET -->
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
   <div class="sheet" id="sheet-main">
-    <div class="sheet-handle" onclick="closeSheet()"></div>
+    <div class="sheet-handle" id="sheet-handle-main"></div>
     <h2>Add transaction</h2>
     <div class="type-toggle">
       <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
@@ -347,7 +340,7 @@
 <!-- ADD GOAL SHEET -->
 <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
   <div class="sheet" id="sheet-goal">
-    <div class="sheet-handle" onclick="closeGoalSheet()"></div>
+    <div class="sheet-handle" id="sheet-handle-goal"></div>
     <h2>Add a goal</h2>
     <div class="form-row">
       <label>Goal name</label>
@@ -477,8 +470,7 @@
     if (!donutFiltered) return;
     const container = document.getElementById('donut-container');
     if (!container.contains(e.target)) {
-      donutFiltered = false;
-      donutFilteredIdx = -1;
+      donutFiltered = false; donutFilteredIdx = -1;
       const svg = document.getElementById('donut-svg');
       if (svg._currentItems) {
         drawDonut(svg._currentItems, svg._currentTotal, -1);
@@ -487,6 +479,44 @@
       }
     }
   });
+
+  // ---- DRAG TO DISMISS ----
+  function initDragDismiss(handleId, sheetId, overlayId, closeFn) {
+    const handle = document.getElementById(handleId);
+    const sheet = document.getElementById(sheetId);
+    const overlay = document.getElementById(overlayId);
+    let startY = 0, currentY = 0, dragging = false;
+
+    handle.addEventListener('touchstart', e => {
+      startY = e.touches[0].clientY;
+      dragging = true;
+      sheet.classList.add('dragging');
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', e => {
+      if (!dragging) return;
+      currentY = e.touches[0].clientY - startY;
+      if (currentY < 0) currentY = 0;
+      sheet.style.transform = `translateY(${currentY}px)`;
+      overlay.style.opacity = Math.max(0, 1 - currentY / 300);
+    }, { passive: true });
+
+    handle.addEventListener('touchend', () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.classList.remove('dragging');
+      if (currentY > 120) {
+        sheet.style.transform = `translateY(100%)`;
+        setTimeout(() => { sheet.style.transform = ''; overlay.style.opacity = ''; closeFn(); }, 200);
+      } else {
+        sheet.style.transform = '';
+        overlay.style.opacity = '1';
+      }
+      currentY = 0;
+    });
+
+    handle.addEventListener('click', closeFn);
+  }
 
   function updateGoalBanner() {
     const banner = document.getElementById("goal-banner");
@@ -505,57 +535,20 @@
   function renderStatCards() {
     const keys = Object.keys(months).map(Number);
     if (keys.length === 0) { document.getElementById('stat-cards').innerHTML = ''; return; }
-
-    // best month
     let bestKey = keys[0], bestIncome = 0;
-    keys.forEach(k => {
-      const inc = getTotal(months[String(k)].income.items);
-      if (inc > bestIncome) { bestIncome = inc; bestKey = k; }
-    });
-
-    // average income
+    keys.forEach(k => { const inc = getTotal(months[String(k)].income.items); if (inc > bestIncome) { bestIncome = inc; bestKey = k; } });
     const totalIncome = keys.reduce((s,k) => s + getTotal(months[String(k)].income.items), 0);
     const avgIncome = Math.round(totalIncome / keys.length);
-
-    // total saved (sum of all positive nets)
-    const totalSaved = keys.reduce((s,k) => {
-      const net = getTotal(months[String(k)].income.items) - getTotal(months[String(k)].expense.items);
-      return s + (net > 0 ? net : 0);
-    }, 0);
-
-    // top revenue source across all months
+    const totalSaved = keys.reduce((s,k) => { const net = getTotal(months[String(k)].income.items) - getTotal(months[String(k)].expense.items); return s + (net > 0 ? net : 0); }, 0);
     const sourceTotals = {};
-    keys.forEach(k => {
-      months[String(k)].income.items.forEach(item => {
-        sourceTotals[item.name] = (sourceTotals[item.name] || 0) + item.amount;
-      });
-    });
+    keys.forEach(k => { months[String(k)].income.items.forEach(item => { sourceTotals[item.name] = (sourceTotals[item.name] || 0) + item.amount; }); });
     let topSource = '—', topSourceTotal = 0;
-    Object.entries(sourceTotals).forEach(([name, total]) => {
-      if (total > topSourceTotal) { topSourceTotal = total; topSource = name; }
-    });
-
+    Object.entries(sourceTotals).forEach(([name, total]) => { if (total > topSourceTotal) { topSourceTotal = total; topSource = name; } });
     document.getElementById('stat-cards').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-label">Best month</div>
-        <div class="stat-value stat-gold">$${bestIncome.toLocaleString()}</div>
-        <div class="stat-sub">${months[String(bestKey)].label}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Avg income</div>
-        <div class="stat-value stat-gold">$${avgIncome.toLocaleString()}</div>
-        <div class="stat-sub">per month</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Total saved</div>
-        <div class="stat-value stat-green">$${totalSaved.toLocaleString()}</div>
-        <div class="stat-sub">all time net</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Top source</div>
-        <div class="stat-value stat-dark" style="font-size:${topSource.length > 10 ? '15px' : '20px'};">${topSource}</div>
-        <div class="stat-sub">$${topSourceTotal.toLocaleString()} total</div>
-      </div>
+      <div class="stat-card"><div class="stat-label">Best month</div><div class="stat-value stat-gold">$${bestIncome.toLocaleString()}</div><div class="stat-sub">${months[String(bestKey)].label}</div></div>
+      <div class="stat-card"><div class="stat-label">Avg income</div><div class="stat-value stat-gold">$${avgIncome.toLocaleString()}</div><div class="stat-sub">per month</div></div>
+      <div class="stat-card"><div class="stat-label">Total saved</div><div class="stat-value stat-green">$${totalSaved.toLocaleString()}</div><div class="stat-sub">all time net</div></div>
+      <div class="stat-card"><div class="stat-label">Top source</div><div class="stat-value stat-dark" style="font-size:${topSource.length > 10 ? '15px' : '20px'};">${topSource}</div><div class="stat-sub">$${topSourceTotal.toLocaleString()} total</div></div>
     `;
   }
 
@@ -568,30 +561,22 @@
     if (trendsChart) { trendsChart.destroy(); trendsChart = null; }
     trendsChart = new Chart(document.getElementById('trends-canvas'), {
       type: 'line',
-      data: {
-        labels,
-        datasets: [
-          { label: 'Income', data: incomeData, borderColor: '#e8b84b', borderWidth: 2.5, pointBackgroundColor: '#e8b84b', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
-          { label: 'Expenses', data: expenseData, borderColor: '#a0622a', borderWidth: 2.5, pointBackgroundColor: '#a0622a', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
-          { label: 'Net', data: netData, borderColor: '#6a9e40', borderWidth: 2, pointBackgroundColor: '#6a9e40', pointRadius: 4, pointHoverRadius: 6, tension: 0.35, fill: false, borderDash: [5,3] }
-        ]
-      },
+      data: { labels, datasets: [
+        { label: 'Income', data: incomeData, borderColor: '#e8b84b', borderWidth: 2.5, pointBackgroundColor: '#e8b84b', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
+        { label: 'Expenses', data: expenseData, borderColor: '#a0622a', borderWidth: 2.5, pointBackgroundColor: '#a0622a', pointRadius: 5, pointHoverRadius: 7, tension: 0.35, fill: false },
+        { label: 'Net', data: netData, borderColor: '#6a9e40', borderWidth: 2, pointBackgroundColor: '#6a9e40', pointRadius: 4, pointHoverRadius: 6, tension: 0.35, fill: false, borderDash: [5,3] }
+      ]},
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: { backgroundColor: '#fff', titleColor: '#222', bodyColor: '#555', borderColor: '#eee', borderWidth: 1, padding: 10, callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } }
-        },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', titleColor: '#222', bodyColor: '#555', borderColor: '#eee', borderWidth: 1, padding: 10, callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } } },
         scales: {
           x: { grid: { display: false }, ticks: { color: '#aaa', font: { size: 11 }, autoSkip: false, maxRotation: 45 }, border: { color: '#eee' } },
           y: { grid: { color: '#f5f5f5' }, ticks: { color: '#aaa', font: { size: 11 }, callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }, border: { display: false } }
         }
       }
     });
-    document.getElementById('page-trends').onclick = (e) => {
-      if (!e.target.closest('canvas') && trendsChart) { trendsChart.tooltip.setActiveElements([], {}); trendsChart.update(); }
-    };
+    document.getElementById('page-trends').onclick = (e) => { if (!e.target.closest('canvas') && trendsChart) { trendsChart.tooltip.setActiveElements([], {}); trendsChart.update(); } };
     renderStatCards();
   }
 
@@ -642,50 +627,26 @@
     items.forEach((s,i) => {
       const color = getBrand(s.name).color;
       const sweep = (s.amount/total)*2*Math.PI - gap;
-      const a1 = angle + gap/2;
-      const a2 = angle + sweep + gap/2;
-      const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
-      const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+      const a1 = angle + gap/2, a2 = angle + sweep + gap/2;
+      const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1), x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
       const large = sweep > Math.PI ? 1 : 0;
       const path = document.createElementNS("http://www.w3.org/2000/svg","path");
       path.setAttribute("d",`M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`);
-      path.setAttribute("fill","none");
-      path.setAttribute("stroke", color);
+      path.setAttribute("fill","none"); path.setAttribute("stroke", color);
       path.setAttribute("stroke-width", highlightIdx===i ? sw+4 : sw);
       path.setAttribute("stroke-linecap","butt");
       path.style.opacity = highlightIdx===-1||highlightIdx===i ? "1" : "0.25";
-      path.style.cursor="pointer";
-      path.style.transition="stroke-width 0.15s, opacity 0.15s";
-      path.addEventListener("mouseenter",()=>{
-        if (!donutFiltered) {
-          drawDonut(items,total,i);
-          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
-          document.getElementById("center-lbl").textContent=s.name;
-        }
-      });
-      path.addEventListener("mouseleave",()=>{
-        if (!donutFiltered) {
-          drawDonut(items,total,-1);
-          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-          document.getElementById("center-lbl").textContent="total";
-        }
-      });
+      path.style.cursor="pointer"; path.style.transition="stroke-width 0.15s, opacity 0.15s";
+      path.addEventListener("mouseenter",()=>{ if (!donutFiltered) { drawDonut(items,total,i); document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString(); document.getElementById("center-lbl").textContent=s.name; } });
+      path.addEventListener("mouseleave",()=>{ if (!donutFiltered) { drawDonut(items,total,-1); document.getElementById("center-amt").textContent="$"+total.toLocaleString(); document.getElementById("center-lbl").textContent="total"; } });
       path.addEventListener("click",(e)=>{
         e.stopPropagation();
         if (donutFiltered && donutFilteredIdx === i) {
-          // tap same segment again = deselect
-          donutFiltered = false;
-          donutFilteredIdx = -1;
-          drawDonut(items,total,-1);
-          document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-          document.getElementById("center-lbl").textContent="total";
+          donutFiltered = false; donutFilteredIdx = -1; drawDonut(items,total,-1);
+          document.getElementById("center-amt").textContent="$"+total.toLocaleString(); document.getElementById("center-lbl").textContent="total";
         } else {
-          // tap new segment = select it
-          donutFiltered = true;
-          donutFilteredIdx = i;
-          drawDonut(items,total,i);
-          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString();
-          document.getElementById("center-lbl").textContent=s.name;
+          donutFiltered = true; donutFilteredIdx = i; drawDonut(items,total,i);
+          document.getElementById("center-amt").textContent="$"+s.amount.toLocaleString(); document.getElementById("center-lbl").textContent=s.name;
         }
       });
       svg.appendChild(path);
@@ -730,11 +691,8 @@
     netEl.className=net>=0?"net-positive":"net-negative";
     document.getElementById("center-amt").textContent="$"+total.toLocaleString();
     document.getElementById("center-lbl").textContent="total";
-    donutFiltered = false;
-    donutFilteredIdx = -1;
-    updateGoalBanner();
-    drawDonut(items,total);
-    renderLegend(items,total);
+    donutFiltered = false; donutFilteredIdx = -1;
+    updateGoalBanner(); drawDonut(items,total); renderLegend(items,total);
   }
 
   function setMode(m) {
@@ -765,20 +723,15 @@
   function changeMonth(dir) {
     const next = offset + dir;
     if (dir > 0 && next > 0) return;
-    if (!months[String(next)]) {
-      months[String(next)] = { label: getMonthLabelFull(next), income: { items: [] }, expense: { items: [] } };
-      saveData();
-    }
-    offset = next;
-    render();
+    if (!months[String(next)]) { months[String(next)] = { label: getMonthLabelFull(next), income: { items: [] }, expense: { items: [] } }; saveData(); }
+    offset = next; render();
   }
 
   function openSheet() {
     entryType=mode;
     document.getElementById("type-income").className="type-btn"+(entryType==="income"?" active income":"");
     document.getElementById("type-expense").className="type-btn"+(entryType==="expense"?" active expense":"");
-    buildSourceGrid();
-    document.getElementById("input-amount").value="";
+    buildSourceGrid(); document.getElementById("input-amount").value="";
     document.getElementById("overlay").classList.add("open");
   }
   function closeSheet() { document.getElementById("overlay").classList.remove("open"); }
@@ -822,6 +775,8 @@
   offset = 0;
   render();
   switchPage('home');
+  initDragDismiss('sheet-handle-main', 'sheet-main', 'overlay', closeSheet);
+  initDragDismiss('sheet-handle-goal', 'sheet-goal', 'goal-overlay', closeGoalSheet);
 </script>
 </body>
 </html>
