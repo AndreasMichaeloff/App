@@ -430,15 +430,19 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
-  function txIconHTML(name) {
-    const b = getBrand(name);
-    if (b.logo) return `<div class="tx-icon" style="background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='12px';"/></div>`;
-    return `<div class="tx-icon" style="background:${b.color};font-size:12px;">${b.initials}</div>`;
-  }
-
   function formatDate(ts) {
     const d = new Date(ts);
     return d.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function getDateMonthKey(ts) {
+    const d = new Date(ts);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  function getDateMonthLabel(ts) {
+    const d = new Date(ts);
+    return d.toLocaleString('default', { month: 'long', year: 'numeric' });
   }
 
   function getMonthLabel(off) {
@@ -491,32 +495,26 @@
 
   // ---- PULL TO REFRESH ----
   let pullStartY = 0, pulling = false;
-  const pullIndicator = document.getElementById('pull-indicator');
-  const pullText = document.getElementById('pull-text');
-  const pullSpinner = document.getElementById('pull-spinner');
-
   document.getElementById('page-home').addEventListener('touchstart', e => {
     if (document.getElementById('page-home').scrollTop === 0) { pullStartY = e.touches[0].clientY; pulling = true; }
   }, { passive: true });
-
   document.getElementById('page-home').addEventListener('touchmove', e => {
     if (!pulling) return;
     const dist = e.touches[0].clientY - pullStartY;
-    if (dist > 40) { pullIndicator.classList.add('visible'); pullText.style.display = 'inline'; pullSpinner.style.display = 'none'; }
+    if (dist > 40) { document.getElementById('pull-indicator').classList.add('visible'); document.getElementById('pull-text').style.display = 'inline'; document.getElementById('pull-spinner').style.display = 'none'; }
   }, { passive: true });
-
   document.getElementById('page-home').addEventListener('touchend', e => {
     if (!pulling) return;
     const dist = e.changedTouches[0].clientY - pullStartY;
     pulling = false;
     if (dist > 40) {
-      pullText.style.display = 'none'; pullSpinner.style.display = 'block';
+      document.getElementById('pull-text').style.display = 'none'; document.getElementById('pull-spinner').style.display = 'block';
       setTimeout(() => {
         months = loadData(); goals = loadGoals(); ensureCurrentMonth(); render();
-        pullIndicator.classList.remove('visible'); pullSpinner.style.display = 'none'; pullText.style.display = 'inline';
+        document.getElementById('pull-indicator').classList.remove('visible'); document.getElementById('pull-spinner').style.display = 'none'; document.getElementById('pull-text').style.display = 'inline';
         showToast('Refreshed');
       }, 600);
-    } else { pullIndicator.classList.remove('visible'); }
+    } else { document.getElementById('pull-indicator').classList.remove('visible'); }
   }, { passive: true });
 
   // ---- DONUT RESET ----
@@ -569,25 +567,46 @@
   }
 
   function renderTransactions() {
-    const keys = Object.keys(months).map(Number).sort((a,b) => b - a);
-    let html = '';
-    let hasAny = false;
+    // Collect ALL transactions with their actual dates
+    const allItems = [];
+    Object.keys(months).forEach(k => {
+      const mo = months[k];
+      if (txFilter !== 'expense') {
+        mo.income.items.forEach(item => allItems.push({...item, type: 'income'}));
+      }
+      if (txFilter !== 'income') {
+        mo.expense.items.forEach(item => allItems.push({...item, type: 'expense'}));
+      }
+    });
 
-    keys.forEach(k => {
-      const mo = months[String(k)];
-      let items = [];
-      if (txFilter !== 'expense') mo.income.items.forEach(item => items.push({...item, type:'income'}));
-      if (txFilter !== 'income') mo.expense.items.forEach(item => items.push({...item, type:'expense'}));
-      items.sort((a,b) => (b.date||0) - (a.date||0));
-      if (!items.length) return;
-      hasAny = true;
-      html += `<div class="tx-month-group"><div class="tx-month-label">${mo.label}</div>`;
-      items.forEach(item => {
-        const dateStr = item.date ? formatDate(item.date) : mo.label;
+    if (!allItems.length) {
+      document.getElementById('tx-list').innerHTML = '<div class="tx-empty">No transactions yet</div>';
+      return;
+    }
+
+    // Sort newest first
+    allItems.sort((a,b) => (b.date||0) - (a.date||0));
+
+    // Group by actual calendar month from the date
+    const groups = {};
+    const groupOrder = [];
+    allItems.forEach(item => {
+      const key = item.date ? getDateMonthKey(item.date) : 'unknown';
+      const label = item.date ? getDateMonthLabel(item.date) : 'Unknown date';
+      if (!groups[key]) { groups[key] = { label, items: [] }; groupOrder.push(key); }
+      groups[key].items.push(item);
+    });
+
+    let html = '';
+    groupOrder.forEach(key => {
+      const g = groups[key];
+      html += `<div class="tx-month-group"><div class="tx-month-label">${g.label}</div>`;
+      g.items.forEach(item => {
         const b = getBrand(item.name);
         const iconHtml = b.logo
           ? `<div class="tx-icon" style="background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='12px';"/></div>`
           : `<div class="tx-icon" style="background:${b.color};font-size:12px;">${b.initials}</div>`;
+        const dateStr = item.date ? formatDate(item.date) : '—';
         html += `<div class="tx-item">
           ${iconHtml}
           <div class="tx-info">
@@ -603,7 +622,7 @@
       html += '</div>';
     });
 
-    document.getElementById('tx-list').innerHTML = hasAny ? html : '<div class="tx-empty">No transactions yet</div>';
+    document.getElementById('tx-list').innerHTML = html;
   }
 
   function updateGoalBanner() {
