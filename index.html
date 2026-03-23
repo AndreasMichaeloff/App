@@ -72,7 +72,7 @@
     .net-label { font-size: clamp(11px, 1.4vh, 13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px, 2.2vh, 20px); font-weight: 700; }
-    #page-trends, #page-goals, #page-settings { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
+    #page-trends, #page-goals, #page-settings, #page-transactions { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1rem; }
     .chart-legend { display: flex; gap: 16px; margin-bottom: 1rem; }
@@ -88,6 +88,26 @@
     .stat-gold { color: #e8b84b; }
     .stat-green { color: #6a9e40; }
     .stat-dark { color: #222; }
+    .tx-filter-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .tx-filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all 0.15s; }
+    .tx-filter-btn.active-all { background: #222; color: #fff; border-color: #222; }
+    .tx-filter-btn.active-income { background: #e8b84b; color: #fff; border-color: #e8b84b; }
+    .tx-filter-btn.active-expense { background: #a0622a; color: #fff; border-color: #a0622a; }
+    .tx-month-group { margin-bottom: 1.25rem; }
+    .tx-month-label { font-size: 11px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .tx-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+    .tx-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; }
+    .tx-icon img { width: 36px; height: 36px; object-fit: cover; border-radius: 10px; }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-date { font-size: 11px; color: #bbb; margin-top: 2px; }
+    .tx-right { text-align: right; flex-shrink: 0; }
+    .tx-amount-income { font-size: 15px; font-weight: 700; color: #6a9e40; }
+    .tx-amount-expense { font-size: 15px; font-weight: 700; color: #a0622a; }
+    .tx-tag { font-size: 10px; font-weight: 600; margin-top: 2px; padding: 2px 7px; border-radius: 10px; display: inline-block; }
+    .tx-tag-income { background: #fff8e6; color: #a07010; }
+    .tx-tag-expense { background: #fdf0e6; color: #a0622a; }
+    .tx-empty { text-align: center; color: #ccc; font-size: 14px; padding: 3rem 0; }
     .goal-card { background: #fff; border: 1.5px solid #e0e0e0; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-name { font-size: 15px; font-weight: 600; color: #222; }
@@ -118,8 +138,8 @@
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: #fff; border-top: 1.5px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0 24px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
-    .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-    .nav-label { font-size: 10px; font-weight: 500; color: #ccc; }
+    .nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+    .nav-label { font-size: 9px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; transition: opacity 0.2s; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
@@ -230,6 +250,18 @@
   <div class="stat-cards" id="stat-cards"></div>
 </div>
 
+<!-- TRANSACTIONS PAGE -->
+<div class="page" id="page-transactions">
+  <div class="page-title">Transactions</div>
+  <div class="page-subtitle">Every transaction, all in one place</div>
+  <div class="tx-filter-row">
+    <button class="tx-filter-btn active-all" id="tx-filter-all" onclick="setTxFilter('all')">All</button>
+    <button class="tx-filter-btn" id="tx-filter-income" onclick="setTxFilter('income')">Income</button>
+    <button class="tx-filter-btn" id="tx-filter-expense" onclick="setTxFilter('expense')">Expenses</button>
+  </div>
+  <div id="tx-list"></div>
+</div>
+
 <!-- GOALS PAGE -->
 <div class="page" id="page-goals">
   <div class="page-title">Goals</div>
@@ -270,7 +302,7 @@
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
     <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
         <rect x="2" y="2" width="8" height="8" rx="2.5" fill="#e8b84b"/>
         <rect x="12" y="2" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/>
         <rect x="2" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/>
@@ -281,15 +313,25 @@
   </div>
   <div class="nav-item" id="nav-trends" onclick="switchPage('trends')">
     <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
         <path d="M2 16 L6 10 L10 13 L14 7 L20 10" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <span class="nav-label">Trends</span>
   </div>
+  <div class="nav-item" id="nav-transactions" onclick="switchPage('transactions')">
+    <div class="nav-icon">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+        <rect x="2" y="5" width="18" height="3" rx="1.5" fill="#ccc"/>
+        <rect x="2" y="10" width="14" height="3" rx="1.5" fill="#ccc"/>
+        <rect x="2" y="15" width="10" height="3" rx="1.5" fill="#ccc"/>
+      </svg>
+    </div>
+    <span class="nav-label">Transactions</span>
+  </div>
   <div class="nav-item" id="nav-goals" onclick="switchPage('goals')">
     <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
         <circle cx="11" cy="11" r="8" stroke="#ccc" stroke-width="2"/>
         <circle cx="11" cy="11" r="4" stroke="#ccc" stroke-width="2"/>
         <circle cx="11" cy="11" r="1.5" fill="#ccc"/>
@@ -299,7 +341,7 @@
   </div>
   <div class="nav-item" id="nav-settings" onclick="switchPage('settings')">
     <div class="nav-icon">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
         <circle cx="11" cy="11" r="3" stroke="#ccc" stroke-width="2"/>
         <path d="M11 2 L11 5 M11 17 L11 20 M2 11 L5 11 M17 11 L20 11 M4.2 4.2 L6.3 6.3 M15.7 15.7 L17.8 17.8 M17.8 4.2 L15.7 6.3 M6.3 15.7 L4.2 17.8" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
       </svg>
@@ -388,6 +430,17 @@
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
   }
 
+  function txIconHTML(name) {
+    const b = getBrand(name);
+    if (b.logo) return `<div class="tx-icon" style="background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='12px';"/></div>`;
+    return `<div class="tx-icon" style="background:${b.color};font-size:12px;">${b.initials}</div>`;
+  }
+
+  function formatDate(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
   function getMonthLabel(off) {
     const now = new Date();
     const d = new Date(now.getFullYear(), now.getMonth() + off, 1);
@@ -409,8 +462,8 @@
   }
 
   const DEFAULT_MONTHS = {
-    "-1": { label: getMonthLabelFull(-1), income: { items: [{name:"YouTube",amount:3200},{name:"Venmo",amount:1980},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1000},{name:"Food",amount:850},{name:"Other",amount:1000}]}},
-    "-2": { label: getMonthLabelFull(-2), income: { items: [{name:"YouTube",amount:2900},{name:"Venmo",amount:1850},{name:"Direct deposit",amount:1600},{name:"Cash App",amount:730}]}, expense: {items:[{name:"Rent",amount:2200},{name:"Software",amount:1050},{name:"Food",amount:900},{name:"Other",amount:1000}]}},
+    "-1": { label: getMonthLabelFull(-1), income: { items: [{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]}, expense: {items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
+    "-2": { label: getMonthLabelFull(-2), income: { items: [{name:"YouTube",amount:2900,date:Date.now()-864e5*50},{name:"Venmo",amount:1850,date:Date.now()-864e5*48},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*45},{name:"Cash App",amount:730,date:Date.now()-864e5*40}]}, expense: {items:[{name:"Rent",amount:2200,date:Date.now()-864e5*58},{name:"Software",amount:1050,date:Date.now()-864e5*52},{name:"Food",amount:900,date:Date.now()-864e5*46},{name:"Other",amount:1000,date:Date.now()-864e5*42}]}},
   };
 
   function saveData() { localStorage.setItem('filo_months', JSON.stringify(months)); localStorage.setItem('filo_goals', JSON.stringify(goals)); }
@@ -432,6 +485,7 @@
   let trendsChart = null;
   let donutFiltered = false;
   let donutFilteredIdx = -1;
+  let txFilter = 'all';
 
   function getTotal(items) { return items.reduce((s,x) => s + x.amount, 0); }
 
@@ -465,7 +519,7 @@
     } else { pullIndicator.classList.remove('visible'); }
   }, { passive: true });
 
-  // ---- DONUT RESET on outside tap ----
+  // ---- DONUT RESET ----
   document.getElementById('page-home').addEventListener('click', (e) => {
     if (!donutFiltered) return;
     const container = document.getElementById('donut-container');
@@ -486,13 +540,7 @@
     const sheet = document.getElementById(sheetId);
     const overlay = document.getElementById(overlayId);
     let startY = 0, currentY = 0, dragging = false;
-
-    handle.addEventListener('touchstart', e => {
-      startY = e.touches[0].clientY;
-      dragging = true;
-      sheet.classList.add('dragging');
-    }, { passive: true });
-
+    handle.addEventListener('touchstart', e => { startY = e.touches[0].clientY; dragging = true; sheet.classList.add('dragging'); }, { passive: true });
     handle.addEventListener('touchmove', e => {
       if (!dragging) return;
       currentY = e.touches[0].clientY - startY;
@@ -500,22 +548,62 @@
       sheet.style.transform = `translateY(${currentY}px)`;
       overlay.style.opacity = Math.max(0, 1 - currentY / 300);
     }, { passive: true });
-
     handle.addEventListener('touchend', () => {
       if (!dragging) return;
-      dragging = false;
-      sheet.classList.remove('dragging');
+      dragging = false; sheet.classList.remove('dragging');
       if (currentY > 120) {
         sheet.style.transform = `translateY(100%)`;
         setTimeout(() => { sheet.style.transform = ''; overlay.style.opacity = ''; closeFn(); }, 200);
-      } else {
-        sheet.style.transform = '';
-        overlay.style.opacity = '1';
-      }
+      } else { sheet.style.transform = ''; overlay.style.opacity = '1'; }
       currentY = 0;
     });
-
     handle.addEventListener('click', closeFn);
+  }
+
+  function setTxFilter(f) {
+    txFilter = f;
+    document.getElementById('tx-filter-all').className = 'tx-filter-btn' + (f==='all' ? ' active-all' : '');
+    document.getElementById('tx-filter-income').className = 'tx-filter-btn' + (f==='income' ? ' active-income' : '');
+    document.getElementById('tx-filter-expense').className = 'tx-filter-btn' + (f==='expense' ? ' active-expense' : '');
+    renderTransactions();
+  }
+
+  function renderTransactions() {
+    const keys = Object.keys(months).map(Number).sort((a,b) => b - a);
+    let html = '';
+    let hasAny = false;
+
+    keys.forEach(k => {
+      const mo = months[String(k)];
+      let items = [];
+      if (txFilter !== 'expense') mo.income.items.forEach(item => items.push({...item, type:'income'}));
+      if (txFilter !== 'income') mo.expense.items.forEach(item => items.push({...item, type:'expense'}));
+      items.sort((a,b) => (b.date||0) - (a.date||0));
+      if (!items.length) return;
+      hasAny = true;
+      html += `<div class="tx-month-group"><div class="tx-month-label">${mo.label}</div>`;
+      items.forEach(item => {
+        const dateStr = item.date ? formatDate(item.date) : mo.label;
+        const b = getBrand(item.name);
+        const iconHtml = b.logo
+          ? `<div class="tx-icon" style="background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='12px';"/></div>`
+          : `<div class="tx-icon" style="background:${b.color};font-size:12px;">${b.initials}</div>`;
+        html += `<div class="tx-item">
+          ${iconHtml}
+          <div class="tx-info">
+            <div class="tx-name">${item.name}</div>
+            <div class="tx-date">${dateStr}</div>
+          </div>
+          <div class="tx-right">
+            <div class="${item.type==='income'?'tx-amount-income':'tx-amount-expense'}">${item.type==='income'?'+':'-'}$${item.amount.toLocaleString()}</div>
+            <span class="tx-tag ${item.type==='income'?'tx-tag-income':'tx-tag-expense'}">${item.type==='income'?'Income':'Expense'}</span>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+
+    document.getElementById('tx-list').innerHTML = hasAny ? html : '<div class="tx-empty">No transactions yet</div>';
   }
 
   function updateGoalBanner() {
@@ -718,6 +806,7 @@
     });
     if (page === 'trends') renderTrends();
     if (page === 'goals') renderGoals();
+    if (page === 'transactions') renderTransactions();
   }
 
   function changeMonth(dir) {
@@ -746,7 +835,8 @@
     const mo=months[String(offset)];
     const list=mo[entryType].items;
     const existing=list.find(x=>x.name.toLowerCase()===name.toLowerCase());
-    if(existing){existing.amount+=amount;}else{list.push({name,amount});}
+    if(existing){ existing.amount+=amount; if(!existing.date) existing.date=Date.now(); }
+    else { list.push({name, amount, date: Date.now()}); }
     saveData(); closeSheet();
     if(mode!==entryType)setMode(entryType);else render();
     showToast("$"+amount.toLocaleString()+" added to "+name);
