@@ -96,7 +96,7 @@
     .tx-month-group { margin-bottom: 1.25rem; }
     .tx-month-label { font-size: 11px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
     .tx-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
-    .tx-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; }
+    .tx-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; overflow: hidden; }
     .tx-icon img { width: 36px; height: 36px; object-fit: cover; border-radius: 10px; }
     .tx-info { flex: 1; min-width: 0; }
     .tx-name { font-size: 14px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -108,6 +108,7 @@
     .tx-tag-income { background: #fff8e6; color: #a07010; }
     .tx-tag-expense { background: #fdf0e6; color: #a0622a; }
     .tx-empty { text-align: center; color: #ccc; font-size: 14px; padding: 3rem 0; }
+    #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem 0; }
     .goal-card { background: #fff; border: 1.5px solid #e0e0e0; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-name { font-size: 15px; font-weight: 600; color: #222; }
@@ -128,7 +129,7 @@
       .page.active { display: block; }
       .total-card .amount { font-size: 52px; }
       .donut-container { width: 200px; height: 200px; }
-      .chart-section { flex: none; padding: 1.5rem; }
+      .chart-section { flex: none; padding: 1.5rem; min-height: 200px; }
       .chart-wrap { gap: 48px; }
       .legend-item { padding: 8px 0; }
       .net-card { margin-top: 1.25rem; }
@@ -161,7 +162,7 @@
     .source-chip:active { transform: scale(0.95); }
     .source-chip:hover { background: #fff8e6; border-color: #e8b84b; }
     .source-chip.selected { background: #fff8e6; border-color: #e8b84b; color: #a07010; }
-    .chip-icon { width: 32px; height: 32px; border-radius: 9px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .chip-icon { width: 32px; height: 32px; border-radius: 9px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; }
     .chip-icon img { width: 32px; height: 32px; object-fit: cover; border-radius: 9px; }
     .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 13px; }
     .custom-input-row { display: none; margin-bottom: 10px; }
@@ -217,7 +218,7 @@
   </div>
   <div class="sources-title" id="breakdown-title">Income breakdown</div>
   <div class="chart-section">
-    <div class="chart-wrap">
+    <div id="chart-section-inner" class="chart-wrap">
       <div class="donut-container" id="donut-container">
         <svg id="donut-svg" viewBox="0 0 150 150"></svg>
         <div class="donut-center">
@@ -226,6 +227,11 @@
         </div>
       </div>
       <div class="legend" id="legend"></div>
+    </div>
+    <div id="empty-state">
+      <div style="font-size:36px;">💰</div>
+      <div style="font-size:15px;font-weight:600;color:#555;">No transactions yet</div>
+      <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap the <strong style="color:#e8b84b;">+</strong> button above to add your first income or expense</div>
     </div>
   </div>
   <div class="net-card">
@@ -409,8 +415,8 @@
     "Stripe":         { color: "#635BFF", initials: "S",  logo: "https://www.google.com/s2/favicons?domain=stripe.com&sz=64" },
     "Sponsorship":    { color: "#F7931E", initials: "🤝", logo: null },
     "Merch":          { color: "#E8B84B", initials: "👕", logo: null },
-    "Direct deposit": { color: "#2ECC71", initials: "🏦", logo: null },
     "Patreon":        { color: "#FF424D", initials: "P",  logo: "https://www.google.com/s2/favicons?domain=patreon.com&sz=64" },
+    "Direct deposit": { color: "#2ECC71", initials: "🏦", logo: null },
     "Rent":           { color: "#a0622a", initials: "🏠", logo: null },
     "Food":           { color: "#F39C12", initials: "🍔", logo: null },
     "Software":       { color: "#3498DB", initials: "💻", logo: null },
@@ -426,8 +432,10 @@
 
   function iconHTML(name, size = 24) {
     const b = getBrand(name);
-    if (b.logo) return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.38)}px';"/></div>`;
-    return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${Math.round(size*0.38)}px;">${b.initials}</div>`;
+    if (b.logo) return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.5)}px';"/></div>`;
+    const isEmoji = /\p{Emoji}/u.test(b.initials);
+    const fs = isEmoji ? Math.round(size*0.55) : Math.round(size*0.38);
+    return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${fs}px;">${b.initials}</div>`;
   }
 
   function formatDate(ts) {
@@ -567,16 +575,11 @@
   }
 
   function renderTransactions() {
-    // Collect ALL transactions with their actual dates
     const allItems = [];
     Object.keys(months).forEach(k => {
       const mo = months[k];
-      if (txFilter !== 'expense') {
-        mo.income.items.forEach(item => allItems.push({...item, type: 'income'}));
-      }
-      if (txFilter !== 'income') {
-        mo.expense.items.forEach(item => allItems.push({...item, type: 'expense'}));
-      }
+      if (txFilter !== 'expense') mo.income.items.forEach(item => allItems.push({...item, type: 'income'}));
+      if (txFilter !== 'income') mo.expense.items.forEach(item => allItems.push({...item, type: 'expense'}));
     });
 
     if (!allItems.length) {
@@ -584,12 +587,9 @@
       return;
     }
 
-    // Sort newest first
     allItems.sort((a,b) => (b.date||0) - (a.date||0));
 
-    // Group by actual calendar month from the date
-    const groups = {};
-    const groupOrder = [];
+    const groups = {}, groupOrder = [];
     allItems.forEach(item => {
       const key = item.date ? getDateMonthKey(item.date) : 'unknown';
       const label = item.date ? getDateMonthLabel(item.date) : 'Unknown date';
@@ -603,9 +603,10 @@
       html += `<div class="tx-month-group"><div class="tx-month-label">${g.label}</div>`;
       g.items.forEach(item => {
         const b = getBrand(item.name);
+        const isEmoji = /\p{Emoji}/u.test(b.initials);
         const iconHtml = b.logo
-          ? `<div class="tx-icon" style="background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='12px';"/></div>`
-          : `<div class="tx-icon" style="background:${b.color};font-size:12px;">${b.initials}</div>`;
+          ? `<div class="tx-icon" style="background:${b.color};font-size:11px;"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='18px';"/></div>`
+          : `<div class="tx-icon" style="background:${b.color};font-size:${isEmoji ? '20px' : '11px'};">${b.initials}</div>`;
         const dateStr = item.date ? formatDate(item.date) : '—';
         html += `<div class="tx-item">
           ${iconHtml}
@@ -704,7 +705,10 @@
     document.getElementById("source-grid").innerHTML =
       sources.map(s => {
         const b = getBrand(s);
-        const icon = b.logo ? `<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';"/></div>` : `<div class="chip-icon" style="background:${b.color};">${b.initials}</div>`;
+        const isEmoji = /\p{Emoji}/u.test(b.initials);
+        const icon = b.logo
+          ? `<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';this.parentElement.style.fontSize='16px';"/></div>`
+          : `<div class="chip-icon" style="background:${b.color};font-size:${isEmoji ? '16px' : '12px'};">${b.initials}</div>`;
         return `<div class="source-chip" onclick="selectSource('${s}', this)">${icon}${s}</div>`;
       }).join('') + `<div class="source-chip custom-chip" onclick="selectSource('__custom__', this)">+ Custom</div>`;
   }
@@ -722,12 +726,7 @@
     svg.innerHTML = "";
     svg._currentItems = items;
     svg._currentTotal = total;
-    if (!items.length || total === 0) {
-      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-      text.setAttribute("x","75"); text.setAttribute("y","80"); text.setAttribute("text-anchor","middle");
-      text.setAttribute("font-size","11"); text.setAttribute("fill","#bbb"); text.textContent="No data yet";
-      svg.appendChild(text); return;
-    }
+    if (!items.length || total === 0) return;
     const cx = 75, cy = 75, r = 55, sw = 24;
     let angle = -Math.PI / 2;
     const gap = 0.04;
@@ -762,7 +761,7 @@
   }
 
   function renderLegend(items, total) {
-    if (!items.length) { document.getElementById("legend").innerHTML = `<div style="font-size:13px;color:#bbb;padding:8px 0;">Add your first transaction</div>`; return; }
+    if (!items.length) { document.getElementById("legend").innerHTML = ''; return; }
     document.getElementById("legend").innerHTML = items.map(s => {
       const pct = Math.round(s.amount/total*100);
       return `<div class="legend-item">${iconHTML(s.name,24)}<span class="legend-name">${s.name}</span><span class="legend-pct">${pct}%</span><span class="legend-amt">$${s.amount.toLocaleString()}</span><span class="legend-del" onclick="deleteItem('${s.name}')">&#215;</span></div>`;
@@ -796,10 +795,22 @@
     const netEl = document.getElementById("net-amount");
     netEl.textContent=(net>=0?"+":"-")+"$"+Math.abs(net).toLocaleString();
     netEl.className=net>=0?"net-positive":"net-negative";
-    document.getElementById("center-amt").textContent="$"+total.toLocaleString();
-    document.getElementById("center-lbl").textContent="total";
     donutFiltered = false; donutFilteredIdx = -1;
-    updateGoalBanner(); drawDonut(items,total); renderLegend(items,total);
+    updateGoalBanner();
+
+    const inner = document.getElementById('chart-section-inner');
+    const empty = document.getElementById('empty-state');
+    if (!items.length || total === 0) {
+      inner.style.display = 'none';
+      empty.style.display = 'flex';
+    } else {
+      inner.style.display = 'flex';
+      empty.style.display = 'none';
+      document.getElementById("center-amt").textContent="$"+total.toLocaleString();
+      document.getElementById("center-lbl").textContent="total";
+      drawDonut(items,total);
+      renderLegend(items,total);
+    }
   }
 
   function setMode(m) {
