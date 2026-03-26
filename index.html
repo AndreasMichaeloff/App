@@ -10,8 +10,8 @@
   <link rel="apple-touch-icon" href="filo.png"/>
   <link rel="icon" href="filo.png"/>
   <style>
-    /* SPLASH SCREEN */
-  #splash-screen {
+/* SPLASH SCREEN */
+#splash-screen {
   position: fixed;
   inset: 0;
   background: #fffdf7;
@@ -19,28 +19,29 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  animation: splashFade 0.5s ease 1.4s forwards;
+}
+
+.splash-content {
+  text-align: center;
 }
 
 .splash-logo {
-  width: 120px;   /* adjust this */
+  width: 120px;
   height: auto;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: logoPop 0.5s ease forwards;
 }
 
-.-logo {
-  width: 90px;
-  height: 90px;
-  margin-bottom: 12px;
-  animation: logoPop 0.8s ease;
+.splash-text {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #aaa;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: textFade 0.6s ease 0.4s forwards;
 }
-
-.-text {
-  font-size: 32px;
-  font-weight: 700;
-  color: #e8b84b;
-  letter-spacing: -1px;
-  animation: textFade 1s ease;
-}
-
 @keyframes logoPop {
   0% { transform: scale(0.7); opacity: 0; }
   60% { transform: scale(1.1); }
@@ -225,6 +226,14 @@
   </style>
 </head>
 
+<body>
+
+  <!-- SPLASH SCREEN -->
+<div id="splash-screen">
+  <div class="splash-content">
+    <img src="logo.png" alt="Filo Logo" class="splash-logo" />
+  </div>
+</div>
 <!-- HOME PAGE -->
 <div class="page active" id="page-home">
   <div class="pull-indicator" id="pull-indicator">
@@ -950,10 +959,4 @@
 </script>
   
 </body>
-  <!-- SPLASH SCREEN -->
-<div id="splash-screen">
-  <div class="splash-content">
-    <img src="logo.png" alt="Filo Logo" class="splash-logo" />
-  </div>
-</div>
 </html>
