@@ -14,14 +14,12 @@
     html, body { height: 100%; overscroll-behavior: none; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
 
-    /* ── Splash ── */
     #splash-screen { position: fixed; inset: 0; background: #fffdf7; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s ease; }
     #splash-screen.hide { opacity: 0; pointer-events: none; }
     .splash-logo { width: 110px; height: auto; animation: logoPop 0.7s ease forwards; }
     .splash-fallback { font-size: 56px; font-weight: 700; color: #e8b84b; letter-spacing: -2px; animation: logoPop 0.7s ease forwards; display: none; }
     @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
 
-    /* ── Pages ── */
     .page { display: none; height: calc(100dvh - 72px); overflow: hidden; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; }
     .page.active { display: flex; flex-direction: column; }
 
@@ -70,10 +68,8 @@
 
     /* ── Chart section ── */
     .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; border: 1.5px solid #e0d8c8; padding: clamp(8px,1.2vh,14px); display: flex; flex-direction: column; overflow: hidden; }
-
     .filo-wrap { flex: 1; min-height: 0; display: flex; gap: 12px; align-items: stretch; }
 
-    /* SVG column */
     .filo-svg-col {
       flex-shrink: 0;
       width: clamp(90px, 28vw, 130px);
@@ -91,13 +87,12 @@
     }
     .stack-total-label { text-align: center; padding-top: 5px; flex-shrink: 0; }
     .stack-total-label .amt { font-size: clamp(12px,1.8vh,17px); font-weight: 700; color: #222; transition: all 0.2s; }
-    .stack-total-label .lbl { font-size: clamp(9px,1.1vh,11px); color: #aaa; transition: all 0.2s; }
+    .stack-total-label .lbl { font-size: clamp(9px,1.1vh,11px); color: #aaa; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    /* Legend */
     .filo-legend { flex: 1; overflow: hidden; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
     .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px,0.7vh,8px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); cursor: pointer; transition: opacity 0.2s; }
     .legend-item:last-child { border-bottom: none; }
-    .legend-item.dimmed { opacity: 0.3; }
+    .legend-item.dimmed { opacity: 0.2; }
     .source-icon { width: clamp(20px,3vh,26px); height: clamp(20px,3vh,26px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
     .source-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .legend-name { font-size: clamp(10px,1.4vh,13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -106,10 +101,8 @@
     .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
     .legend-item:hover .legend-del { opacity: 1; }
 
-    /* SVG layer transitions */
-    .filo-layer-group { cursor: pointer; transition: opacity 0.2s; }
-    .filo-layer-group.dimmed { opacity: 0.25; }
-    .filo-layer-group.highlighted path.layer-fill { filter: brightness(1.1); }
+    .filo-layer-group { cursor: pointer; transition: opacity 0.18s; }
+    .filo-layer-group.dimmed { opacity: 0.15; }
 
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top: clamp(5px,0.8vh,10px); margin-bottom: 1vh; flex-shrink: 0; }
     .net-label    { font-size: clamp(11px,1.4vh,13px); color: #aaa; }
@@ -118,7 +111,6 @@
 
     #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem 0; }
 
-    /* ── Scrollable pages ── */
     #page-trends, #page-goals, #page-settings, #page-transactions { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title    { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1rem; }
@@ -177,7 +169,6 @@
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
 
-    /* ── Bottom nav ── */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: #fff; border-top: 1.5px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom,0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0 24px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
@@ -185,7 +176,6 @@
     .nav-label { font-size: 9px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
 
-    /* ── Overlay / Sheet ── */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -234,7 +224,6 @@
 </head>
 <body>
 
-  <!-- Splash -->
   <div id="splash-screen">
     <div>
       <img src="logo.png" class="splash-logo" alt="Filo"
@@ -243,7 +232,6 @@
     </div>
   </div>
 
-  <!-- HOME -->
   <div class="page active" id="page-home">
     <div class="pull-indicator" id="pull-indicator">
       <div class="pull-spinner" id="pull-spinner" style="display:none;"></div>
@@ -309,7 +297,6 @@
     </div>
   </div>
 
-  <!-- TRENDS -->
   <div class="page" id="page-trends">
     <div class="page-title">Trends</div>
     <div class="page-subtitle">Income, expenses &amp; net over time</div>
@@ -323,7 +310,6 @@
     <div class="stat-cards" id="stat-cards"></div>
   </div>
 
-  <!-- TRANSACTIONS -->
   <div class="page" id="page-transactions">
     <div class="page-title">Transactions</div>
     <div class="page-subtitle">Every transaction, all in one place</div>
@@ -335,7 +321,6 @@
     <div id="tx-list"></div>
   </div>
 
-  <!-- GOALS -->
   <div class="page" id="page-goals">
     <div class="page-title">Goals</div>
     <div class="page-subtitle">Set targets, track progress</div>
@@ -343,7 +328,6 @@
     <button class="add-goal-btn" onclick="openGoalSheet()">+ Add a goal</button>
   </div>
 
-  <!-- SETTINGS -->
   <div class="page" id="page-settings">
     <div class="page-title">Settings</div>
     <div class="page-subtitle">Manage your Filo</div>
@@ -367,7 +351,6 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
       <div class="nav-icon">
@@ -421,7 +404,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- ADD TRANSACTION SHEET -->
   <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
     <div class="sheet" id="sheet-main">
       <div class="sheet-handle" id="sheet-handle-main"></div>
@@ -448,7 +430,6 @@
     </div>
   </div>
 
-  <!-- EDIT TRANSACTION SHEET -->
   <div class="overlay" id="edit-overlay" onclick="closeEditIfOutside(event)">
     <div class="sheet" id="sheet-edit">
       <div class="sheet-handle" id="sheet-handle-edit"></div>
@@ -466,7 +447,6 @@
     </div>
   </div>
 
-  <!-- ADD GOAL SHEET -->
   <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
     <div class="sheet" id="sheet-goal">
       <div class="sheet-handle" id="sheet-handle-goal"></div>
@@ -555,6 +535,7 @@
   let months=loadData(), goals=loadGoals();
   let offset=0, mode="income", entryType="income", selectedSource=null;
   let trendsChart=null, txFilter='all', editContext=null, pinnedLayerIdx=-1;
+  let _lastSorted=[], _lastTotal=0;
 
   // ── Pull to refresh ───────────────────────────────────────────────────────
   let pullStartY=0, pulling=false;
@@ -644,39 +625,10 @@
     else{banner.classList.add('hidden');}
   }
 
-  // ── ✦ FILO WAVE STACK — rewritten from scratch ✦ ─────────────────────────
-  // Uses a fixed 100×200 SVG coordinate space so wave amplitude is always
-  // proportional regardless of screen size. preserveAspectRatio="none" then
-  // stretches it to fill the container.
-  // Each layer is a closed path:
-  //   top edge  = smooth cubic bezier wave across full width
-  //   sides     = straight lines down to bottom edge
-  //   bottom    = straight line back (or previous layer's top wave path reversed)
-  // Layers are drawn bottom→top so the largest is at the bottom.
-
-  const W = 100; // SVG coordinate width
-  let _lastSorted = [], _lastTotal = 0;
-
-  function makeWavePath(y, h, amp, phase) {
-    // Returns { top, full }
-    // top  = just the top curve (for reuse as next layer's bottom)
-    // full = closed filled shape from topY to bottomY
-    const topY    = y;
-    const bottomY = y + h;
-
-    // Cubic bezier: start flat on left, peak/trough in middle, flat on right
-    // phase alternates so adjacent layers wave in opposite directions
-    const dir = phase % 2 === 0 ? 1 : -1;
-    const peak = amp * dir;
-
-    // Top wave: M 0,topY  C 25,(topY+peak) 75,(topY-peak) 100,topY
-    const topCurve = `M0,${topY} C25,${topY+peak} 75,${topY-peak} ${W},${topY}`;
-
-    // Full closed path: top curve → right side down → bottom line ← left side up
-    const full = `${topCurve} L${W},${bottomY} L0,${bottomY} Z`;
-
-    return { top: topCurve, full };
-  }
+  // ── ✦ FILO PHYLLO STACK CHART ✦ ──────────────────────────────────────────
+  // Layers stacked biggest-at-bottom. Each layer has a gentle wave top edge
+  // that only bulges UPWARD from a flat baseline — guaranteeing zero gap
+  // between adjacent layers. The whole stack is clipped to rounded corners.
 
   function renderFiloStack(items, total) {
     const svgEl    = document.getElementById('filo-wave-svg');
@@ -685,114 +637,121 @@
     legendEl.innerHTML = '';
     if (!items.length || total === 0) return;
 
-    // Work in a normalised 100×200 coordinate space
-    const H        = 200;
-    const GAP      = 3;   // gap between layers in SVG units
-    const MIN_H    = 14;  // minimum layer height in SVG units
-    const AMP      = 6;   // wave amplitude — bigger = more dramatic curves
+    const ns = 'http://www.w3.org/2000/svg';
+
+    // Use a fixed coordinate space; preserveAspectRatio="none" fills the container
+    const W = 100, H = 200, R = 10, MIN_H = 12, AMP = 6;
+    const n = items.length;
+
+    // Sort biggest first = bottom of stack
+    const sorted = [...items].sort((a, b) => b.amount - a.amount);
+    _lastSorted  = sorted;
+    _lastTotal   = total;
 
     svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svgEl.setAttribute('preserveAspectRatio', 'none');
 
-    // Sort largest at bottom (index 0 = bottom layer)
-    const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    _lastSorted  = sorted;
-    _lastTotal   = total;
-    const n      = sorted.length;
+    // Clip entire SVG to rounded rect so corners are clean
+    const defs = document.createElementNS(ns, 'defs');
+    const clip = document.createElementNS(ns, 'clipPath');
+    clip.setAttribute('id', 'filo-clip');
+    const clipRect = document.createElementNS(ns, 'rect');
+    clipRect.setAttribute('x', '0'); clipRect.setAttribute('y', '0');
+    clipRect.setAttribute('width', W); clipRect.setAttribute('height', H);
+    clipRect.setAttribute('rx', R);
+    clip.appendChild(clipRect);
+    defs.appendChild(clip);
+    svgEl.appendChild(defs);
 
-    // Calculate proportional heights, enforce minimum
-    const usableH = H - (n - 1) * GAP;
-    let rawHeights = sorted.map(item => (item.amount / total) * usableH);
-    // Clamp minimums and scale back to fit
-    rawHeights     = rawHeights.map(h => Math.max(MIN_H, h));
-    const sumRaw   = rawHeights.reduce((s, h) => s + h, 0);
-    const heights  = rawHeights.map(h => (h / sumRaw) * usableH);
+    const stackG = document.createElementNS(ns, 'g');
+    stackG.setAttribute('clip-path', 'url(#filo-clip)');
+    svgEl.appendChild(stackG);
 
-    // Compute top-Y of each layer, building from the bottom up
-    const topYs = [];
-    let cursor  = H;
-    for (let i = 0; i < n; i++) {
-      cursor -= heights[i];
-      topYs.push(cursor);
-      if (i < n - 1) cursor -= GAP;
-    }
+    // Proportional heights with minimum
+    let hs = sorted.map(d => Math.max(MIN_H, (d.amount / total) * H));
+    const hsum = hs.reduce((s, h) => s + h, 0);
+    hs = hs.map(h => Math.max(MIN_H, h * (H / hsum)));
 
-    // Draw layers bottom→top (index 0 drawn first = visually at bottom z-order)
-    sorted.forEach((item, i) => {
-      const color = getBrand(item.name).color;
-      const y     = topYs[i];
-      const h     = heights[i];
-      const { full, top } = makeWavePath(y, h, AMP, i);
+    // Draw order: smallest on top (low y) → biggest at bottom (high y)
+    // So we reverse sorted for draw order
+    const drawOrder   = [...sorted].reverse();
+    const drawHeights = [...hs].reverse();
 
-      const ns  = 'http://www.w3.org/2000/svg';
-      const grp = document.createElementNS(ns, 'g');
-      grp.setAttribute('class', 'filo-layer-group');
-      grp.dataset.idx = i;
+    let curY = 0;
+    drawOrder.forEach((item, di) => {
+      const si    = n - 1 - di; // index back into sorted[]
+      const h     = drawHeights[di];
+      const yFlat = curY;       // flat baseline this layer starts at
+      const yBot  = curY + h;
+      curY = yBot;
 
-      // Main filled layer
-      const fill = document.createElementNS(ns, 'path');
-      fill.setAttribute('d', full);
-      fill.setAttribute('fill', color);
-      fill.setAttribute('class', 'layer-fill');
+      // Wave: only goes UP from yFlat (never down), so layer below fills flush
+      const seed  = si * 137.5;
+      const a     = AMP;
+      const midY  = yFlat - Math.abs(Math.sin(seed + 1.1) * a);
+      const cp1y  = yFlat - Math.abs(Math.sin(seed) * a * 0.7);
+      const cp2y  = yFlat - Math.abs(Math.sin(seed + 2.1) * a * 0.8);
 
-      // Lighter inner gradient overlay for depth
-      const shine = document.createElementNS(ns, 'path');
-      shine.setAttribute('d', full);
-      shine.setAttribute('fill', 'url(#shineGrad)');
-      shine.setAttribute('pointer-events', 'none');
+      // Path: flat bottom → right side → wave top → left side → close
+      const d = `M0,${yBot} L${W},${yBot} L${W},${yFlat} Q${W*0.75},${cp2y} ${W*0.5},${midY} Q${W*0.25},${cp1y} 0,${yFlat} Z`;
 
-      // White highlight line along the top wave edge
-      const edge = document.createElementNS(ns, 'path');
-      edge.setAttribute('d', top);
-      edge.setAttribute('fill', 'none');
-      edge.setAttribute('stroke', 'rgba(255,255,255,0.35)');
-      edge.setAttribute('stroke-width', '1');
-      edge.setAttribute('pointer-events', 'none');
+      const g = document.createElementNS(ns, 'g');
+      g.setAttribute('class', 'filo-layer-group');
+      g.dataset.idx = si;
 
-      grp.appendChild(fill);
-      grp.appendChild(shine);
-      grp.appendChild(edge);
+      const path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', getBrand(item.name).color);
+      path.setAttribute('opacity', '0.93');
+      g.appendChild(path);
 
-      grp.addEventListener('mouseenter', () => hoverLayer(i, true));
-      grp.addEventListener('mouseleave', () => hoverLayer(i, false));
-      grp.addEventListener('click',      () => pinLayer(i));
-      grp.addEventListener('touchend',   e  => { e.preventDefault(); pinLayer(i); });
+      // Subtle shimmer along the wave edge
+      const shimD = `M0,${yFlat} Q${W*0.25},${cp1y} ${W*0.5},${midY} Q${W*0.75},${cp2y} ${W},${yFlat}`;
+      const shim  = document.createElementNS(ns, 'path');
+      shim.setAttribute('d', shimD);
+      shim.setAttribute('fill', 'none');
+      shim.setAttribute('stroke', 'rgba(255,255,255,0.55)');
+      shim.setAttribute('stroke-width', di === n - 1 ? '2' : '1.4');
+      shim.setAttribute('pointer-events', 'none');
+      g.appendChild(shim);
 
-      svgEl.appendChild(grp);
+      // Subtle dark separator so adjacent close-color layers stay distinct
+      if (di > 0) {
+        const sep = document.createElementNS(ns, 'line');
+        sep.setAttribute('x1', '0');  sep.setAttribute('y1', yFlat);
+        sep.setAttribute('x2', W);    sep.setAttribute('y2', yFlat);
+        sep.setAttribute('stroke', 'rgba(0,0,0,0.07)');
+        sep.setAttribute('stroke-width', '0.5');
+        sep.setAttribute('pointer-events', 'none');
+        g.appendChild(sep);
+      }
 
-      // Legend row
-      const pct    = Math.round((item.amount / total) * 100);
-      const legRow = document.createElement('div');
-      legRow.className   = 'legend-item';
-      legRow.dataset.idx = i;
-      legRow.innerHTML   = `
-        ${iconHTML(item.name, 24)}
-        <span class="legend-name">${item.name}</span>
-        <span class="legend-pct">${pct}%</span>
-        <span class="legend-amt">$${item.amount.toLocaleString()}</span>
-        <span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
-      legRow.addEventListener('mouseenter', () => hoverLayer(i, true));
-      legRow.addEventListener('mouseleave', () => hoverLayer(i, false));
-      legRow.addEventListener('click',      () => pinLayer(i));
-      legendEl.appendChild(legRow);
+      g.addEventListener('mouseenter', () => { if (pinnedLayerIdx < 0) setLayerStates(si); });
+      g.addEventListener('mouseleave', () => { if (pinnedLayerIdx < 0) setLayerStates(-1); });
+      g.addEventListener('click',      () => pinLayer(si));
+      g.addEventListener('touchend',   e  => { e.preventDefault(); pinLayer(si); });
+      stackG.appendChild(g);
+
+      // Legend row (sorted big→small order)
+      if (di === n - 1) {
+        sorted.forEach((s, li) => {
+          const pct    = Math.round((s.amount / total) * 100);
+          const legRow = document.createElement('div');
+          legRow.className   = 'legend-item';
+          legRow.dataset.idx = li;
+          legRow.innerHTML   = `
+            ${iconHTML(s.name, 24)}
+            <span class="legend-name">${s.name}</span>
+            <span class="legend-pct">${pct}%</span>
+            <span class="legend-amt">$${s.amount.toLocaleString()}</span>
+            <span class="legend-del" onclick="event.stopPropagation();deleteItem('${s.name}')">&#215;</span>`;
+          legRow.addEventListener('mouseenter', () => { if (pinnedLayerIdx < 0) setLayerStates(li); });
+          legRow.addEventListener('mouseleave', () => { if (pinnedLayerIdx < 0) setLayerStates(-1); });
+          legRow.addEventListener('click',      () => pinLayer(li));
+          legendEl.appendChild(legRow);
+        });
+      }
     });
-
-    // Gradient definition for inner shine
-    const defs  = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const grad  = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-    grad.setAttribute('id',  'shineGrad');
-    grad.setAttribute('x1',  '0');
-    grad.setAttribute('y1',  '0');
-    grad.setAttribute('x2',  '0');
-    grad.setAttribute('y2',  '1');
-    const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    s1.setAttribute('offset', '0%');
-    s1.setAttribute('stop-color', 'rgba(255,255,255,0.18)');
-    const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    s2.setAttribute('offset', '100%');
-    s2.setAttribute('stop-color', 'rgba(0,0,0,0.08)');
-    grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad);
-    svgEl.insertBefore(defs, svgEl.firstChild);
 
     document.getElementById('stack-total-amt').textContent = '$' + total.toLocaleString();
     document.getElementById('stack-total-lbl').textContent = 'total';
@@ -800,40 +759,33 @@
   }
 
   function setLayerStates(activeIdx) {
-    const layers = document.getElementById('filo-wave-svg').querySelectorAll('.filo-layer-group');
-    const rows   = document.getElementById('filo-legend').querySelectorAll('.legend-item');
-    layers.forEach((l, i) => {
-      l.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
-      l.classList.toggle('highlighted', activeIdx !== -1 && i === activeIdx);
+    const svgEl    = document.getElementById('filo-wave-svg');
+    const legendEl = document.getElementById('filo-legend');
+    svgEl.querySelectorAll('.filo-layer-group').forEach(el => {
+      const i = parseInt(el.dataset.idx);
+      el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
     });
-    rows.forEach((r, i) => r.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx));
-
+    legendEl.querySelectorAll('.legend-item').forEach(el => {
+      const i = parseInt(el.dataset.idx);
+      el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
+    });
+    const amtEl = document.getElementById('stack-total-amt');
+    const lblEl = document.getElementById('stack-total-lbl');
     if (activeIdx === -1) {
-      document.getElementById('stack-total-amt').textContent = '$' + _lastTotal.toLocaleString();
-      document.getElementById('stack-total-lbl').textContent = 'total';
+      amtEl.textContent = '$' + _lastTotal.toLocaleString();
+      lblEl.textContent = 'total';
     } else {
-      const item = _lastSorted[activeIdx];
-      document.getElementById('stack-total-amt').textContent = '$' + item.amount.toLocaleString();
-      document.getElementById('stack-total-lbl').textContent = item.name;
+      amtEl.textContent = '$' + _lastSorted[activeIdx].amount.toLocaleString();
+      lblEl.textContent = _lastSorted[activeIdx].name;
     }
-  }
-
-  function hoverLayer(idx, on) {
-    if (pinnedLayerIdx !== -1) return;
-    setLayerStates(on ? idx : -1);
   }
 
   function pinLayer(idx) {
-    if (pinnedLayerIdx === idx) {
-      pinnedLayerIdx = -1;
-      setLayerStates(-1);
-    } else {
-      pinnedLayerIdx = idx;
-      setLayerStates(idx);
-    }
+    if (pinnedLayerIdx === idx) { pinnedLayerIdx = -1; setLayerStates(-1); }
+    else { pinnedLayerIdx = idx; setLayerStates(idx); }
   }
 
-  // ── Stat cards ────────────────────────────────────────────────────────────
+  // ── Stat cards / Trends ───────────────────────────────────────────────────
   function renderStatCards(){
     const keys=Object.keys(months).map(Number);
     if(!keys.length){document.getElementById('stat-cards').innerHTML='';return;}
@@ -940,7 +892,6 @@
       inner.style.display='none';empty.style.display='flex';
     } else {
       inner.style.display='flex';empty.style.display='none';
-      // rAF ensures the SVG has rendered dimensions before we draw
       requestAnimationFrame(()=>renderFiloStack(items,total));
     }
   }
