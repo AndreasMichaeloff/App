@@ -68,32 +68,48 @@
 
     .sources-title { font-size: clamp(9px,1.1vh,11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px,0.8vh,8px); margin-top: clamp(8px,1.2vh,14px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
 
-    /* ── Filo Wave Chart ── */
+    /* ── Chart section ── */
     .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; border: 1.5px solid #e0d8c8; padding: clamp(8px,1.2vh,14px); display: flex; flex-direction: column; overflow: hidden; }
 
-    .filo-wave-wrap { flex: 1; min-height: 0; display: flex; gap: 10px; align-items: stretch; }
+    .filo-wrap { flex: 1; min-height: 0; display: flex; gap: 12px; align-items: stretch; }
 
-    /* SVG wave column */
-    .filo-svg-col { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; width: clamp(100px,26vw,140px); }
-    .filo-wave-svg { width: 100%; flex: 1; min-height: 0; cursor: pointer; }
+    /* SVG column */
+    .filo-svg-col {
+      flex-shrink: 0;
+      width: clamp(90px, 28vw, 130px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #filo-wave-svg {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .stack-total-label { text-align: center; padding-top: 5px; flex-shrink: 0; }
+    .stack-total-label .amt { font-size: clamp(12px,1.8vh,17px); font-weight: 700; color: #222; transition: all 0.2s; }
+    .stack-total-label .lbl { font-size: clamp(9px,1.1vh,11px); color: #aaa; transition: all 0.2s; }
 
-    /* Legend panel */
+    /* Legend */
     .filo-legend { flex: 1; overflow: hidden; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-    .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px,0.6vh,7px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); cursor: pointer; transition: opacity 0.15s; }
+    .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px,0.7vh,8px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); cursor: pointer; transition: opacity 0.2s; }
     .legend-item:last-child { border-bottom: none; }
-    .legend-item.dimmed { opacity: 0.35; }
-    .source-icon { width: clamp(20px,3vh,28px); height: clamp(20px,3vh,28px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
+    .legend-item.dimmed { opacity: 0.3; }
+    .source-icon { width: clamp(20px,3vh,26px); height: clamp(20px,3vh,26px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
     .source-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .legend-name { font-size: clamp(10px,1.4vh,13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .legend-pct  { font-size: clamp(9px,1.2vh,11px); color: #bbb; margin-right: 2px; }
+    .legend-pct  { font-size: clamp(9px,1.1vh,11px); color: #bbb; margin-right: 2px; }
     .legend-amt  { font-size: clamp(10px,1.4vh,13px); font-weight: 600; color: #222; white-space: nowrap; }
     .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
     .legend-item:hover .legend-del { opacity: 1; }
 
-    /* Total label below stack */
-    .stack-total-label { text-align: center; margin-top: 4px; flex-shrink: 0; }
-    .stack-total-label .amt { font-size: clamp(12px,1.7vh,16px); font-weight: 700; color: #222; }
-    .stack-total-label .lbl { font-size: clamp(9px,1.1vh,11px); color: #aaa; }
+    /* SVG layer transitions */
+    .filo-layer-group { cursor: pointer; transition: opacity 0.2s; }
+    .filo-layer-group.dimmed { opacity: 0.25; }
+    .filo-layer-group.highlighted path.layer-fill { filter: brightness(1.1); }
 
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top: clamp(5px,0.8vh,10px); margin-bottom: 1vh; flex-shrink: 0; }
     .net-label    { font-size: clamp(11px,1.4vh,13px); color: #aaa; }
@@ -128,7 +144,7 @@
     .tx-filter-btn.active-expense { background: #a0622a; color: #fff; border-color: #a0622a; }
     .tx-month-group { margin-bottom: 1.25rem; }
     .tx-month-label { font-size: 11px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .tx-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+    .tx-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
     .tx-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; overflow: hidden; }
     .tx-icon img { width: 36px; height: 36px; object-fit: cover; border-radius: 10px; }
     .tx-info { flex: 1; min-width: 0; }
@@ -206,17 +222,12 @@
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
-    /* Wave layer hover animation */
-    .filo-wave-layer { transition: opacity 0.18s ease, filter 0.18s ease; cursor: pointer; }
-    .filo-wave-layer.dimmed { opacity: 0.3; filter: saturate(0.3); }
-    .filo-wave-layer.active { filter: brightness(1.08); }
-
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 72px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
       .total-card .amount { font-size: 52px; }
-      .filo-svg-col { width: 180px; }
-      .chart-section { flex: none; padding: 1.5rem; min-height: 220px; }
+      .filo-svg-col { width: 160px; }
+      .chart-section { flex: none; padding: 1.5rem; min-height: 240px; }
       .trends-chart-wrap { height: 320px; }
     }
   </style>
@@ -272,11 +283,10 @@
     </div>
     <div class="sources-title" id="breakdown-title">Income breakdown</div>
 
-    <!-- Filo Wave Chart -->
     <div class="chart-section" id="chart-section">
-      <div id="chart-section-inner" class="filo-wave-wrap">
+      <div id="chart-section-inner" class="filo-wrap">
         <div class="filo-svg-col">
-          <svg id="filo-wave-svg" class="filo-wave-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+          <svg id="filo-wave-svg" xmlns="http://www.w3.org/2000/svg"></svg>
           <div class="stack-total-label">
             <div class="amt" id="stack-total-amt"></div>
             <div class="lbl" id="stack-total-lbl">total</div>
@@ -478,7 +488,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script>
-  // ── Brand map ──────────────────────────────────────────────────────────────
   const SOURCE_BRANDS = {
     "YouTube":        {color:"#FF0000",initials:"YT",logo:"https://www.google.com/s2/favicons?domain=youtube.com&sz=64"},
     "Venmo":          {color:"#3D95CE",initials:"V", logo:"https://www.google.com/s2/favicons?domain=venmo.com&sz=64"},
@@ -515,13 +524,11 @@
   function getMonthLabel(off)    { const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off); return d.toLocaleString('default',{month:'short',year:'numeric'}); }
   function getMonthLabelFull(off){ const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off); return d.toLocaleString('default',{month:'long',year:'numeric'}); }
 
-  // ── Default demo data ─────────────────────────────────────────────────────
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
     "-2":{label:getMonthLabelFull(-2),income:{items:[{name:"YouTube",amount:2900,date:Date.now()-864e5*50},{name:"Venmo",amount:1850,date:Date.now()-864e5*48},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*45},{name:"Cash App",amount:730,date:Date.now()-864e5*40}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*58},{name:"Software",amount:1050,date:Date.now()-864e5*52},{name:"Food",amount:900,date:Date.now()-864e5*46},{name:"Other",amount:1000,date:Date.now()-864e5*42}]}},
   };
 
-  // ── Storage with graceful fallback ────────────────────────────────────────
   const store=(()=>{
     try{localStorage.setItem('_t','1');localStorage.removeItem('_t');return localStorage;}
     catch(e){const m={};return{getItem:k=>m[k]||null,setItem:(k,v)=>m[k]=v,removeItem:k=>delete m[k],clear:()=>Object.keys(m).forEach(k=>delete m[k])};}
@@ -547,8 +554,7 @@
 
   let months=loadData(), goals=loadGoals();
   let offset=0, mode="income", entryType="income", selectedSource=null;
-  let trendsChart=null, txFilter='all', editContext=null;
-  let pinnedLayerIdx = -1;
+  let trendsChart=null, txFilter='all', editContext=null, pinnedLayerIdx=-1;
 
   // ── Pull to refresh ───────────────────────────────────────────────────────
   let pullStartY=0, pulling=false;
@@ -604,7 +610,6 @@
     document.getElementById('tx-list').innerHTML=html;
   }
 
-  // ── Edit / Delete ─────────────────────────────────────────────────────────
   function openEditSheet(monthKey,type,itemIdx){
     editContext={monthKey,type,itemIdx};
     const item=months[monthKey][type].items[itemIdx];
@@ -629,7 +634,6 @@
     saveData();closeEditSheet();render();renderTransactions();showToast(name+' removed');
   }
 
-  // ── Goal banner ───────────────────────────────────────────────────────────
   function updateGoalBanner(){
     const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji');
     if(!goals.length){banner.classList.add('hidden');return;}
@@ -640,165 +644,192 @@
     else{banner.classList.add('hidden');}
   }
 
-  // ── ✦ FILO WAVE STACK CHART ✦ ─────────────────────────────────────────────
-  // Renders source items as stacked SVG wave-ribbon layers, largest at bottom.
-  // Each layer has a quadratic-curve top edge for that "filo pastry" look.
-  // Hover/click interactions dim other layers and update the total label.
+  // ── ✦ FILO WAVE STACK — rewritten from scratch ✦ ─────────────────────────
+  // Uses a fixed 100×200 SVG coordinate space so wave amplitude is always
+  // proportional regardless of screen size. preserveAspectRatio="none" then
+  // stretches it to fill the container.
+  // Each layer is a closed path:
+  //   top edge  = smooth cubic bezier wave across full width
+  //   sides     = straight lines down to bottom edge
+  //   bottom    = straight line back (or previous layer's top wave path reversed)
+  // Layers are drawn bottom→top so the largest is at the bottom.
+
+  const W = 100; // SVG coordinate width
+  let _lastSorted = [], _lastTotal = 0;
+
+  function makeWavePath(y, h, amp, phase) {
+    // Returns { top, full }
+    // top  = just the top curve (for reuse as next layer's bottom)
+    // full = closed filled shape from topY to bottomY
+    const topY    = y;
+    const bottomY = y + h;
+
+    // Cubic bezier: start flat on left, peak/trough in middle, flat on right
+    // phase alternates so adjacent layers wave in opposite directions
+    const dir = phase % 2 === 0 ? 1 : -1;
+    const peak = amp * dir;
+
+    // Top wave: M 0,topY  C 25,(topY+peak) 75,(topY-peak) 100,topY
+    const topCurve = `M0,${topY} C25,${topY+peak} 75,${topY-peak} ${W},${topY}`;
+
+    // Full closed path: top curve → right side down → bottom line ← left side up
+    const full = `${topCurve} L${W},${bottomY} L0,${bottomY} Z`;
+
+    return { top: topCurve, full };
+  }
 
   function renderFiloStack(items, total) {
-    const svgEl   = document.getElementById('filo-wave-svg');
+    const svgEl    = document.getElementById('filo-wave-svg');
     const legendEl = document.getElementById('filo-legend');
-    svgEl.innerHTML   = '';
+    svgEl.innerHTML    = '';
     legendEl.innerHTML = '';
     if (!items.length || total === 0) return;
 
-    // Measure available pixel height from the SVG container
-    const availH = svgEl.parentElement.clientHeight - 36; // subtract total-label area
-    const svgW   = svgEl.clientWidth || 120;
+    // Work in a normalised 100×200 coordinate space
+    const H        = 200;
+    const GAP      = 3;   // gap between layers in SVG units
+    const MIN_H    = 14;  // minimum layer height in SVG units
+    const AMP      = 6;   // wave amplitude — bigger = more dramatic curves
 
-    // Sort largest amount at the bottom (rendered last = visually on top edge)
-    const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    const n      = sorted.length;
-
-    // Assign proportional heights, min 14px so tiny slices are still visible
-    const MIN_H   = 14;
-    const totalPx = availH - (n - 1) * 3; // 3px gap between layers
-    const heights = sorted.map(item => {
-      const raw = (item.amount / total) * totalPx;
-      return Math.max(MIN_H, raw);
-    });
-    // Re-scale so they sum exactly to totalPx (after min clamping)
-    const sumH  = heights.reduce((s, h) => s + h, 0);
-    const scale = totalPx / sumH;
-    const scaledH = heights.map(h => Math.max(MIN_H, h * scale));
-
-    // Build cumulative y positions (top of each layer), bottom-up
-    // Layer 0 (biggest) sits at the bottom
-    const yPositions = [];
-    let curY = availH;
-    for (let i = 0; i < n; i++) {
-      curY -= scaledH[i];
-      yPositions.push(curY);
-      if (i < n - 1) curY -= 3;
-    }
-
-    // Set SVG viewBox to actual pixel dimensions for 1:1 rendering
-    svgEl.setAttribute('viewBox', `0 0 ${svgW} ${availH}`);
+    svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svgEl.setAttribute('preserveAspectRatio', 'none');
 
-    // Wave amplitude: subtle, alternating direction per layer for depth
-    const waveAmp = 5;
+    // Sort largest at bottom (index 0 = bottom layer)
+    const sorted = [...items].sort((a, b) => b.amount - a.amount);
+    _lastSorted  = sorted;
+    _lastTotal   = total;
+    const n      = sorted.length;
 
+    // Calculate proportional heights, enforce minimum
+    const usableH = H - (n - 1) * GAP;
+    let rawHeights = sorted.map(item => (item.amount / total) * usableH);
+    // Clamp minimums and scale back to fit
+    rawHeights     = rawHeights.map(h => Math.max(MIN_H, h));
+    const sumRaw   = rawHeights.reduce((s, h) => s + h, 0);
+    const heights  = rawHeights.map(h => (h / sumRaw) * usableH);
+
+    // Compute top-Y of each layer, building from the bottom up
+    const topYs = [];
+    let cursor  = H;
+    for (let i = 0; i < n; i++) {
+      cursor -= heights[i];
+      topYs.push(cursor);
+      if (i < n - 1) cursor -= GAP;
+    }
+
+    // Draw layers bottom→top (index 0 drawn first = visually at bottom z-order)
     sorted.forEach((item, i) => {
       const color = getBrand(item.name).color;
-      const y     = yPositions[i];
-      const h     = scaledH[i];
-      const yBot  = y + h;
+      const y     = topYs[i];
+      const h     = heights[i];
+      const { full, top } = makeWavePath(y, h, AMP, i);
 
-      // Wave control point: alternates left/right bulge
-      const cpX = svgW / 2;
-      const cpY = y + (i % 2 === 0 ? -waveAmp : waveAmp);
+      const ns  = 'http://www.w3.org/2000/svg';
+      const grp = document.createElementNS(ns, 'g');
+      grp.setAttribute('class', 'filo-layer-group');
+      grp.dataset.idx = i;
 
-      // Top edge: quadratic bezier curve
-      // Bottom edge: straight (or previous layer's top wave)
-      const topPath    = `M0,${y} Q${cpX},${cpY} ${svgW},${y}`;
-      const bottomPath = `L${svgW},${yBot} L0,${yBot} Z`;
-      const fullPath   = topPath + ' ' + bottomPath;
+      // Main filled layer
+      const fill = document.createElementNS(ns, 'path');
+      fill.setAttribute('d', full);
+      fill.setAttribute('fill', color);
+      fill.setAttribute('class', 'layer-fill');
 
-      // Highlight stroke along the top wave
-      const strokePath = `M0,${y} Q${cpX},${cpY} ${svgW},${y}`;
+      // Lighter inner gradient overlay for depth
+      const shine = document.createElementNS(ns, 'path');
+      shine.setAttribute('d', full);
+      shine.setAttribute('fill', 'url(#shineGrad)');
+      shine.setAttribute('pointer-events', 'none');
 
-      // Build group
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.setAttribute('class', 'filo-wave-layer');
-      g.dataset.idx = i;
-      g.style.animationDelay = `${i * 0.06}s`;
+      // White highlight line along the top wave edge
+      const edge = document.createElementNS(ns, 'path');
+      edge.setAttribute('d', top);
+      edge.setAttribute('fill', 'none');
+      edge.setAttribute('stroke', 'rgba(255,255,255,0.35)');
+      edge.setAttribute('stroke-width', '1');
+      edge.setAttribute('pointer-events', 'none');
 
-      // Fill path
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', fullPath);
-      path.setAttribute('fill', color);
-      path.setAttribute('opacity', '0.92');
-      g.appendChild(path);
+      grp.appendChild(fill);
+      grp.appendChild(shine);
+      grp.appendChild(edge);
 
-      // Subtle inner shine along top edge
-      const shine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      shine.setAttribute('d', strokePath);
-      shine.setAttribute('fill', 'none');
-      shine.setAttribute('stroke', 'rgba(255,255,255,0.28)');
-      shine.setAttribute('stroke-width', '1.2');
-      g.appendChild(shine);
+      grp.addEventListener('mouseenter', () => hoverLayer(i, true));
+      grp.addEventListener('mouseleave', () => hoverLayer(i, false));
+      grp.addEventListener('click',      () => pinLayer(i));
+      grp.addEventListener('touchend',   e  => { e.preventDefault(); pinLayer(i); });
 
-      // Events
-      g.addEventListener('mouseenter', () => highlightLayer(i, sorted, total, true));
-      g.addEventListener('mouseleave', () => highlightLayer(-1, sorted, total, false));
-      g.addEventListener('click',      () => toggleLayerPin(i, sorted, total));
-      g.addEventListener('touchend',   (e) => { e.preventDefault(); toggleLayerPin(i, sorted, total); });
-
-      svgEl.appendChild(g);
+      svgEl.appendChild(grp);
 
       // Legend row
-      const pctLabel = Math.round((item.amount / total) * 100);
-      const legRow   = document.createElement('div');
+      const pct    = Math.round((item.amount / total) * 100);
+      const legRow = document.createElement('div');
       legRow.className   = 'legend-item';
       legRow.dataset.idx = i;
       legRow.innerHTML   = `
         ${iconHTML(item.name, 24)}
         <span class="legend-name">${item.name}</span>
-        <span class="legend-pct">${pctLabel}%</span>
+        <span class="legend-pct">${pct}%</span>
         <span class="legend-amt">$${item.amount.toLocaleString()}</span>
         <span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
-      legRow.addEventListener('mouseenter', () => highlightLayer(i, sorted, total, true));
-      legRow.addEventListener('mouseleave', () => highlightLayer(-1, sorted, total, false));
-      legRow.addEventListener('click',      () => toggleLayerPin(i, sorted, total));
+      legRow.addEventListener('mouseenter', () => hoverLayer(i, true));
+      legRow.addEventListener('mouseleave', () => hoverLayer(i, false));
+      legRow.addEventListener('click',      () => pinLayer(i));
       legendEl.appendChild(legRow);
     });
+
+    // Gradient definition for inner shine
+    const defs  = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const grad  = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id',  'shineGrad');
+    grad.setAttribute('x1',  '0');
+    grad.setAttribute('y1',  '0');
+    grad.setAttribute('x2',  '0');
+    grad.setAttribute('y2',  '1');
+    const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s1.setAttribute('offset', '0%');
+    s1.setAttribute('stop-color', 'rgba(255,255,255,0.18)');
+    const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    s2.setAttribute('offset', '100%');
+    s2.setAttribute('stop-color', 'rgba(0,0,0,0.08)');
+    grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad);
+    svgEl.insertBefore(defs, svgEl.firstChild);
 
     document.getElementById('stack-total-amt').textContent = '$' + total.toLocaleString();
     document.getElementById('stack-total-lbl').textContent = 'total';
     pinnedLayerIdx = -1;
   }
 
-  function highlightLayer(idx, sorted, total, on) {
-    if (pinnedLayerIdx !== -1) return;
-    const layers = document.getElementById('filo-wave-svg').querySelectorAll('.filo-wave-layer');
+  function setLayerStates(activeIdx) {
+    const layers = document.getElementById('filo-wave-svg').querySelectorAll('.filo-layer-group');
     const rows   = document.getElementById('filo-legend').querySelectorAll('.legend-item');
+    layers.forEach((l, i) => {
+      l.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
+      l.classList.toggle('highlighted', activeIdx !== -1 && i === activeIdx);
+    });
+    rows.forEach((r, i) => r.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx));
 
-    if (!on || idx === -1) {
-      layers.forEach(l => { l.classList.remove('active', 'dimmed'); });
-      rows.forEach(r   => r.classList.remove('dimmed'));
-      document.getElementById('stack-total-amt').textContent = '$' + total.toLocaleString();
+    if (activeIdx === -1) {
+      document.getElementById('stack-total-amt').textContent = '$' + _lastTotal.toLocaleString();
       document.getElementById('stack-total-lbl').textContent = 'total';
     } else {
-      layers.forEach((l, i) => {
-        l.classList.toggle('active', i === idx);
-        l.classList.toggle('dimmed', i !== idx);
-      });
-      rows.forEach((r, i) => r.classList.toggle('dimmed', i !== idx));
-      document.getElementById('stack-total-amt').textContent = '$' + sorted[idx].amount.toLocaleString();
-      document.getElementById('stack-total-lbl').textContent = sorted[idx].name;
+      const item = _lastSorted[activeIdx];
+      document.getElementById('stack-total-amt').textContent = '$' + item.amount.toLocaleString();
+      document.getElementById('stack-total-lbl').textContent = item.name;
     }
   }
 
-  function toggleLayerPin(idx, sorted, total) {
-    const layers = document.getElementById('filo-wave-svg').querySelectorAll('.filo-wave-layer');
-    const rows   = document.getElementById('filo-legend').querySelectorAll('.legend-item');
+  function hoverLayer(idx, on) {
+    if (pinnedLayerIdx !== -1) return;
+    setLayerStates(on ? idx : -1);
+  }
 
+  function pinLayer(idx) {
     if (pinnedLayerIdx === idx) {
       pinnedLayerIdx = -1;
-      layers.forEach(l => l.classList.remove('active', 'dimmed'));
-      rows.forEach(r   => r.classList.remove('dimmed'));
-      document.getElementById('stack-total-amt').textContent = '$' + total.toLocaleString();
-      document.getElementById('stack-total-lbl').textContent = 'total';
+      setLayerStates(-1);
     } else {
       pinnedLayerIdx = idx;
-      layers.forEach((l, i) => {
-        l.classList.toggle('active', i === idx);
-        l.classList.toggle('dimmed', i !== idx);
-      });
-      rows.forEach((r, i) => r.classList.toggle('dimmed', i !== idx));
-      document.getElementById('stack-total-amt').textContent = '$' + sorted[idx].amount.toLocaleString();
-      document.getElementById('stack-total-lbl').textContent = sorted[idx].name;
+      setLayerStates(idx);
     }
   }
 
@@ -887,7 +918,6 @@
     if(idx>-1){list.splice(idx,1);saveData();render();showToast(name+' removed');}
   }
 
-  // ── Main render ───────────────────────────────────────────────────────────
   function render(){
     const d=months[String(offset)];if(!d)return;
     const prev=months[String(offset-1)],data=d[mode],items=data.items,total=getTotal(items);
@@ -910,6 +940,7 @@
       inner.style.display='none';empty.style.display='flex';
     } else {
       inner.style.display='flex';empty.style.display='none';
+      // rAF ensures the SVG has rendered dimensions before we draw
       requestAnimationFrame(()=>renderFiloStack(items,total));
     }
   }
@@ -1003,8 +1034,6 @@
   window.addEventListener('load',()=>{
     setTimeout(()=>{ const s=document.getElementById('splash-screen'); s.classList.add('hide'); setTimeout(()=>s.style.display='none',400); },1200);
   });
-
-  // Re-render stack on resize so wave proportions stay correct
   window.addEventListener('resize',()=>{ if(document.getElementById('page-home').classList.contains('active')) render(); });
   </script>
 </body>
