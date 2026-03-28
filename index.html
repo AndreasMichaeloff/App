@@ -39,8 +39,8 @@
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px,1vh,11px) 10px; font-size: clamp(13px,1.6vh,15px); font-weight: 600; border: 2px solid; border-radius: 12px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
     .toggle-btn:active { transform: scale(0.97); }
-    .toggle-btn.income-active  { background: #e8b84b; color: #fff; border-color: #e8b84b; }
-    .toggle-btn.expense-active { background: #a0622a; color: #fff; border-color: #a0622a; }
+    .toggle-btn.income-active   { background: #e8b84b; color: #fff; border-color: #e8b84b; }
+    .toggle-btn.expense-active  { background: #a0622a; color: #fff; border-color: #a0622a; }
     .toggle-btn.inactive-income  { background: #fff; color: #c49a3a; border-color: #e8b84b; }
     .toggle-btn.inactive-expense { background: #fff; color: #a0622a; border-color: #a0622a; }
 
@@ -66,56 +66,90 @@
 
     .sources-title { font-size: clamp(9px,1.1vh,11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px,0.8vh,8px); margin-top: clamp(8px,1.2vh,14px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
 
-    /* ── Chart section ── */
-    .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 16px; border: 1.5px solid #e0d8c8; padding: clamp(8px,1.2vh,14px); display: flex; flex-direction: column; overflow: hidden; }
-    .filo-wrap { flex: 1; min-height: 0; display: flex; gap: 12px; align-items: stretch; }
+    /* ── Chart card ── */
+    .chart-section {
+      flex: 1; min-height: 0;
+      background: #f7f2e8;
+      border-radius: 18px;
+      border: 1.5px solid #e0d8c8;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      padding: 0;
+    }
 
-    .filo-svg-col {
+    /* Left: rings SVG */
+    .rings-col {
       flex-shrink: 0;
-      width: clamp(90px, 28vw, 130px);
+      width: clamp(130px, 38vw, 190px);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(10px,2vh,18px);
+    }
+    #rings-svg {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* Right: legend */
+    .rings-legend {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      justify-content: center;
+      padding: clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0;
+      gap: 0;
     }
-    #filo-wave-svg {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      display: block;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .stack-total-label { text-align: center; padding-top: 5px; flex-shrink: 0; }
-    .stack-total-label .amt { font-size: clamp(12px,1.8vh,17px); font-weight: 700; color: #222; transition: all 0.2s; }
-    .stack-total-label .lbl { font-size: clamp(9px,1.1vh,11px); color: #aaa; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    .filo-legend { flex: 1; overflow: hidden; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-    .legend-item { display: flex; align-items: center; gap: 6px; padding: clamp(3px,0.7vh,8px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); cursor: pointer; transition: opacity 0.2s; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: clamp(4px,0.7vh,8px) 0;
+      border-bottom: 0.5px solid rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
     .legend-item:last-child { border-bottom: none; }
-    .legend-item.dimmed { opacity: 0.2; }
+    .legend-item.dimmed { opacity: 0.25; }
+
+    .legend-swatch {
+      width: clamp(8px,1.2vh,11px);
+      height: clamp(8px,1.2vh,11px);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
     .source-icon { width: clamp(20px,3vh,26px); height: clamp(20px,3vh,26px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
     .source-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .legend-name { font-size: clamp(10px,1.4vh,13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .legend-pct  { font-size: clamp(9px,1.1vh,11px); color: #bbb; margin-right: 2px; }
+    .legend-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
     .legend-amt  { font-size: clamp(10px,1.4vh,13px); font-weight: 600; color: #222; white-space: nowrap; }
-    .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 2px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; }
+    .legend-pct  { font-size: clamp(9px,1.1vh,10px); color: #bbb; }
+    .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; flex-shrink: 0; }
     .legend-item:hover .legend-del { opacity: 1; }
 
-    .filo-layer-group { cursor: pointer; transition: opacity 0.18s; }
-    .filo-layer-group.dimmed { opacity: 0.15; }
+    /* Empty state */
+    #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem; text-align: center; }
 
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top: clamp(5px,0.8vh,10px); margin-bottom: 1vh; flex-shrink: 0; }
     .net-label    { font-size: clamp(11px,1.4vh,13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
 
-    #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem 0; }
-
+    /* ── Other pages ── */
     #page-trends, #page-goals, #page-settings, #page-transactions { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title    { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1rem; }
-
-    .chart-legend { display: flex; gap: 16px; margin-bottom: 1rem; }
+    .chart-legend  { display: flex; gap: 16px; margin-bottom: 1rem; }
     .chart-legend span { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
     .chart-legend .dot { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
     .trends-chart-wrap { position: relative; width: 100%; height: 240px; margin-bottom: 1.5rem; }
@@ -128,7 +162,6 @@
     .stat-gold  { color: #e8b84b; }
     .stat-green { color: #6a9e40; }
     .stat-dark  { color: #222; }
-
     .tx-filter-row { display: flex; gap: 8px; margin-bottom: 1rem; }
     .tx-filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all 0.15s; }
     .tx-filter-btn.active-all     { background: #222; color: #fff; border-color: #222; }
@@ -149,7 +182,6 @@
     .tx-tag-income  { background: #fff8e6; color: #a07010; }
     .tx-tag-expense { background: #fdf0e6; color: #a0622a; }
     .tx-empty { text-align: center; color: #ccc; font-size: 14px; padding: 3rem 0; }
-
     .goal-card { background: #fff; border: 1.5px solid #e0e0e0; border-radius: 16px; padding: 1.25rem; margin-bottom: 12px; }
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-name    { font-size: 15px; font-weight: 600; color: #222; }
@@ -161,7 +193,6 @@
     .goal-delete  { font-size: 18px; color: #ddd; cursor: pointer; padding: 2px 6px; transition: color 0.15s; }
     .goal-delete:hover { color: #a0622a; }
     .add-goal-btn { width: 100%; padding: 14px; border: 2px dashed #e8c96a; border-radius: 14px; background: transparent; color: #c49a3a; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
-
     .settings-section { margin-bottom: 1.5rem; }
     .settings-section-title { font-size: 11px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
     .settings-row { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 6px; cursor: pointer; }
@@ -169,6 +200,7 @@
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
 
+    /* ── Nav ── */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: #fff; border-top: 1.5px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom,0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0 24px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
@@ -176,6 +208,7 @@
     .nav-label { font-size: 9px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
 
+    /* ── Sheets ── */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -208,16 +241,24 @@
     .btn-add { flex: 2; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; background: #e8b84b; color: #fff; transition: background 0.15s, transform 0.1s; }
     .btn-add:active { transform: scale(0.97); background: #c49a3a; }
     .edit-amount-hint { font-size: 12px; color: #bbb; margin-top: 6px; text-align: center; }
-
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
+
+    /* Ring animation */
+    @keyframes ringDraw {
+      from { stroke-dashoffset: var(--circ); }
+      to   { stroke-dashoffset: var(--dash-offset); }
+    }
+    .ring-arc { transition: opacity 0.22s, stroke-width 0.18s; cursor: pointer; }
+    .ring-arc.dimmed { opacity: 0.2; }
+    .ring-arc.highlighted { stroke-width: var(--sw-hi); }
 
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 72px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
       .total-card .amount { font-size: 52px; }
-      .filo-svg-col { width: 160px; }
-      .chart-section { flex: none; padding: 1.5rem; min-height: 240px; }
+      .chart-section { flex: none; height: 220px; }
+      .rings-col { width: 220px; }
       .trends-chart-wrap { height: 320px; }
     }
   </style>
@@ -232,6 +273,7 @@
     </div>
   </div>
 
+  <!-- HOME -->
   <div class="page active" id="page-home">
     <div class="pull-indicator" id="pull-indicator">
       <div class="pull-spinner" id="pull-spinner" style="display:none;"></div>
@@ -271,23 +313,16 @@
     </div>
     <div class="sources-title" id="breakdown-title">Income breakdown</div>
 
+    <!-- CHART -->
     <div class="chart-section" id="chart-section">
-      <div id="chart-section-inner" class="filo-wrap">
-        <div class="filo-svg-col">
-          <svg id="filo-wave-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-          <div class="stack-total-label">
-            <div class="amt" id="stack-total-amt"></div>
-            <div class="lbl" id="stack-total-lbl">total</div>
-          </div>
-        </div>
-        <div class="filo-legend" id="filo-legend"></div>
+      <div class="rings-col" id="rings-col">
+        <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
-      <div id="empty-state">
-        <div style="font-size:36px;">💰</div>
-        <div style="font-size:15px; font-weight:600; color:#555;">No transactions yet</div>
-        <div style="font-size:12px; color:#bbb; text-align:center; line-height:1.5;">
-          Tap the <strong style="color:#e8b84b;">+</strong> button above to add your first income or expense
-        </div>
+      <div class="rings-legend" id="rings-legend"></div>
+      <div id="empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
+        <div style="font-size:34px;">💰</div>
+        <div style="font-size:14px; font-weight:600; color:#555;">No transactions yet</div>
+        <div style="font-size:12px; color:#bbb; text-align:center; line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add your first transaction</div>
       </div>
     </div>
 
@@ -297,6 +332,7 @@
     </div>
   </div>
 
+  <!-- TRENDS -->
   <div class="page" id="page-trends">
     <div class="page-title">Trends</div>
     <div class="page-subtitle">Income, expenses &amp; net over time</div>
@@ -310,6 +346,7 @@
     <div class="stat-cards" id="stat-cards"></div>
   </div>
 
+  <!-- TRANSACTIONS -->
   <div class="page" id="page-transactions">
     <div class="page-title">Transactions</div>
     <div class="page-subtitle">Every transaction, all in one place</div>
@@ -321,6 +358,7 @@
     <div id="tx-list"></div>
   </div>
 
+  <!-- GOALS -->
   <div class="page" id="page-goals">
     <div class="page-title">Goals</div>
     <div class="page-subtitle">Set targets, track progress</div>
@@ -328,6 +366,7 @@
     <button class="add-goal-btn" onclick="openGoalSheet()">+ Add a goal</button>
   </div>
 
+  <!-- SETTINGS -->
   <div class="page" id="page-settings">
     <div class="page-title">Settings</div>
     <div class="page-subtitle">Manage your Filo</div>
@@ -351,66 +390,40 @@
     </div>
   </div>
 
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
-      <div class="nav-icon">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-          <rect x="2"  y="2"  width="8" height="8" rx="2.5" fill="#e8b84b"/>
-          <rect x="12" y="2"  width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/>
-          <rect x="2"  y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/>
-          <rect x="12" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/>
-        </svg>
-      </div>
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2.5" fill="#e8b84b"/><rect x="12" y="2" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/><rect x="2" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/><rect x="12" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/></svg></div>
       <span class="nav-label">Home</span>
     </div>
     <div class="nav-item" id="nav-trends" onclick="switchPage('trends')">
-      <div class="nav-icon">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-          <path d="M2 16 L6 10 L10 13 L14 7 L20 10" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M2 16 L6 10 L10 13 L14 7 L20 10" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <span class="nav-label">Trends</span>
     </div>
     <div class="nav-item" id="nav-transactions" onclick="switchPage('transactions')">
-      <div class="nav-icon">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-          <rect x="2" y="5"  width="18" height="3" rx="1.5" fill="#ccc"/>
-          <rect x="2" y="10" width="14" height="3" rx="1.5" fill="#ccc"/>
-          <rect x="2" y="15" width="10" height="3" rx="1.5" fill="#ccc"/>
-        </svg>
-      </div>
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="2" y="5" width="18" height="3" rx="1.5" fill="#ccc"/><rect x="2" y="10" width="14" height="3" rx="1.5" fill="#ccc"/><rect x="2" y="15" width="10" height="3" rx="1.5" fill="#ccc"/></svg></div>
       <span class="nav-label">Transactions</span>
     </div>
     <div class="nav-item" id="nav-goals" onclick="switchPage('goals')">
-      <div class="nav-icon">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-          <circle cx="11" cy="11" r="8"   stroke="#ccc" stroke-width="2"/>
-          <circle cx="11" cy="11" r="4"   stroke="#ccc" stroke-width="2"/>
-          <circle cx="11" cy="11" r="1.5" fill="#ccc"/>
-        </svg>
-      </div>
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#ccc" stroke-width="2"/><circle cx="11" cy="11" r="4" stroke="#ccc" stroke-width="2"/><circle cx="11" cy="11" r="1.5" fill="#ccc"/></svg></div>
       <span class="nav-label">Goals</span>
     </div>
     <div class="nav-item" id="nav-settings" onclick="switchPage('settings')">
-      <div class="nav-icon">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
-          <circle cx="11" cy="11" r="3" stroke="#ccc" stroke-width="2"/>
-          <path d="M11 2 L11 5 M11 17 L11 20 M2 11 L5 11 M17 11 L20 11 M4.2 4.2 L6.3 6.3 M15.7 15.7 L17.8 17.8 M17.8 4.2 L15.7 6.3 M6.3 15.7 L4.2 17.8" stroke="#ccc" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="3" stroke="#ccc" stroke-width="2"/><path d="M11 2 L11 5 M11 17 L11 20 M2 11 L5 11 M17 11 L20 11 M4.2 4.2 L6.3 6.3 M15.7 15.7 L17.8 17.8 M17.8 4.2 L15.7 6.3 M6.3 15.7 L4.2 17.8" stroke="#ccc" stroke-width="2" stroke-linecap="round"/></svg></div>
       <span class="nav-label">Settings</span>
     </div>
   </nav>
 
   <div class="toast" id="toast"></div>
 
+  <!-- ADD TRANSACTION -->
   <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
     <div class="sheet" id="sheet-main">
       <div class="sheet-handle" id="sheet-handle-main"></div>
       <h2>Add transaction</h2>
       <div class="type-toggle">
-        <button class="type-btn active income"  id="type-income"  onclick="setType('income')">Income</button>
-        <button class="type-btn expense"         id="type-expense" onclick="setType('expense')">Expense</button>
+        <button class="type-btn active income" id="type-income" onclick="setType('income')">Income</button>
+        <button class="type-btn expense"        id="type-expense" onclick="setType('expense')">Expense</button>
       </div>
       <div class="form-row">
         <label id="source-label">Source</label>
@@ -430,6 +443,7 @@
     </div>
   </div>
 
+  <!-- EDIT TRANSACTION -->
   <div class="overlay" id="edit-overlay" onclick="closeEditIfOutside(event)">
     <div class="sheet" id="sheet-edit">
       <div class="sheet-handle" id="sheet-handle-edit"></div>
@@ -447,6 +461,7 @@
     </div>
   </div>
 
+  <!-- ADD GOAL -->
   <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
     <div class="sheet" id="sheet-goal">
       <div class="sheet-handle" id="sheet-handle-goal"></div>
@@ -494,15 +509,15 @@
   function iconHTML(name,size=24){
     const b=getBrand(name);
     if(b.logo) return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.5)}px';"/></div>`;
-    const isEmoji=/\p{Emoji}/u.test(b.initials), fs=isEmoji?Math.round(size*0.55):Math.round(size*0.38);
+    const isEmoji=/\p{Emoji}/u.test(b.initials),fs=isEmoji?Math.round(size*0.55):Math.round(size*0.38);
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${fs}px;">${b.initials}</div>`;
   }
 
   function formatDate(ts){ return new Date(ts).toLocaleDateString('default',{month:'short',day:'numeric',year:'numeric'}); }
   function getDateMonthKey(ts)   { const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
   function getDateMonthLabel(ts) { return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
-  function getMonthLabel(off)    { const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off); return d.toLocaleString('default',{month:'short',year:'numeric'}); }
-  function getMonthLabelFull(off){ const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off); return d.toLocaleString('default',{month:'long',year:'numeric'}); }
+  function getMonthLabel(off)    { const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short',year:'numeric'}); }
+  function getMonthLabelFull(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'long',year:'numeric'}); }
 
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
@@ -514,17 +529,16 @@
     catch(e){const m={};return{getItem:k=>m[k]||null,setItem:(k,v)=>m[k]=v,removeItem:k=>delete m[k],clear:()=>Object.keys(m).forEach(k=>delete m[k])};}
   })();
 
-  function saveData(){ store.setItem('filo_months',JSON.stringify(months)); store.setItem('filo_goals',JSON.stringify(goals)); }
+  function saveData(){ store.setItem('filo_months',JSON.stringify(months));store.setItem('filo_goals',JSON.stringify(goals)); }
   function loadData(){ try{const s=store.getItem('filo_months');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_MONTHS));}catch(e){return JSON.parse(JSON.stringify(DEFAULT_MONTHS));} }
   function loadGoals(){ try{const s=store.getItem('filo_goals');return s?JSON.parse(s):[{name:"Monthly income",target:10000}];}catch(e){return[];} }
-
   function ensureCurrentMonth(){
     if(!months["0"]){months["0"]={label:getMonthLabelFull(0),income:{items:[]},expense:{items:[]}};saveData();}
     months["0"].label=getMonthLabelFull(0);
   }
   function getTotal(items){ return items.reduce((s,x)=>s+x.amount,0); }
   function calcChange(cur,prev,type){
-    if(!prev||prev===0) return null;
+    if(!prev||prev===0)return null;
     const pct=Math.round(((cur-prev)/prev)*100);
     return{text:(pct>=0?"+":"")+pct+"%",isGood:type==="income"?pct>=0:pct<=0};
   }
@@ -532,19 +546,18 @@
   const INCOME_SOURCES  = ["YouTube","Venmo","Cash App","PayPal","Stripe","Sponsorship","Merch","Patreon","Direct deposit"];
   const EXPENSE_SOURCES = ["Rent","Food","Software","Equipment","Ads","Transport","Utilities","Subscriptions","Other"];
 
-  let months=loadData(), goals=loadGoals();
-  let offset=0, mode="income", entryType="income", selectedSource=null;
-  let trendsChart=null, txFilter='all', editContext=null, pinnedLayerIdx=-1;
-  let _lastSorted=[], _lastTotal=0;
+  let months=loadData(),goals=loadGoals();
+  let offset=0,mode="income",entryType="income",selectedSource=null;
+  let trendsChart=null,txFilter='all',editContext=null,pinnedIdx=-1;
+  let _ringSorted=[],_ringTotal=0;
 
   // ── Pull to refresh ───────────────────────────────────────────────────────
-  let pullStartY=0, pulling=false;
+  let pullStartY=0,pulling=false;
   const homeEl=document.getElementById('page-home');
   homeEl.addEventListener('touchstart',e=>{if(homeEl.scrollTop===0){pullStartY=e.touches[0].clientY;pulling=true;}},{passive:true});
   homeEl.addEventListener('touchmove', e=>{if(!pulling)return;if(e.touches[0].clientY-pullStartY>40){document.getElementById('pull-indicator').classList.add('visible');document.getElementById('pull-text').style.display='inline';document.getElementById('pull-spinner').style.display='none';}},{passive:true});
   homeEl.addEventListener('touchend',  e=>{if(!pulling)return;const dist=e.changedTouches[0].clientY-pullStartY;pulling=false;if(dist>40){document.getElementById('pull-text').style.display='none';document.getElementById('pull-spinner').style.display='block';setTimeout(()=>{months=loadData();goals=loadGoals();ensureCurrentMonth();render();document.getElementById('pull-indicator').classList.remove('visible');document.getElementById('pull-spinner').style.display='none';document.getElementById('pull-text').style.display='inline';showToast('Refreshed');},600);}else{document.getElementById('pull-indicator').classList.remove('visible');}},{passive:true});
 
-  // ── Drag to dismiss ───────────────────────────────────────────────────────
   function initDragDismiss(handleId,sheetId,overlayId,closeFn){
     const handle=document.getElementById(handleId),sheet=document.getElementById(sheetId),overlay=document.getElementById(overlayId);
     let startY=0,currentY=0,dragging=false;
@@ -594,23 +607,23 @@
   function openEditSheet(monthKey,type,itemIdx){
     editContext={monthKey,type,itemIdx};
     const item=months[monthKey][type].items[itemIdx];
-    if(!item) return;
+    if(!item)return;
     document.getElementById('edit-sheet-title').textContent=`Edit — ${item.name}`;
     document.getElementById('edit-amount').value=item.amount;
     document.getElementById('edit-overlay').classList.add('open');
   }
-  function closeEditSheet(){ document.getElementById('edit-overlay').classList.remove('open'); editContext=null; }
-  function closeEditIfOutside(e){ if(e.target===document.getElementById('edit-overlay')) closeEditSheet(); }
+  function closeEditSheet(){ document.getElementById('edit-overlay').classList.remove('open');editContext=null; }
+  function closeEditIfOutside(e){ if(e.target===document.getElementById('edit-overlay'))closeEditSheet(); }
   function confirmEdit(){
-    if(!editContext) return;
-    const {monthKey,type,itemIdx}=editContext, newAmt=parseFloat(document.getElementById('edit-amount').value);
+    if(!editContext)return;
+    const {monthKey,type,itemIdx}=editContext,newAmt=parseFloat(document.getElementById('edit-amount').value);
     if(isNaN(newAmt)||newAmt<=0){showToast('Enter a valid amount');return;}
     months[monthKey][type].items[itemIdx].amount=newAmt;
     saveData();closeEditSheet();render();renderTransactions();showToast('Updated!');
   }
   function saveEdit(){
-    if(!editContext) return;
-    const {monthKey,type,itemIdx}=editContext, name=months[monthKey][type].items[itemIdx].name;
+    if(!editContext)return;
+    const {monthKey,type,itemIdx}=editContext,name=months[monthKey][type].items[itemIdx].name;
     months[monthKey][type].items.splice(itemIdx,1);
     saveData();closeEditSheet();render();renderTransactions();showToast(name+' removed');
   }
@@ -625,167 +638,213 @@
     else{banner.classList.add('hidden');}
   }
 
-  // ── ✦ FILO PHYLLO STACK CHART ✦ ──────────────────────────────────────────
-  // Layers stacked biggest-at-bottom. Each layer has a gentle wave top edge
-  // that only bulges UPWARD from a flat baseline — guaranteeing zero gap
-  // between adjacent layers. The whole stack is clipped to rounded corners.
+  // ══════════════════════════════════════════════════════════════════════════
+  // ✦ FILO CONCENTRIC RINGS CHART
+  //
+  // Each source = one ring. Biggest source = outermost ring (widest, most
+  // prominent). Smaller sources nest inward. Each ring is a full circle arc
+  // that fills proportionally — the arc length represents the source's share.
+  // Single source = one complete glowing ring, beautiful on its own.
+  //
+  // Ring spacing is even. Stroke width scales with ring index so outer rings
+  // feel weightier. Gaps between arc ends are tiny (like a watch face).
+  // ══════════════════════════════════════════════════════════════════════════
 
-  function renderFiloStack(items, total) {
-    const svgEl    = document.getElementById('filo-wave-svg');
-    const legendEl = document.getElementById('filo-legend');
-    svgEl.innerHTML    = '';
-    legendEl.innerHTML = '';
-    if (!items.length || total === 0) return;
+  const CX = 100, CY = 100;          // SVG center
+  const OUTER_R   = 88;              // outermost ring radius
+  const RING_GAP  = 13;              // gap between ring centers
+  const BASE_SW   = 11;              // stroke-width of outermost ring
+  const SW_STEP   = 1.5;            // each inner ring gets slightly thinner
+  const MIN_SW    = 5;               // minimum stroke-width
+  const GAP_DEG   = 4;              // degrees of empty gap at arc tail end
+  const START_DEG = -90;             // start at top
+
+  function degToRad(d){ return (d * Math.PI) / 180; }
+
+  function arcPath(cx, cy, r, startDeg, endDeg) {
+    const s = degToRad(startDeg), e = degToRad(endDeg);
+    const x1 = cx + r * Math.cos(s), y1 = cy + r * Math.sin(s);
+    const x2 = cx + r * Math.cos(e), y2 = cy + r * Math.sin(e);
+    const sweep = endDeg - startDeg;
+    const largeArc = sweep > 180 ? 1 : 0;
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+  }
+
+  function renderRings(items, total) {
+    const svg     = document.getElementById('rings-svg');
+    const legend  = document.getElementById('rings-legend');
+    const empty   = document.getElementById('empty-state');
+    const ringsCol = document.getElementById('rings-col');
+    svg.innerHTML    = '';
+    legend.innerHTML = '';
+
+    if (!items.length || total === 0) {
+      ringsCol.style.display = 'none';
+      legend.style.display   = 'none';
+      empty.style.display    = 'flex';
+      return;
+    }
+    ringsCol.style.display = '';
+    legend.style.display   = '';
+    empty.style.display    = 'none';
 
     const ns = 'http://www.w3.org/2000/svg';
 
-    // Use a fixed coordinate space; preserveAspectRatio="none" fills the container
-    const W = 100, H = 200, R = 10, MIN_H = 12, AMP = 6;
-    const n = items.length;
-
-    // Sort biggest first = bottom of stack
+    // Sort largest first → outermost ring
     const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    _lastSorted  = sorted;
-    _lastTotal   = total;
+    _ringSorted  = sorted;
+    _ringTotal   = total;
+    pinnedIdx    = -1;
 
-    svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svgEl.setAttribute('preserveAspectRatio', 'none');
+    const n = sorted.length;
 
-    // Clip entire SVG to rounded rect so corners are clean
-    const defs = document.createElementNS(ns, 'defs');
-    const clip = document.createElementNS(ns, 'clipPath');
-    clip.setAttribute('id', 'filo-clip');
-    const clipRect = document.createElementNS(ns, 'rect');
-    clipRect.setAttribute('x', '0'); clipRect.setAttribute('y', '0');
-    clipRect.setAttribute('width', W); clipRect.setAttribute('height', H);
-    clipRect.setAttribute('rx', R);
-    clip.appendChild(clipRect);
-    defs.appendChild(clip);
-    svgEl.appendChild(defs);
-
-    const stackG = document.createElementNS(ns, 'g');
-    stackG.setAttribute('clip-path', 'url(#filo-clip)');
-    svgEl.appendChild(stackG);
-
-    // Proportional heights with minimum
-    let hs = sorted.map(d => Math.max(MIN_H, (d.amount / total) * H));
-    const hsum = hs.reduce((s, h) => s + h, 0);
-    hs = hs.map(h => Math.max(MIN_H, h * (H / hsum)));
-
-    // Draw order: smallest on top (low y) → biggest at bottom (high y)
-    // So we reverse sorted for draw order
-    const drawOrder   = [...sorted].reverse();
-    const drawHeights = [...hs].reverse();
-
-    let curY = 0;
-    drawOrder.forEach((item, di) => {
-      const si    = n - 1 - di; // index back into sorted[]
-      const h     = drawHeights[di];
-      const yFlat = curY;       // flat baseline this layer starts at
-      const yBot  = curY + h;
-      curY = yBot;
-
-      // Wave: only goes UP from yFlat (never down), so layer below fills flush
-      const seed  = si * 137.5;
-      const a     = AMP;
-      const midY  = yFlat - Math.abs(Math.sin(seed + 1.1) * a);
-      const cp1y  = yFlat - Math.abs(Math.sin(seed) * a * 0.7);
-      const cp2y  = yFlat - Math.abs(Math.sin(seed + 2.1) * a * 0.8);
-
-      // Path: flat bottom → right side → wave top → left side → close
-      const d = `M0,${yBot} L${W},${yBot} L${W},${yFlat} Q${W*0.75},${cp2y} ${W*0.5},${midY} Q${W*0.25},${cp1y} 0,${yFlat} Z`;
-
-      const g = document.createElementNS(ns, 'g');
-      g.setAttribute('class', 'filo-layer-group');
-      g.dataset.idx = si;
-
-      const path = document.createElementNS(ns, 'path');
-      path.setAttribute('d', d);
-      path.setAttribute('fill', getBrand(item.name).color);
-      path.setAttribute('opacity', '0.93');
-      g.appendChild(path);
-
-      // Subtle shimmer along the wave edge
-      const shimD = `M0,${yFlat} Q${W*0.25},${cp1y} ${W*0.5},${midY} Q${W*0.75},${cp2y} ${W},${yFlat}`;
-      const shim  = document.createElementNS(ns, 'path');
-      shim.setAttribute('d', shimD);
-      shim.setAttribute('fill', 'none');
-      shim.setAttribute('stroke', 'rgba(255,255,255,0.55)');
-      shim.setAttribute('stroke-width', di === n - 1 ? '2' : '1.4');
-      shim.setAttribute('pointer-events', 'none');
-      g.appendChild(shim);
-
-      // Subtle dark separator so adjacent close-color layers stay distinct
-      if (di > 0) {
-        const sep = document.createElementNS(ns, 'line');
-        sep.setAttribute('x1', '0');  sep.setAttribute('y1', yFlat);
-        sep.setAttribute('x2', W);    sep.setAttribute('y2', yFlat);
-        sep.setAttribute('stroke', 'rgba(0,0,0,0.07)');
-        sep.setAttribute('stroke-width', '0.5');
-        sep.setAttribute('pointer-events', 'none');
-        g.appendChild(sep);
-      }
-
-      g.addEventListener('mouseenter', () => { if (pinnedLayerIdx < 0) setLayerStates(si); });
-      g.addEventListener('mouseleave', () => { if (pinnedLayerIdx < 0) setLayerStates(-1); });
-      g.addEventListener('click',      () => pinLayer(si));
-      g.addEventListener('touchend',   e  => { e.preventDefault(); pinLayer(si); });
-      stackG.appendChild(g);
-
-      // Legend row (sorted big→small order)
-      if (di === n - 1) {
-        sorted.forEach((s, li) => {
-          const pct    = Math.round((s.amount / total) * 100);
-          const legRow = document.createElement('div');
-          legRow.className   = 'legend-item';
-          legRow.dataset.idx = li;
-          legRow.innerHTML   = `
-            ${iconHTML(s.name, 24)}
-            <span class="legend-name">${s.name}</span>
-            <span class="legend-pct">${pct}%</span>
-            <span class="legend-amt">$${s.amount.toLocaleString()}</span>
-            <span class="legend-del" onclick="event.stopPropagation();deleteItem('${s.name}')">&#215;</span>`;
-          legRow.addEventListener('mouseenter', () => { if (pinnedLayerIdx < 0) setLayerStates(li); });
-          legRow.addEventListener('mouseleave', () => { if (pinnedLayerIdx < 0) setLayerStates(-1); });
-          legRow.addEventListener('click',      () => pinLayer(li));
-          legendEl.appendChild(legRow);
-        });
-      }
+    // Track ring — faint grey background circle for each ring
+    sorted.forEach((item, i) => {
+      const r = OUTER_R - i * RING_GAP;
+      if (r < 8) return;
+      const track = document.createElementNS(ns, 'circle');
+      track.setAttribute('cx', CX); track.setAttribute('cy', CY); track.setAttribute('r', r);
+      track.setAttribute('fill', 'none');
+      track.setAttribute('stroke', 'rgba(0,0,0,0.07)');
+      track.setAttribute('stroke-width', Math.max(MIN_SW, BASE_SW - i * SW_STEP));
+      track.setAttribute('pointer-events', 'none');
+      svg.appendChild(track);
     });
 
-    document.getElementById('stack-total-amt').textContent = '$' + total.toLocaleString();
-    document.getElementById('stack-total-lbl').textContent = 'total';
-    pinnedLayerIdx = -1;
+    // Arcs
+    sorted.forEach((item, i) => {
+      const r   = OUTER_R - i * RING_GAP;
+      if (r < 8) return;
+      const sw  = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
+      const pct = item.amount / total;
+
+      // Arc sweeps from START_DEG, leaves a small gap
+      const sweepDeg  = 360 * pct - GAP_DEG;
+      const startDeg  = START_DEG;
+      const endDeg    = startDeg + Math.max(sweepDeg, 10); // min arc so it's always visible
+
+      const d = arcPath(CX, CY, r, startDeg, endDeg);
+      const color = getBrand(item.name).color;
+
+      const arc = document.createElementNS(ns, 'path');
+      arc.setAttribute('d', d);
+      arc.setAttribute('fill', 'none');
+      arc.setAttribute('stroke', color);
+      arc.setAttribute('stroke-width', sw);
+      arc.setAttribute('stroke-linecap', 'round');
+      arc.setAttribute('class', 'ring-arc');
+      arc.setAttribute('data-idx', i);
+      arc.style.setProperty('--sw-hi', sw + 3);
+      arc.style.cursor = 'pointer';
+
+      // Animate draw-on
+      const circ = 2 * Math.PI * r;
+      const dashLen = circ * pct - (GAP_DEG / 360 * circ);
+      arc.style.setProperty('--circ', circ);
+      arc.style.setProperty('--dash-offset', circ - dashLen);
+      arc.setAttribute('stroke-dasharray', `${dashLen} ${circ}`);
+      arc.setAttribute('stroke-dashoffset', circ);
+      arc.style.animation = `ringDraw 0.7s ease ${i * 0.12}s forwards`;
+
+      arc.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
+      arc.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
+      arc.addEventListener('click',      () => pinRing(i));
+      arc.addEventListener('touchend',   e  => { e.preventDefault(); pinRing(i); });
+      svg.appendChild(arc);
+
+      // Dot at arc start tip
+      const dotRad = degToRad(START_DEG);
+      const dx = CX + r * Math.cos(dotRad), dy = CY + r * Math.sin(dotRad);
+      const dot = document.createElementNS(ns, 'circle');
+      dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
+      dot.setAttribute('r', sw / 2 + 0.5);
+      dot.setAttribute('fill', color); dot.setAttribute('pointer-events', 'none');
+      dot.setAttribute('data-dot', i);
+      svg.appendChild(dot);
+    });
+
+    // Center label
+    const centerAmt = document.createElementNS(ns, 'text');
+    centerAmt.setAttribute('id', 'ring-center-amt');
+    centerAmt.setAttribute('x', CX); centerAmt.setAttribute('y', CY - 8);
+    centerAmt.setAttribute('text-anchor', 'middle');
+    centerAmt.setAttribute('dominant-baseline', 'middle');
+    centerAmt.setAttribute('font-size', '16');
+    centerAmt.setAttribute('font-weight', '700');
+    centerAmt.setAttribute('fill', '#222');
+    centerAmt.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
+    centerAmt.textContent = '$' + total.toLocaleString();
+    svg.appendChild(centerAmt);
+
+    const centerLbl = document.createElementNS(ns, 'text');
+    centerLbl.setAttribute('id', 'ring-center-lbl');
+    centerLbl.setAttribute('x', CX); centerLbl.setAttribute('y', CY + 11);
+    centerLbl.setAttribute('text-anchor', 'middle');
+    centerLbl.setAttribute('dominant-baseline', 'middle');
+    centerLbl.setAttribute('font-size', '10');
+    centerLbl.setAttribute('fill', '#aaa');
+    centerLbl.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
+    centerLbl.textContent = 'total';
+    svg.appendChild(centerLbl);
+
+    // Legend
+    sorted.forEach((item, i) => {
+      const pct    = Math.round((item.amount / total) * 100);
+      const color  = getBrand(item.name).color;
+      const row    = document.createElement('div');
+      row.className   = 'legend-item';
+      row.dataset.idx = i;
+      row.innerHTML   = `
+        ${iconHTML(item.name, 22)}
+        <span class="legend-name">${item.name}</span>
+        <div class="legend-right">
+          <span class="legend-amt">$${item.amount.toLocaleString()}</span>
+          <span class="legend-pct">${pct}%</span>
+        </div>
+        <span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
+      row.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
+      row.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
+      row.addEventListener('click',      () => pinRing(i));
+      legend.appendChild(row);
+    });
   }
 
-  function setLayerStates(activeIdx) {
-    const svgEl    = document.getElementById('filo-wave-svg');
-    const legendEl = document.getElementById('filo-legend');
-    svgEl.querySelectorAll('.filo-layer-group').forEach(el => {
+  function setRingState(activeIdx) {
+    const svg    = document.getElementById('rings-svg');
+    const legend = document.getElementById('rings-legend');
+
+    svg.querySelectorAll('.ring-arc').forEach(el => {
+      const i = parseInt(el.dataset.idx);
+      el.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
+      el.classList.toggle('highlighted', activeIdx !== -1 && i === activeIdx);
+    });
+    svg.querySelectorAll('[data-dot]').forEach(el => {
+      const i = parseInt(el.dataset.dot);
+      el.style.opacity = (activeIdx === -1 || i === activeIdx) ? '1' : '0.2';
+    });
+    legend.querySelectorAll('.legend-item').forEach(el => {
       const i = parseInt(el.dataset.idx);
       el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
     });
-    legendEl.querySelectorAll('.legend-item').forEach(el => {
-      const i = parseInt(el.dataset.idx);
-      el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
-    });
-    const amtEl = document.getElementById('stack-total-amt');
-    const lblEl = document.getElementById('stack-total-lbl');
+
+    const amtEl = document.getElementById('ring-center-amt');
+    const lblEl = document.getElementById('ring-center-lbl');
+    if (!amtEl) return;
     if (activeIdx === -1) {
-      amtEl.textContent = '$' + _lastTotal.toLocaleString();
+      amtEl.textContent = '$' + _ringTotal.toLocaleString();
       lblEl.textContent = 'total';
     } else {
-      amtEl.textContent = '$' + _lastSorted[activeIdx].amount.toLocaleString();
-      lblEl.textContent = _lastSorted[activeIdx].name;
+      amtEl.textContent = '$' + _ringSorted[activeIdx].amount.toLocaleString();
+      lblEl.textContent = _ringSorted[activeIdx].name;
     }
   }
 
-  function pinLayer(idx) {
-    if (pinnedLayerIdx === idx) { pinnedLayerIdx = -1; setLayerStates(-1); }
-    else { pinnedLayerIdx = idx; setLayerStates(idx); }
+  function pinRing(idx) {
+    if (pinnedIdx === idx) { pinnedIdx = -1; setRingState(-1); }
+    else { pinnedIdx = idx; setRingState(idx); }
   }
 
-  // ── Stat cards / Trends ───────────────────────────────────────────────────
+  // ── Stat cards ────────────────────────────────────────────────────────────
   function renderStatCards(){
     const keys=Object.keys(months).map(Number);
     if(!keys.length){document.getElementById('stat-cards').innerHTML='';return;}
@@ -885,15 +944,8 @@
     const netEl=document.getElementById('net-amount');
     netEl.textContent=(net>=0?'+':'-')+'$'+Math.abs(net).toLocaleString();
     netEl.className=net>=0?'net-positive':'net-negative';
-    pinnedLayerIdx=-1;
     updateGoalBanner();
-    const inner=document.getElementById('chart-section-inner'),empty=document.getElementById('empty-state');
-    if(!items.length||total===0){
-      inner.style.display='none';empty.style.display='flex';
-    } else {
-      inner.style.display='flex';empty.style.display='none';
-      requestAnimationFrame(()=>renderFiloStack(items,total));
-    }
+    requestAnimationFrame(()=>renderRings(items,total));
   }
 
   function setMode(m){
@@ -923,7 +975,7 @@
 
   function changeMonth(dir){
     const next=offset+dir;
-    if(dir>0&&next>0) return;
+    if(dir>0&&next>0)return;
     if(!months[String(next)]){months[String(next)]={label:getMonthLabelFull(next),income:{items:[]},expense:{items:[]}};saveData();}
     offset=next;render();
   }
@@ -936,7 +988,7 @@
     document.getElementById('overlay').classList.add('open');
   }
   function closeSheet(){ document.getElementById('overlay').classList.remove('open'); }
-  function closeIfOutside(e){ if(e.target===document.getElementById('overlay')) closeSheet(); }
+  function closeIfOutside(e){ if(e.target===document.getElementById('overlay'))closeSheet(); }
   function setType(t){
     entryType=t;
     document.getElementById('type-income').className ='type-btn'+(t==='income'?' active income':' income');
@@ -960,7 +1012,7 @@
 
   function openGoalSheet(){ document.getElementById('goal-name').value='';document.getElementById('goal-target').value='';document.getElementById('goal-overlay').classList.add('open'); }
   function closeGoalSheet(){ document.getElementById('goal-overlay').classList.remove('open'); }
-  function closeGoalIfOutside(e){ if(e.target===document.getElementById('goal-overlay')) closeGoalSheet(); }
+  function closeGoalIfOutside(e){ if(e.target===document.getElementById('goal-overlay'))closeGoalSheet(); }
   function saveGoal(){
     const name=document.getElementById('goal-name').value.trim(),target=parseFloat(document.getElementById('goal-target').value);
     if(!name||!target||target<=0){showToast('Enter a name and target amount');return;}
@@ -973,7 +1025,6 @@
 
   function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 
-  // ── Init ──────────────────────────────────────────────────────────────────
   ensureCurrentMonth();
   offset=0;
   render();
@@ -983,9 +1034,10 @@
   initDragDismiss('sheet-handle-goal','sheet-goal','goal-overlay',closeGoalSheet);
 
   window.addEventListener('load',()=>{
-    setTimeout(()=>{ const s=document.getElementById('splash-screen'); s.classList.add('hide'); setTimeout(()=>s.style.display='none',400); },1200);
+    setTimeout(()=>{ const s=document.getElementById('splash-screen');s.classList.add('hide');setTimeout(()=>s.style.display='none',400); },1200);
+    setTimeout(()=>render(), 80);
   });
-  window.addEventListener('resize',()=>{ if(document.getElementById('page-home').classList.contains('active')) render(); });
+  window.addEventListener('resize',()=>{ if(document.getElementById('page-home').classList.contains('active'))render(); });
   </script>
 </body>
 </html>
