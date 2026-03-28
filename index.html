@@ -584,8 +584,6 @@
   function getDateMonthLabel(ts){ return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
   function getMonthLabel(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short',year:'numeric'}); }
   function getMonthLabelFull(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'long',year:'numeric'}); }
-  function getMonthShort(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short'}); }
-
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
     "-2":{label:getMonthLabelFull(-2),income:{items:[{name:"YouTube",amount:2900,date:Date.now()-864e5*50},{name:"Venmo",amount:1850,date:Date.now()-864e5*48},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*45},{name:"Cash App",amount:730,date:Date.now()-864e5*40}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*58},{name:"Software",amount:1050,date:Date.now()-864e5*52},{name:"Food",amount:900,date:Date.now()-864e5*46},{name:"Other",amount:1000,date:Date.now()-864e5*42}]}},
@@ -635,19 +633,21 @@
   }
 
   // ── MINI BAR CHART ────────────────────────────────────────────────────────
-  // Draws a 12-month rolling bar chart directly on a canvas inside the total card.
-  // Colors: semi-transparent darker version of the card background for bars,
-  // current month (offset=0) highlighted brighter. Tooltip on tap/click.
+  // 13-month rolling bar chart inside the total card.
+  // Shows the 12 months before the currently viewed month + the viewed month itself.
+  // The viewed month bar is always highlighted brightest.
+  // Sparse month labels (every ~3 bars) sit below the bars.
+  // Tap/click any bar → tooltip with month name + amount.
 
-  let miniBarData = []; // [{label, value, offsetKey}]
+  let miniBarData   = [];
   let tooltipTimeout = null;
 
   function getMiniBarColors(isIncome) {
     return {
-      bar:         isIncome ? 'rgba(180,130,20,0.45)'  : 'rgba(100,50,10,0.4)',
-      barHover:    isIncome ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.45)',
-      barCurrent:  isIncome ? 'rgba(255,255,255,0.7)'  : 'rgba(255,255,255,0.6)',
-      barEmpty:    isIncome ? 'rgba(180,130,20,0.18)'  : 'rgba(100,50,10,0.18)',
+      normal:   isIncome ? 'rgba(255,255,255,0.38)' : 'rgba(255,255,255,0.32)',
+      active:   isIncome ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.85)',
+      empty:    isIncome ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.10)',
+      labelCol: isIncome ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.48)',
     };
   }
 
@@ -655,22 +655,32 @@
     const canvas = document.getElementById('mini-bar-canvas');
     if (!canvas) return;
 
-    // Collect last 12 months (offset -11 to 0 relative to current view's month)
-    // We anchor to the real current month (offset 0 in data), show rolling 12
+    // Build 13 entries: offsets (offset - 12) … offset
+    // Each entry is relative to the real "current month" (today),
+    // so we express as relOffset = (offset - 12) through offset
     const data = [];
-    for (let i = -11; i <= 0; i++) {
-      const mo = months[String(i)];
+    for (let i = -12; i <= 0; i++) {
+      const relOffset = offset + i; // data key in months{}
+      const mo  = months[String(relOffset)];
       const val = mo ? getTotal(mo[mode].items) : 0;
-      const label = getMonthLabel(i);
-      const shortLabel = getMonthShort(i);
-      data.push({ label, shortLabel, value: val, offsetKey: i });
+
+      // Build a label for this month
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() + relOffset);
+      const shortLabel = d.toLocaleString('default', { month: 'short' });
+      const fullLabel  = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+      const isViewed   = (i === 0); // this is the month currently on screen
+
+      data.push({ relOffset, shortLabel, fullLabel, value: val, isViewed });
     }
     miniBarData = data;
 
-    const dpr    = window.devicePixelRatio || 1;
-    const rect   = canvas.parentElement.getBoundingClientRect();
-    const W      = rect.width;
-    const H      = rect.height;
+    // Size canvas
+    const dpr  = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const W    = rect.width;
+    const H    = rect.height;
     canvas.width  = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     canvas.style.width  = W + 'px';
@@ -682,47 +692,66 @@
 
     const isIncome = mode === 'income';
     const colors   = getMiniBarColors(isIncome);
-    const maxVal   = Math.max(...data.map(d => d.value), 1);
 
-    const n       = data.length;
-    const gap     = 3;
-    const barW    = (W - gap * (n - 1)) / n;
-    const maxBarH = H - 4; // leave 4px top breathing room
+    const LABEL_H = 13; // px reserved at bottom for month labels
+    const maxVal  = Math.max(...data.map(d => d.value), 1);
 
+    const n      = data.length; // 13
+    const gap    = 3;
+    const barW   = (W - gap * (n - 1)) / n;
+    const maxBarH= H - LABEL_H - 4;
+    const minH   = 3;
+
+    // Draw bars
     data.forEach((d, i) => {
       const x    = i * (barW + gap);
       const pct  = d.value / maxVal;
-      const barH = Math.max(pct > 0 ? 4 : 2, pct * maxBarH);
-      const y    = H - barH;
-      const isCurrent = d.offsetKey === 0;
+      const barH = Math.max(d.value > 0 ? minH : 2, pct * maxBarH);
+      const y    = H - LABEL_H - barH;
+      const r    = Math.min(3, barW / 2);
 
       ctx.beginPath();
-      const r = Math.min(3, barW / 2);
       ctx.moveTo(x + r, y);
       ctx.lineTo(x + barW - r, y);
       ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
-      ctx.lineTo(x + barW, H);
-      ctx.lineTo(x, H);
+      ctx.lineTo(x + barW, H - LABEL_H);
+      ctx.lineTo(x, H - LABEL_H);
       ctx.lineTo(x, y + r);
       ctx.quadraticCurveTo(x, y, x + r, y);
       ctx.closePath();
 
-      ctx.fillStyle = d.value === 0
-        ? colors.barEmpty
-        : isCurrent
-          ? colors.barCurrent
-          : colors.bar;
+      ctx.fillStyle = d.isViewed
+        ? colors.active
+        : d.value === 0
+          ? colors.empty
+          : colors.normal;
       ctx.fill();
     });
 
-    // Store bar rects for hit testing
+    // Draw sparse month labels — show label every ~3 bars + always the viewed month
+    ctx.font = `500 9px -apple-system, BlinkMacSystemFont, sans-serif`;
+    ctx.fillStyle = colors.labelCol;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+
+    data.forEach((d, i) => {
+      const showLabel = (i % 3 === 0) || d.isViewed;
+      if (!showLabel) return;
+      const cx = i * (barW + gap) + barW / 2;
+      // Viewed month label slightly brighter
+      ctx.fillStyle = d.isViewed
+        ? (isIncome ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.82)')
+        : colors.labelCol;
+      ctx.fillText(d.shortLabel, cx, H);
+    });
+
+    // Store rects for hit-testing
     canvas._barRects = data.map((d, i) => ({
       x: i * (barW + gap),
       w: barW,
-      label: d.label,
-      shortLabel: d.shortLabel,
+      label: d.fullLabel,
       value: d.value,
-      offsetKey: d.offsetKey,
+      isViewed: d.isViewed,
     }));
   }
 
@@ -752,15 +781,14 @@
   function handleMiniBarInteraction(e) {
     const canvas = document.getElementById('mini-bar-canvas');
     if (!canvas || !canvas._barRects) return;
-    const rect   = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const rect    = canvas.getBoundingClientRect();
+    const clientX = e.clientX !== undefined ? e.clientX : (e.changedTouches ? e.changedTouches[0].clientX : 0);
+    const clientY = e.clientY !== undefined ? e.clientY : (e.changedTouches ? e.changedTouches[0].clientY : 0);
     const x = clientX - rect.left;
-    const y = clientY - rect.top;
 
     for (const bar of canvas._barRects) {
       if (x >= bar.x && x <= bar.x + bar.w) {
-        showBarTooltip(bar.label, bar.value, x, y);
+        showBarTooltip(bar.label, bar.value, clientX, clientY);
         break;
       }
     }
@@ -768,8 +796,8 @@
 
   function initMiniBarEvents() {
     const canvas = document.getElementById('mini-bar-canvas');
-    canvas.addEventListener('click',     handleMiniBarInteraction);
-    canvas.addEventListener('touchend',  e => { e.preventDefault(); handleMiniBarInteraction(e.changedTouches[0] ? {clientX:e.changedTouches[0].clientX,clientY:e.changedTouches[0].clientY} : e); });
+    canvas.addEventListener('click',    handleMiniBarInteraction);
+    canvas.addEventListener('touchend', e => { e.preventDefault(); handleMiniBarInteraction(e); });
   }
 
   // ── Transactions ──────────────────────────────────────────────────────────
