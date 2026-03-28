@@ -80,7 +80,6 @@
       padding: 0;
     }
 
-    /* Left: rings SVG */
     .rings-col {
       flex-shrink: 0;
       width: clamp(130px, 38vw, 190px);
@@ -98,7 +97,6 @@
       overflow: visible;
     }
 
-    /* Right: legend */
     .rings-legend {
       flex: 1;
       min-width: 0;
@@ -109,6 +107,28 @@
       padding: clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0;
       gap: 0;
     }
+
+    /* Goal ring legend row — top of legend */
+    .legend-goal-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: clamp(4px,0.7vh,8px) 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      margin-bottom: 2px;
+      cursor: pointer;
+    }
+    .legend-goal-swatch {
+      width: clamp(8px,1.2vh,11px);
+      height: clamp(8px,1.2vh,11px);
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #e8b84b;
+    }
+    .legend-goal-name { font-size: clamp(10px,1.4vh,13px); font-weight: 700; color: #a07010; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .legend-goal-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .legend-goal-pct { font-size: clamp(10px,1.4vh,13px); font-weight: 700; color: #e8b84b; white-space: nowrap; }
+    .legend-goal-sub { font-size: clamp(9px,1.1vh,10px); color: #bbb; }
 
     .legend-item {
       display: flex;
@@ -137,7 +157,19 @@
     .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; flex-shrink: 0; }
     .legend-item:hover .legend-del { opacity: 1; }
 
-    /* Empty state */
+    /* No-goal prompt inside chart */
+    .set-goal-prompt {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      pointer-events: none; /* only the SVG circle is clickable */
+    }
+
     #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem; text-align: center; }
 
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top: clamp(5px,0.8vh,10px); margin-bottom: 1vh; flex-shrink: 0; }
@@ -244,7 +276,7 @@
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
-    /* Ring animation — draws from dashoffset=circ down to the final offset */
+    /* Ring animation */
     @keyframes ringDraw {
       from { stroke-dashoffset: var(--circ); }
       to   { stroke-dashoffset: var(--dash-offset); }
@@ -252,6 +284,13 @@
     .ring-arc { transition: opacity 0.22s, stroke-width 0.18s; cursor: pointer; }
     .ring-arc.dimmed { opacity: 0.2; }
     .ring-arc.highlighted { stroke-width: var(--sw-hi); }
+
+    /* Goal ring pulse when no goal set */
+    @keyframes goalPulse {
+      0%, 100% { opacity: 0.35; }
+      50%       { opacity: 0.7; }
+    }
+    .goal-ring-empty { animation: goalPulse 2s ease-in-out infinite; cursor: pointer; }
 
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 72px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
@@ -549,7 +588,7 @@
   let months=loadData(),goals=loadGoals();
   let offset=0,mode="income",entryType="income",selectedSource=null;
   let trendsChart=null,txFilter='all',editContext=null,pinnedIdx=-1;
-  let _ringSorted=[],_ringTotal=0;
+  let _ringSorted=[],_ringGoal=0;
 
   // ── Pull to refresh ───────────────────────────────────────────────────────
   let pullStartY=0,pulling=false;
@@ -639,33 +678,79 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // ✦ FILO CONCENTRIC RINGS CHART
+  // ✦ FILO GOAL-AWARE CONCENTRIC RINGS CHART
   //
-  // FIX: stroke-dasharray is now set to "circ circ" (full circumference as
-  // both dash and gap). The @keyframes ringDraw animates stroke-dashoffset
-  // from circ (fully hidden) down to (circ - arcLength) = revealed arc.
-  // Previously dasharray was set to "dashLen circ" which made only a tiny
-  // sliver ever visible regardless of the animation.
+  // Outer ring  = income goal progress (gold, fills relative to goal target)
+  // Inner rings = individual sources   (each fills relative to goal target)
+  // No goal set = faint pulsing grey outer ring with "Set goal" tap
   // ══════════════════════════════════════════════════════════════════════════
 
   const CX = 100, CY = 100;
-  const OUTER_R  = 88;
-  const RING_GAP = 13;
-  const BASE_SW  = 11;
-  const SW_STEP  = 1.5;
-  const MIN_SW   = 5;
-  const GAP_DEG  = 4;
+  const GOAL_R   = 88;   // outermost ring radius (goal)
+  const RING_GAP = 14;   // gap between source rings
+  const GOAL_SW  = 13;   // stroke-width for goal ring
+  const BASE_SW  = 10;   // stroke-width for first source ring
+  const SW_STEP  = 1.2;  // taper per ring inward
+  const MIN_SW   = 4;
   const START_DEG = -90;
 
   function degToRad(d){ return (d * Math.PI) / 180; }
 
-  function arcPath(cx, cy, r, startDeg, endDeg) {
-    const s = degToRad(startDeg), e = degToRad(endDeg);
-    const x1 = cx + r * Math.cos(s), y1 = cy + r * Math.sin(s);
-    const x2 = cx + r * Math.cos(e), y2 = cy + r * Math.sin(e);
-    const sweep = endDeg - startDeg;
-    const largeArc = sweep > 180 ? 1 : 0;
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+  function drawArc(svg, ns, r, fraction, color, sw, delay, extraClass='') {
+    // fraction: 0–1, how much of the circle to fill
+    const clampedFraction = Math.min(1, Math.max(0, fraction));
+    const sweepDeg = clampedFraction * 360;
+
+    // Track (grey background full circle)
+    const track = document.createElementNS(ns, 'circle');
+    track.setAttribute('cx', CX); track.setAttribute('cy', CY); track.setAttribute('r', r);
+    track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', 'rgba(0,0,0,0.07)');
+    track.setAttribute('stroke-width', sw);
+    track.setAttribute('pointer-events', 'none');
+    svg.appendChild(track);
+
+    if (clampedFraction <= 0) return null;
+
+    // Arc path from -90° sweeping clockwise
+    const s = degToRad(START_DEG);
+    const e = degToRad(START_DEG + sweepDeg);
+    const x1 = CX + r * Math.cos(s), y1 = CY + r * Math.sin(s);
+    const x2 = CX + r * Math.cos(e), y2 = CY + r * Math.sin(e);
+    const largeArc = sweepDeg > 180 ? 1 : 0;
+    const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+
+    const arc = document.createElementNS(ns, 'path');
+    arc.setAttribute('d', d);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', color);
+    arc.setAttribute('stroke-width', sw);
+    arc.setAttribute('stroke-linecap', 'round');
+    if (extraClass) arc.setAttribute('class', extraClass);
+
+    // Dash animation
+    const circ    = 2 * Math.PI * r;
+    const dashLen = circ * clampedFraction;
+    arc.style.setProperty('--circ', circ);
+    arc.style.setProperty('--dash-offset', circ - dashLen);
+    arc.style.setProperty('--sw-hi', sw + 3);
+    arc.setAttribute('stroke-dasharray', `${circ} ${circ}`);
+    arc.setAttribute('stroke-dashoffset', circ);
+    arc.style.animation = `ringDraw 0.7s ease ${delay}s forwards`;
+
+    svg.appendChild(arc);
+
+    // Start-cap dot
+    const dotRad = degToRad(START_DEG);
+    const dx = CX + r * Math.cos(dotRad), dy = CY + r * Math.sin(dotRad);
+    const dot = document.createElementNS(ns, 'circle');
+    dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
+    dot.setAttribute('r', sw / 2 + 0.5);
+    dot.setAttribute('fill', color);
+    dot.setAttribute('pointer-events', 'none');
+    svg.appendChild(dot);
+
+    return arc;
   }
 
   function renderRings(items, total) {
@@ -676,6 +761,9 @@
     svg.innerHTML    = '';
     legend.innerHTML = '';
 
+    const ns = 'http://www.w3.org/2000/svg';
+
+    // ── Empty state ──────────────────────────────────────────────────────
     if (!items.length || total === 0) {
       ringsCol.style.display = 'none';
       legend.style.display   = 'none';
@@ -686,94 +774,107 @@
     legend.style.display   = '';
     empty.style.display    = 'none';
 
-    const ns = 'http://www.w3.org/2000/svg';
-    const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    _ringSorted = sorted;
-    _ringTotal  = total;
-    pinnedIdx   = -1;
+    const sorted  = [...items].sort((a, b) => b.amount - a.amount);
+    _ringSorted   = sorted;
+    pinnedIdx     = -1;
 
-    // Track rings (faint grey background circles)
+    // ── Determine goal ───────────────────────────────────────────────────
+    // Use first income goal if we're in income mode, otherwise no goal ring scaling
+    const activeGoal = (mode === 'income' && goals.length > 0) ? goals[0] : null;
+    _ringGoal = activeGoal ? activeGoal.target : 0;
+    const goalTarget = _ringGoal || total; // fallback: treat total as 100%
+
+    // ── OUTER RING: Goal progress ────────────────────────────────────────
+    if (mode === 'income') {
+      if (activeGoal) {
+        // Gold ring showing income vs goal
+        const goalFraction = Math.min(1, total / activeGoal.target);
+        const goalArc = drawArc(svg, ns, GOAL_R, goalFraction, '#e8b84b', GOAL_SW, 0, 'ring-arc goal-arc');
+        if (goalArc) {
+          goalArc.setAttribute('data-idx', 'goal');
+          goalArc.style.filter = 'drop-shadow(0 0 3px rgba(232,184,75,0.5))';
+        }
+
+        // Goal legend row
+        const goalPct = Math.round((total / activeGoal.target) * 100);
+        const goalRow = document.createElement('div');
+        goalRow.className = 'legend-goal-row';
+        goalRow.innerHTML = `
+          <div class="legend-goal-swatch"></div>
+          <span class="legend-goal-name">🎯 ${activeGoal.name}</span>
+          <div class="legend-goal-right">
+            <span class="legend-goal-pct">${goalPct}%</span>
+            <span class="legend-goal-sub">of $${activeGoal.target.toLocaleString()}</span>
+          </div>`;
+        goalRow.addEventListener('click', () => openGoalSheet());
+        legend.appendChild(goalRow);
+
+      } else {
+        // No goal — faint pulsing grey ring + "Set goal" tap
+        const emptyTrack = document.createElementNS(ns, 'circle');
+        emptyTrack.setAttribute('cx', CX); emptyTrack.setAttribute('cy', CY);
+        emptyTrack.setAttribute('r', GOAL_R);
+        emptyTrack.setAttribute('fill', 'none');
+        emptyTrack.setAttribute('stroke', 'rgba(0,0,0,0.12)');
+        emptyTrack.setAttribute('stroke-width', GOAL_SW);
+        emptyTrack.setAttribute('class', 'goal-ring-empty');
+        emptyTrack.setAttribute('stroke-dasharray', `${2 * Math.PI * GOAL_R * 0.6} ${2 * Math.PI * GOAL_R * 0.4}`);
+        emptyTrack.setAttribute('stroke-dashoffset', `${2 * Math.PI * GOAL_R * 0.25}`);
+        emptyTrack.setAttribute('stroke-linecap', 'round');
+        emptyTrack.addEventListener('click', () => openGoalSheet());
+        emptyTrack.addEventListener('touchend', e => { e.preventDefault(); openGoalSheet(); });
+        svg.appendChild(emptyTrack);
+
+        // "Set goal" legend row
+        const setGoalRow = document.createElement('div');
+        setGoalRow.className = 'legend-goal-row';
+        setGoalRow.style.opacity = '0.6';
+        setGoalRow.innerHTML = `
+          <div class="legend-goal-swatch" style="background:#ccc;"></div>
+          <span class="legend-goal-name" style="color:#aaa;">Set income goal</span>
+          <div class="legend-goal-right">
+            <span class="legend-goal-pct" style="color:#ccc;">+ Goal</span>
+          </div>`;
+        setGoalRow.addEventListener('click', () => openGoalSheet());
+        legend.appendChild(setGoalRow);
+      }
+    }
+
+    // ── INNER RINGS: Source breakdown, each scaled to goal ───────────────
     sorted.forEach((item, i) => {
-      const r = OUTER_R - i * RING_GAP;
-      if (r < 8) return;
-      const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
-      const track = document.createElementNS(ns, 'circle');
-      track.setAttribute('cx', CX);
-      track.setAttribute('cy', CY);
-      track.setAttribute('r', r);
-      track.setAttribute('fill', 'none');
-      track.setAttribute('stroke', 'rgba(0,0,0,0.07)');
-      track.setAttribute('stroke-width', sw);
-      track.setAttribute('pointer-events', 'none');
-      svg.appendChild(track);
+      const r  = GOAL_R - RING_GAP - i * RING_GAP; // start one ring in from goal
+      if (r < 10) return;
+      const sw      = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
+      const color   = getBrand(item.name).color;
+      // Each source fills relative to goal target (or total if no goal)
+      const fraction = Math.min(1, item.amount / goalTarget);
+
+      const arc = drawArc(svg, ns, r, fraction, color, sw, 0.08 + i * 0.1, 'ring-arc');
+      if (arc) {
+        arc.setAttribute('data-idx', i);
+        arc.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
+        arc.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
+        arc.addEventListener('click',      () => pinRing(i));
+        arc.addEventListener('touchend',   e  => { e.preventDefault(); pinRing(i); });
+      }
+
+      // Dot markers for source rings (stored separately for highlight)
+      const dotEl = svg.querySelector(`[data-dot="${i}"]`); // will be added by drawArc above implicitly via lastChild logic
+      // We need to tag the dot — find it (it's the last circle child with same fill color)
+      const allCircles = svg.querySelectorAll('circle');
+      const lastDot = allCircles[allCircles.length - 1];
+      if (lastDot && lastDot.getAttribute('fill') === color) {
+        lastDot.setAttribute('data-dot', i);
+      }
     });
 
-    // Coloured arcs
-    sorted.forEach((item, i) => {
-      const r = OUTER_R - i * RING_GAP;
-      if (r < 8) return;
-      const sw    = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
-      const pct   = item.amount / total;
-      const color = getBrand(item.name).color;
-
-      // ── KEY FIX ──────────────────────────────────────────────────────────
-      // arcFraction: how much of the full circle this arc covers (with gap)
-      // Minimum 0.03 so single-item rings always show a visible arc.
-      const arcFraction = Math.max(pct - GAP_DEG / 360, 0.03);
-      const sweepDeg    = Math.max(360 * arcFraction, 10);
-      const startDeg    = START_DEG;
-      const endDeg      = startDeg + sweepDeg;
-
-      const d = arcPath(CX, CY, r, startDeg, endDeg);
-
-      const arc = document.createElementNS(ns, 'path');
-      arc.setAttribute('d', d);
-      arc.setAttribute('fill', 'none');
-      arc.setAttribute('stroke', color);
-      arc.setAttribute('stroke-width', sw);
-      arc.setAttribute('stroke-linecap', 'round');
-      arc.setAttribute('class', 'ring-arc');
-      arc.setAttribute('data-idx', i);
-      arc.style.setProperty('--sw-hi', sw + 3);
-
-      // Correct dasharray/dashoffset pattern:
-      // dasharray = "circ circ"  → full circle is one dash, followed by one gap
-      // dashoffset starts at circ (hides entire dash)
-      // animation drives offset to (circ - dashLen) revealing exactly dashLen
-      const circ    = 2 * Math.PI * r;
-      const dashLen = circ * arcFraction;
-      arc.style.setProperty('--circ', circ);
-      arc.style.setProperty('--dash-offset', circ - dashLen);
-      arc.setAttribute('stroke-dasharray', `${circ} ${circ}`);
-      arc.setAttribute('stroke-dashoffset', circ);
-      arc.style.animation = `ringDraw 0.7s ease ${i * 0.12}s forwards`;
-      // ─────────────────────────────────────────────────────────────────────
-
-      arc.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
-      arc.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
-      arc.addEventListener('click',      () => pinRing(i));
-      arc.addEventListener('touchend',   e  => { e.preventDefault(); pinRing(i); });
-      svg.appendChild(arc);
-
-      // Dot at arc start tip
-      const dotRad = degToRad(START_DEG);
-      const dx = CX + r * Math.cos(dotRad), dy = CY + r * Math.sin(dotRad);
-      const dot = document.createElementNS(ns, 'circle');
-      dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
-      dot.setAttribute('r', sw / 2 + 0.5);
-      dot.setAttribute('fill', color);
-      dot.setAttribute('pointer-events', 'none');
-      dot.setAttribute('data-dot', i);
-      svg.appendChild(dot);
-    });
-
-    // Centre label
+    // ── Centre label ─────────────────────────────────────────────────────
     const centerAmt = document.createElementNS(ns, 'text');
     centerAmt.setAttribute('id', 'ring-center-amt');
     centerAmt.setAttribute('x', CX); centerAmt.setAttribute('y', CY - 8);
     centerAmt.setAttribute('text-anchor', 'middle');
     centerAmt.setAttribute('dominant-baseline', 'middle');
-    centerAmt.setAttribute('font-size', '16');
+    centerAmt.setAttribute('font-size', '15');
     centerAmt.setAttribute('font-weight', '700');
     centerAmt.setAttribute('fill', '#222');
     centerAmt.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
@@ -782,19 +883,22 @@
 
     const centerLbl = document.createElementNS(ns, 'text');
     centerLbl.setAttribute('id', 'ring-center-lbl');
-    centerLbl.setAttribute('x', CX); centerLbl.setAttribute('y', CY + 11);
+    centerLbl.setAttribute('x', CX); centerLbl.setAttribute('y', CY + 10);
     centerLbl.setAttribute('text-anchor', 'middle');
     centerLbl.setAttribute('dominant-baseline', 'middle');
-    centerLbl.setAttribute('font-size', '10');
+    centerLbl.setAttribute('font-size', '9');
     centerLbl.setAttribute('fill', '#aaa');
     centerLbl.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
-    centerLbl.textContent = 'total';
+    centerLbl.textContent = activeGoal
+      ? Math.round((total / activeGoal.target) * 100) + '% of goal'
+      : 'total';
     svg.appendChild(centerLbl);
 
-    // Legend
+    // ── Source legend rows ───────────────────────────────────────────────
     sorted.forEach((item, i) => {
-      const pct   = Math.round((item.amount / total) * 100);
-      const row   = document.createElement('div');
+      const pct    = Math.round((item.amount / (activeGoal ? activeGoal.target : total)) * 100);
+      const goalPctLabel = activeGoal ? `${pct}% of goal` : `${Math.round((item.amount/total)*100)}%`;
+      const row    = document.createElement('div');
       row.className   = 'legend-item';
       row.dataset.idx = i;
       row.innerHTML   = `
@@ -802,7 +906,7 @@
         <span class="legend-name">${item.name}</span>
         <div class="legend-right">
           <span class="legend-amt">$${item.amount.toLocaleString()}</span>
-          <span class="legend-pct">${pct}%</span>
+          <span class="legend-pct">${goalPctLabel}</span>
         </div>
         <span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
       row.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
@@ -815,7 +919,8 @@
   function setRingState(activeIdx) {
     const svg    = document.getElementById('rings-svg');
     const legend = document.getElementById('rings-legend');
-    svg.querySelectorAll('.ring-arc').forEach(el => {
+
+    svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el => {
       const i = parseInt(el.dataset.idx);
       el.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
       el.classList.toggle('highlighted', activeIdx !== -1 && i === activeIdx);
@@ -828,15 +933,23 @@
       const i = parseInt(el.dataset.idx);
       el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
     });
+
     const amtEl = document.getElementById('ring-center-amt');
     const lblEl = document.getElementById('ring-center-lbl');
     if (!amtEl) return;
+
+    const activeGoal = (mode === 'income' && goals.length > 0) ? goals[0] : null;
+    const total = getTotal((months[String(offset)] || {income:{items:[]},expense:{items:[]}}) [mode].items);
+
     if (activeIdx === -1) {
-      amtEl.textContent = '$' + _ringTotal.toLocaleString();
-      lblEl.textContent = 'total';
+      amtEl.textContent = '$' + total.toLocaleString();
+      lblEl.textContent = activeGoal
+        ? Math.round((total / activeGoal.target) * 100) + '% of goal'
+        : 'total';
     } else {
-      amtEl.textContent = '$' + _ringSorted[activeIdx].amount.toLocaleString();
-      lblEl.textContent = _ringSorted[activeIdx].name;
+      const item = _ringSorted[activeIdx];
+      amtEl.textContent = '$' + item.amount.toLocaleString();
+      lblEl.textContent = item.name;
     }
   }
 
@@ -901,7 +1014,7 @@
     }).join('');
   }
 
-  function deleteGoal(i){ goals.splice(i,1);saveData();renderGoals();showToast('Goal removed'); }
+  function deleteGoal(i){ goals.splice(i,1);saveData();renderGoals();render();showToast('Goal removed'); }
 
   function buildSourceGrid(){
     const sources=entryType==="income"?INCOME_SOURCES:EXPENSE_SOURCES;
@@ -1017,7 +1130,7 @@
   function saveGoal(){
     const name=document.getElementById('goal-name').value.trim(),target=parseFloat(document.getElementById('goal-target').value);
     if(!name||!target||target<=0){showToast('Enter a name and target amount');return;}
-    goals.push({name,target});saveData();closeGoalSheet();renderGoals();showToast('Goal added!');
+    goals.push({name,target});saveData();closeGoalSheet();renderGoals();render();showToast('Goal added!');
   }
 
   function confirmReset(){
