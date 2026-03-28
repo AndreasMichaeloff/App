@@ -244,7 +244,7 @@
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
-    /* Ring animation */
+    /* Ring animation — draws from dashoffset=circ down to the final offset */
     @keyframes ringDraw {
       from { stroke-dashoffset: var(--circ); }
       to   { stroke-dashoffset: var(--dash-offset); }
@@ -641,23 +641,21 @@
   // ══════════════════════════════════════════════════════════════════════════
   // ✦ FILO CONCENTRIC RINGS CHART
   //
-  // Each source = one ring. Biggest source = outermost ring (widest, most
-  // prominent). Smaller sources nest inward. Each ring is a full circle arc
-  // that fills proportionally — the arc length represents the source's share.
-  // Single source = one complete glowing ring, beautiful on its own.
-  //
-  // Ring spacing is even. Stroke width scales with ring index so outer rings
-  // feel weightier. Gaps between arc ends are tiny (like a watch face).
+  // FIX: stroke-dasharray is now set to "circ circ" (full circumference as
+  // both dash and gap). The @keyframes ringDraw animates stroke-dashoffset
+  // from circ (fully hidden) down to (circ - arcLength) = revealed arc.
+  // Previously dasharray was set to "dashLen circ" which made only a tiny
+  // sliver ever visible regardless of the animation.
   // ══════════════════════════════════════════════════════════════════════════
 
-  const CX = 100, CY = 100;          // SVG center
-  const OUTER_R   = 88;              // outermost ring radius
-  const RING_GAP  = 13;              // gap between ring centers
-  const BASE_SW   = 11;              // stroke-width of outermost ring
-  const SW_STEP   = 1.5;            // each inner ring gets slightly thinner
-  const MIN_SW    = 5;               // minimum stroke-width
-  const GAP_DEG   = 4;              // degrees of empty gap at arc tail end
-  const START_DEG = -90;             // start at top
+  const CX = 100, CY = 100;
+  const OUTER_R  = 88;
+  const RING_GAP = 13;
+  const BASE_SW  = 11;
+  const SW_STEP  = 1.5;
+  const MIN_SW   = 5;
+  const GAP_DEG  = 4;
+  const START_DEG = -90;
 
   function degToRad(d){ return (d * Math.PI) / 180; }
 
@@ -671,9 +669,9 @@
   }
 
   function renderRings(items, total) {
-    const svg     = document.getElementById('rings-svg');
-    const legend  = document.getElementById('rings-legend');
-    const empty   = document.getElementById('empty-state');
+    const svg      = document.getElementById('rings-svg');
+    const legend   = document.getElementById('rings-legend');
+    const empty    = document.getElementById('empty-state');
     const ringsCol = document.getElementById('rings-col');
     svg.innerHTML    = '';
     legend.innerHTML = '';
@@ -689,42 +687,44 @@
     empty.style.display    = 'none';
 
     const ns = 'http://www.w3.org/2000/svg';
-
-    // Sort largest first → outermost ring
     const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    _ringSorted  = sorted;
-    _ringTotal   = total;
-    pinnedIdx    = -1;
+    _ringSorted = sorted;
+    _ringTotal  = total;
+    pinnedIdx   = -1;
 
-    const n = sorted.length;
-
-    // Track ring — faint grey background circle for each ring
+    // Track rings (faint grey background circles)
     sorted.forEach((item, i) => {
       const r = OUTER_R - i * RING_GAP;
       if (r < 8) return;
+      const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
       const track = document.createElementNS(ns, 'circle');
-      track.setAttribute('cx', CX); track.setAttribute('cy', CY); track.setAttribute('r', r);
+      track.setAttribute('cx', CX);
+      track.setAttribute('cy', CY);
+      track.setAttribute('r', r);
       track.setAttribute('fill', 'none');
       track.setAttribute('stroke', 'rgba(0,0,0,0.07)');
-      track.setAttribute('stroke-width', Math.max(MIN_SW, BASE_SW - i * SW_STEP));
+      track.setAttribute('stroke-width', sw);
       track.setAttribute('pointer-events', 'none');
       svg.appendChild(track);
     });
 
-    // Arcs
+    // Coloured arcs
     sorted.forEach((item, i) => {
-      const r   = OUTER_R - i * RING_GAP;
+      const r = OUTER_R - i * RING_GAP;
       if (r < 8) return;
-      const sw  = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
-      const pct = item.amount / total;
+      const sw    = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
+      const pct   = item.amount / total;
+      const color = getBrand(item.name).color;
 
-      // Arc sweeps from START_DEG, leaves a small gap
-      const sweepDeg  = 360 * pct - GAP_DEG;
-      const startDeg  = START_DEG;
-      const endDeg    = startDeg + Math.max(sweepDeg, 10); // min arc so it's always visible
+      // ── KEY FIX ──────────────────────────────────────────────────────────
+      // arcFraction: how much of the full circle this arc covers (with gap)
+      // Minimum 0.03 so single-item rings always show a visible arc.
+      const arcFraction = Math.max(pct - GAP_DEG / 360, 0.03);
+      const sweepDeg    = Math.max(360 * arcFraction, 10);
+      const startDeg    = START_DEG;
+      const endDeg      = startDeg + sweepDeg;
 
       const d = arcPath(CX, CY, r, startDeg, endDeg);
-      const color = getBrand(item.name).color;
 
       const arc = document.createElementNS(ns, 'path');
       arc.setAttribute('d', d);
@@ -735,16 +735,19 @@
       arc.setAttribute('class', 'ring-arc');
       arc.setAttribute('data-idx', i);
       arc.style.setProperty('--sw-hi', sw + 3);
-      arc.style.cursor = 'pointer';
 
-      // Animate draw-on
-      const circ = 2 * Math.PI * r;
-      const dashLen = circ * pct - (GAP_DEG / 360 * circ);
+      // Correct dasharray/dashoffset pattern:
+      // dasharray = "circ circ"  → full circle is one dash, followed by one gap
+      // dashoffset starts at circ (hides entire dash)
+      // animation drives offset to (circ - dashLen) revealing exactly dashLen
+      const circ    = 2 * Math.PI * r;
+      const dashLen = circ * arcFraction;
       arc.style.setProperty('--circ', circ);
       arc.style.setProperty('--dash-offset', circ - dashLen);
-      arc.setAttribute('stroke-dasharray', `${dashLen} ${circ}`);
+      arc.setAttribute('stroke-dasharray', `${circ} ${circ}`);
       arc.setAttribute('stroke-dashoffset', circ);
       arc.style.animation = `ringDraw 0.7s ease ${i * 0.12}s forwards`;
+      // ─────────────────────────────────────────────────────────────────────
 
       arc.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
       arc.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
@@ -758,12 +761,13 @@
       const dot = document.createElementNS(ns, 'circle');
       dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
       dot.setAttribute('r', sw / 2 + 0.5);
-      dot.setAttribute('fill', color); dot.setAttribute('pointer-events', 'none');
+      dot.setAttribute('fill', color);
+      dot.setAttribute('pointer-events', 'none');
       dot.setAttribute('data-dot', i);
       svg.appendChild(dot);
     });
 
-    // Center label
+    // Centre label
     const centerAmt = document.createElementNS(ns, 'text');
     centerAmt.setAttribute('id', 'ring-center-amt');
     centerAmt.setAttribute('x', CX); centerAmt.setAttribute('y', CY - 8);
@@ -789,9 +793,8 @@
 
     // Legend
     sorted.forEach((item, i) => {
-      const pct    = Math.round((item.amount / total) * 100);
-      const color  = getBrand(item.name).color;
-      const row    = document.createElement('div');
+      const pct   = Math.round((item.amount / total) * 100);
+      const row   = document.createElement('div');
       row.className   = 'legend-item';
       row.dataset.idx = i;
       row.innerHTML   = `
@@ -812,7 +815,6 @@
   function setRingState(activeIdx) {
     const svg    = document.getElementById('rings-svg');
     const legend = document.getElementById('rings-legend');
-
     svg.querySelectorAll('.ring-arc').forEach(el => {
       const i = parseInt(el.dataset.idx);
       el.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
@@ -826,7 +828,6 @@
       const i = parseInt(el.dataset.idx);
       el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
     });
-
     const amtEl = document.getElementById('ring-center-amt');
     const lblEl = document.getElementById('ring-center-lbl');
     if (!amtEl) return;
