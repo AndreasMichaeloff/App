@@ -44,17 +44,60 @@
     .toggle-btn.inactive-income  { background: #fff; color: #c49a3a; border-color: #e8b84b; }
     .toggle-btn.inactive-expense { background: #fff; color: #a0622a; border-color: #a0622a; }
 
+    /* ── Total card ── */
     .total-card-wrap { position: relative; margin-bottom: 1vh; flex-shrink: 0; }
-    .total-card { border-radius: 16px; padding: clamp(8px,1.2vh,14px) clamp(12px,3vw,18px); }
+    .total-card {
+      border-radius: 16px;
+      padding: clamp(8px,1.2vh,14px) clamp(12px,3vw,18px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+    }
     .total-card.income  { background: #e8b84b; border: 1.5px solid #d4a843; }
     .total-card.expense { background: #a0622a; border: 1.5px solid #8a5222; }
+
+    /* Left side: label + amount + pill */
+    .total-card-left { flex-shrink: 0; }
     .total-card .label  { font-size: clamp(11px,1.3vh,13px); color: rgba(255,255,255,0.85); margin-bottom: 1px; }
-    .total-card .amount { font-size: clamp(24px,3.5vh,36px); font-weight: 700; color: #fff; letter-spacing: -1px; }
-    .total-card .change-row { display: flex; align-items: center; gap: 8px; margin-top: clamp(3px,0.6vh,6px); }
+    .total-card .amount { font-size: clamp(22px,3.2vh,34px); font-weight: 700; color: #fff; letter-spacing: -1px; line-height: 1.1; }
+    .total-card .change-row { display: flex; align-items: center; gap: 6px; margin-top: clamp(3px,0.5vh,5px); }
     .total-card .change-pill { font-size: clamp(10px,1.2vh,12px); font-weight: 700; padding: 2px 7px; border-radius: 20px; }
     .pill-good { background: rgba(255,255,255,0.3); color: #fff; }
     .pill-bad  { background: rgba(0,0,0,0.15); color: #fff; }
     .total-card .change-label { font-size: clamp(10px,1.2vh,12px); color: rgba(255,255,255,0.75); }
+
+    /* Right side: mini bar chart */
+    .total-card-chart {
+      flex: 1;
+      min-width: 0;
+      height: clamp(44px, 6vh, 62px);
+      position: relative;
+    }
+    #mini-bar-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Bar tooltip */
+    .bar-tooltip {
+      position: fixed;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 10px;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 500;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .bar-tooltip.show { opacity: 1; }
+
     .add-btn { position: absolute; bottom: -16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 2px solid #e8b84b; color: #e8b84b; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(232,184,75,0.3); transition: background 0.15s, transform 0.1s; z-index: 10; line-height: 1; }
     .add-btn:active { transform: scale(0.93); background: #fff8e6; }
 
@@ -108,7 +151,6 @@
       gap: 0;
     }
 
-    /* Goal ring legend row — top of legend */
     .legend-goal-row {
       display: flex;
       align-items: center;
@@ -142,12 +184,6 @@
     .legend-item:last-child { border-bottom: none; }
     .legend-item.dimmed { opacity: 0.25; }
 
-    .legend-swatch {
-      width: clamp(8px,1.2vh,11px);
-      height: clamp(8px,1.2vh,11px);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
     .source-icon { width: clamp(20px,3vh,26px); height: clamp(20px,3vh,26px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
     .source-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .legend-name { font-size: clamp(10px,1.4vh,13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -157,27 +193,13 @@
     .legend-del  { font-size: clamp(13px,1.8vh,16px); color: #a0622a; margin-left: 4px; opacity: 0; transition: opacity 0.15s; cursor: pointer; padding: 2px; flex-shrink: 0; }
     .legend-item:hover .legend-del { opacity: 1; }
 
-    /* No-goal prompt inside chart */
-    .set-goal-prompt {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      pointer-events: none; /* only the SVG circle is clickable */
-    }
-
-    #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1rem; text-align: center; }
+    #empty-state { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 1.5rem; text-align: center; }
 
     .net-card { display: flex; justify-content: space-between; align-items: center; background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0; padding: clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top: clamp(5px,0.8vh,10px); margin-bottom: 1vh; flex-shrink: 0; }
     .net-label    { font-size: clamp(11px,1.4vh,13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
 
-    /* ── Other pages ── */
     #page-trends, #page-goals, #page-settings, #page-transactions { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title    { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
     .page-subtitle { font-size: 14px; color: #bbb; margin-bottom: 1rem; }
@@ -232,7 +254,6 @@
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
 
-    /* ── Nav ── */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: #fff; border-top: 1.5px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom,0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0 24px 0; transition: transform 0.1s; }
     .nav-item:active { transform: scale(0.9); }
@@ -240,7 +261,6 @@
     .nav-label { font-size: 9px; font-weight: 500; color: #ccc; }
     .nav-item.active .nav-label { color: #e8b84b; font-weight: 700; }
 
-    /* ── Sheets ── */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; align-items: flex-end; justify-content: center; }
     .overlay.open { display: flex; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -276,7 +296,6 @@
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
-    /* Ring animation */
     @keyframes ringDraw {
       from { stroke-dashoffset: var(--circ); }
       to   { stroke-dashoffset: var(--dash-offset); }
@@ -285,7 +304,6 @@
     .ring-arc.dimmed { opacity: 0.2; }
     .ring-arc.highlighted { stroke-width: var(--sw-hi); }
 
-    /* Goal ring pulse when no goal set */
     @keyframes goalPulse {
       0%, 100% { opacity: 0.35; }
       50%       { opacity: 0.7; }
@@ -335,24 +353,34 @@
       <button class="toggle-btn income-active"    id="btn-income"  onclick="setMode('income')">Income</button>
       <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
     </div>
+
+    <!-- TOTAL CARD with mini chart -->
     <div class="total-card-wrap">
       <div class="total-card income" id="total-card">
-        <div class="label"  id="total-label">Total income</div>
-        <div class="amount" id="total-amount">$0</div>
-        <div class="change-row">
-          <span class="change-pill pill-good" id="change-pill">—</span>
-          <span class="change-label" id="change-label">no prior data</span>
+        <div class="total-card-left">
+          <div class="label"  id="total-label">Total income</div>
+          <div class="amount" id="total-amount">$0</div>
+          <div class="change-row">
+            <span class="change-pill pill-good" id="change-pill">—</span>
+            <span class="change-label" id="change-label">no prior data</span>
+          </div>
+        </div>
+        <div class="total-card-chart">
+          <canvas id="mini-bar-canvas"></canvas>
         </div>
       </div>
       <button class="add-btn" onclick="openSheet()">+</button>
     </div>
+
+    <div class="bar-tooltip" id="bar-tooltip"></div>
+
     <div class="goal-banner hidden" id="goal-banner">
       <span class="banner-emoji" id="banner-emoji">🎯</span>
       <span class="banner-text"  id="banner-text"></span>
     </div>
     <div class="sources-title" id="breakdown-title">Income breakdown</div>
 
-    <!-- CHART -->
+    <!-- RINGS CHART -->
     <div class="chart-section" id="chart-section">
       <div class="rings-col" id="rings-col">
         <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -544,7 +572,6 @@
   };
 
   function getBrand(n){ return SOURCE_BRANDS[n]||{color:"#e8b84b",initials:n.slice(0,2).toUpperCase(),logo:null}; }
-
   function iconHTML(name,size=24){
     const b=getBrand(name);
     if(b.logo) return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.5)}px';"/></div>`;
@@ -553,10 +580,11 @@
   }
 
   function formatDate(ts){ return new Date(ts).toLocaleDateString('default',{month:'short',day:'numeric',year:'numeric'}); }
-  function getDateMonthKey(ts)   { const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
-  function getDateMonthLabel(ts) { return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
-  function getMonthLabel(off)    { const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short',year:'numeric'}); }
+  function getDateMonthKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+  function getDateMonthLabel(ts){ return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
+  function getMonthLabel(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short',year:'numeric'}); }
   function getMonthLabelFull(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'long',year:'numeric'}); }
+  function getMonthShort(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short'}); }
 
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
@@ -604,6 +632,144 @@
     handle.addEventListener('touchmove', e=>{if(!dragging)return;currentY=Math.max(0,e.touches[0].clientY-startY);sheet.style.transform=`translateY(${currentY}px)`;overlay.style.opacity=Math.max(0,1-currentY/300);},{passive:true});
     handle.addEventListener('touchend',  ()=>{if(!dragging)return;dragging=false;sheet.classList.remove('dragging');if(currentY>120){sheet.style.transform='translateY(100%)';setTimeout(()=>{sheet.style.transform='';overlay.style.opacity='';closeFn();},200);}else{sheet.style.transform='';overlay.style.opacity='1';}currentY=0;});
     handle.addEventListener('click',closeFn);
+  }
+
+  // ── MINI BAR CHART ────────────────────────────────────────────────────────
+  // Draws a 12-month rolling bar chart directly on a canvas inside the total card.
+  // Colors: semi-transparent darker version of the card background for bars,
+  // current month (offset=0) highlighted brighter. Tooltip on tap/click.
+
+  let miniBarData = []; // [{label, value, offsetKey}]
+  let tooltipTimeout = null;
+
+  function getMiniBarColors(isIncome) {
+    return {
+      bar:         isIncome ? 'rgba(180,130,20,0.45)'  : 'rgba(100,50,10,0.4)',
+      barHover:    isIncome ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.45)',
+      barCurrent:  isIncome ? 'rgba(255,255,255,0.7)'  : 'rgba(255,255,255,0.6)',
+      barEmpty:    isIncome ? 'rgba(180,130,20,0.18)'  : 'rgba(100,50,10,0.18)',
+    };
+  }
+
+  function renderMiniBarChart() {
+    const canvas = document.getElementById('mini-bar-canvas');
+    if (!canvas) return;
+
+    // Collect last 12 months (offset -11 to 0 relative to current view's month)
+    // We anchor to the real current month (offset 0 in data), show rolling 12
+    const data = [];
+    for (let i = -11; i <= 0; i++) {
+      const mo = months[String(i)];
+      const val = mo ? getTotal(mo[mode].items) : 0;
+      const label = getMonthLabel(i);
+      const shortLabel = getMonthShort(i);
+      data.push({ label, shortLabel, value: val, offsetKey: i });
+    }
+    miniBarData = data;
+
+    const dpr    = window.devicePixelRatio || 1;
+    const rect   = canvas.parentElement.getBoundingClientRect();
+    const W      = rect.width;
+    const H      = rect.height;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, W, H);
+
+    const isIncome = mode === 'income';
+    const colors   = getMiniBarColors(isIncome);
+    const maxVal   = Math.max(...data.map(d => d.value), 1);
+
+    const n       = data.length;
+    const gap     = 3;
+    const barW    = (W - gap * (n - 1)) / n;
+    const maxBarH = H - 4; // leave 4px top breathing room
+
+    data.forEach((d, i) => {
+      const x    = i * (barW + gap);
+      const pct  = d.value / maxVal;
+      const barH = Math.max(pct > 0 ? 4 : 2, pct * maxBarH);
+      const y    = H - barH;
+      const isCurrent = d.offsetKey === 0;
+
+      ctx.beginPath();
+      const r = Math.min(3, barW / 2);
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + barW - r, y);
+      ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
+      ctx.lineTo(x + barW, H);
+      ctx.lineTo(x, H);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+
+      ctx.fillStyle = d.value === 0
+        ? colors.barEmpty
+        : isCurrent
+          ? colors.barCurrent
+          : colors.bar;
+      ctx.fill();
+    });
+
+    // Store bar rects for hit testing
+    canvas._barRects = data.map((d, i) => ({
+      x: i * (barW + gap),
+      w: barW,
+      label: d.label,
+      shortLabel: d.shortLabel,
+      value: d.value,
+      offsetKey: d.offsetKey,
+    }));
+  }
+
+  function showBarTooltip(label, value, canvasX, canvasY) {
+    const tooltip = document.getElementById('bar-tooltip');
+    const canvas  = document.getElementById('mini-bar-canvas');
+    const rect    = canvas.getBoundingClientRect();
+    const absX    = rect.left + canvasX;
+    const absY    = rect.top  + canvasY;
+
+    tooltip.textContent = `${label}  $${value.toLocaleString()}`;
+    tooltip.classList.add('show');
+
+    // Position above the tap point, centered
+    const tw = tooltip.offsetWidth || 120;
+    let left = absX - tw / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+    const top = absY - 36;
+
+    tooltip.style.left = left + 'px';
+    tooltip.style.top  = top  + 'px';
+
+    clearTimeout(tooltipTimeout);
+    tooltipTimeout = setTimeout(() => tooltip.classList.remove('show'), 2200);
+  }
+
+  function handleMiniBarInteraction(e) {
+    const canvas = document.getElementById('mini-bar-canvas');
+    if (!canvas || !canvas._barRects) return;
+    const rect   = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+
+    for (const bar of canvas._barRects) {
+      if (x >= bar.x && x <= bar.x + bar.w) {
+        showBarTooltip(bar.label, bar.value, x, y);
+        break;
+      }
+    }
+  }
+
+  function initMiniBarEvents() {
+    const canvas = document.getElementById('mini-bar-canvas');
+    canvas.addEventListener('click',     handleMiniBarInteraction);
+    canvas.addEventListener('touchend',  e => { e.preventDefault(); handleMiniBarInteraction(e.changedTouches[0] ? {clientX:e.changedTouches[0].clientX,clientY:e.changedTouches[0].clientY} : e); });
   }
 
   // ── Transactions ──────────────────────────────────────────────────────────
@@ -677,286 +843,153 @@
     else{banner.classList.add('hidden');}
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // ✦ FILO GOAL-AWARE CONCENTRIC RINGS CHART
-  //
-  // Outer ring  = income goal progress (gold, fills relative to goal target)
-  // Inner rings = individual sources   (each fills relative to goal target)
-  // No goal set = faint pulsing grey outer ring with "Set goal" tap
-  // ══════════════════════════════════════════════════════════════════════════
+  // ── RINGS CHART ───────────────────────────────────────────────────────────
+  const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
+  function degToRad(d){ return (d*Math.PI)/180; }
 
-  const CX = 100, CY = 100;
-  const GOAL_R   = 88;   // outermost ring radius (goal)
-  const RING_GAP = 14;   // gap between source rings
-  const GOAL_SW  = 13;   // stroke-width for goal ring
-  const BASE_SW  = 10;   // stroke-width for first source ring
-  const SW_STEP  = 1.2;  // taper per ring inward
-  const MIN_SW   = 4;
-  const START_DEG = -90;
-
-  function degToRad(d){ return (d * Math.PI) / 180; }
-
-  function drawArc(svg, ns, r, fraction, color, sw, delay, extraClass='') {
-    // fraction: 0–1, how much of the circle to fill
-    const clampedFraction = Math.min(1, Math.max(0, fraction));
-    const sweepDeg = clampedFraction * 360;
-
-    // Track (grey background full circle)
-    const track = document.createElementNS(ns, 'circle');
-    track.setAttribute('cx', CX); track.setAttribute('cy', CY); track.setAttribute('r', r);
-    track.setAttribute('fill', 'none');
-    track.setAttribute('stroke', 'rgba(0,0,0,0.07)');
-    track.setAttribute('stroke-width', sw);
-    track.setAttribute('pointer-events', 'none');
+  function drawArc(svg,ns,r,fraction,color,sw,delay,extraClass=''){
+    const clampedFraction=Math.min(1,Math.max(0,fraction));
+    const sweepDeg=clampedFraction*360;
+    const track=document.createElementNS(ns,'circle');
+    track.setAttribute('cx',CX);track.setAttribute('cy',CY);track.setAttribute('r',r);
+    track.setAttribute('fill','none');track.setAttribute('stroke','rgba(0,0,0,0.07)');
+    track.setAttribute('stroke-width',sw);track.setAttribute('pointer-events','none');
     svg.appendChild(track);
-
-    if (clampedFraction <= 0) return null;
-
-    // Arc path from -90° sweeping clockwise
-    const s = degToRad(START_DEG);
-    const e = degToRad(START_DEG + sweepDeg);
-    const x1 = CX + r * Math.cos(s), y1 = CY + r * Math.sin(s);
-    const x2 = CX + r * Math.cos(e), y2 = CY + r * Math.sin(e);
-    const largeArc = sweepDeg > 180 ? 1 : 0;
-    const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
-
-    const arc = document.createElementNS(ns, 'path');
-    arc.setAttribute('d', d);
-    arc.setAttribute('fill', 'none');
-    arc.setAttribute('stroke', color);
-    arc.setAttribute('stroke-width', sw);
-    arc.setAttribute('stroke-linecap', 'round');
-    if (extraClass) arc.setAttribute('class', extraClass);
-
-    // Dash animation
-    const circ    = 2 * Math.PI * r;
-    const dashLen = circ * clampedFraction;
-    arc.style.setProperty('--circ', circ);
-    arc.style.setProperty('--dash-offset', circ - dashLen);
-    arc.style.setProperty('--sw-hi', sw + 3);
-    arc.setAttribute('stroke-dasharray', `${circ} ${circ}`);
-    arc.setAttribute('stroke-dashoffset', circ);
-    arc.style.animation = `ringDraw 0.7s ease ${delay}s forwards`;
-
+    if(clampedFraction<=0)return null;
+    const s=degToRad(START_DEG),e=degToRad(START_DEG+sweepDeg);
+    const x1=CX+r*Math.cos(s),y1=CY+r*Math.sin(s);
+    const x2=CX+r*Math.cos(e),y2=CY+r*Math.sin(e);
+    const largeArc=sweepDeg>180?1:0;
+    const d=`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+    const arc=document.createElementNS(ns,'path');
+    arc.setAttribute('d',d);arc.setAttribute('fill','none');arc.setAttribute('stroke',color);
+    arc.setAttribute('stroke-width',sw);arc.setAttribute('stroke-linecap','round');
+    if(extraClass)arc.setAttribute('class',extraClass);
+    const circ=2*Math.PI*r,dashLen=circ*clampedFraction;
+    arc.style.setProperty('--circ',circ);arc.style.setProperty('--dash-offset',circ-dashLen);
+    arc.style.setProperty('--sw-hi',sw+3);
+    arc.setAttribute('stroke-dasharray',`${circ} ${circ}`);arc.setAttribute('stroke-dashoffset',circ);
+    arc.style.animation=`ringDraw 0.7s ease ${delay}s forwards`;
     svg.appendChild(arc);
-
-    // Start-cap dot
-    const dotRad = degToRad(START_DEG);
-    const dx = CX + r * Math.cos(dotRad), dy = CY + r * Math.sin(dotRad);
-    const dot = document.createElementNS(ns, 'circle');
-    dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
-    dot.setAttribute('r', sw / 2 + 0.5);
-    dot.setAttribute('fill', color);
-    dot.setAttribute('pointer-events', 'none');
+    const dotRad=degToRad(START_DEG);
+    const dx=CX+r*Math.cos(dotRad),dy=CY+r*Math.sin(dotRad);
+    const dot=document.createElementNS(ns,'circle');
+    dot.setAttribute('cx',dx);dot.setAttribute('cy',dy);dot.setAttribute('r',sw/2+0.5);
+    dot.setAttribute('fill',color);dot.setAttribute('pointer-events','none');
     svg.appendChild(dot);
-
     return arc;
   }
 
-  function renderRings(items, total) {
-    const svg      = document.getElementById('rings-svg');
-    const legend   = document.getElementById('rings-legend');
-    const empty    = document.getElementById('empty-state');
-    const ringsCol = document.getElementById('rings-col');
-    svg.innerHTML    = '';
-    legend.innerHTML = '';
-
-    const ns = 'http://www.w3.org/2000/svg';
-
-    // ── Empty state ──────────────────────────────────────────────────────
-    if (!items.length || total === 0) {
-      ringsCol.style.display = 'none';
-      legend.style.display   = 'none';
-      empty.style.display    = 'flex';
-      return;
+  function renderRings(items,total){
+    const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');
+    const empty=document.getElementById('empty-state'),ringsCol=document.getElementById('rings-col');
+    svg.innerHTML='';legend.innerHTML='';
+    const ns='http://www.w3.org/2000/svg';
+    if(!items.length||total===0){
+      ringsCol.style.display='none';legend.style.display='none';empty.style.display='flex';return;
     }
-    ringsCol.style.display = '';
-    legend.style.display   = '';
-    empty.style.display    = 'none';
-
-    const sorted  = [...items].sort((a, b) => b.amount - a.amount);
-    _ringSorted   = sorted;
-    pinnedIdx     = -1;
-
-    // ── Determine goal ───────────────────────────────────────────────────
-    // Use first income goal if we're in income mode, otherwise no goal ring scaling
-    const activeGoal = (mode === 'income' && goals.length > 0) ? goals[0] : null;
-    _ringGoal = activeGoal ? activeGoal.target : 0;
-    const goalTarget = _ringGoal || total; // fallback: treat total as 100%
-
-    // ── OUTER RING: Goal progress ────────────────────────────────────────
-    if (mode === 'income') {
-      if (activeGoal) {
-        // Gold ring showing income vs goal
-        const goalFraction = Math.min(1, total / activeGoal.target);
-        const goalArc = drawArc(svg, ns, GOAL_R, goalFraction, '#e8b84b', GOAL_SW, 0, 'ring-arc goal-arc');
-        if (goalArc) {
-          goalArc.setAttribute('data-idx', 'goal');
-          goalArc.style.filter = 'drop-shadow(0 0 3px rgba(232,184,75,0.5))';
-        }
-
-        // Goal legend row
-        const goalPct = Math.round((total / activeGoal.target) * 100);
-        const goalRow = document.createElement('div');
-        goalRow.className = 'legend-goal-row';
-        goalRow.innerHTML = `
-          <div class="legend-goal-swatch"></div>
-          <span class="legend-goal-name">🎯 ${activeGoal.name}</span>
-          <div class="legend-goal-right">
-            <span class="legend-goal-pct">${goalPct}%</span>
-            <span class="legend-goal-sub">of $${activeGoal.target.toLocaleString()}</span>
-          </div>`;
-        goalRow.addEventListener('click', () => openGoalSheet());
-        legend.appendChild(goalRow);
-
+    ringsCol.style.display='';legend.style.display='';empty.style.display='none';
+    const sorted=[...items].sort((a,b)=>b.amount-a.amount);
+    _ringSorted=sorted;pinnedIdx=-1;
+    const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;
+    _ringGoal=activeGoal?activeGoal.target:0;
+    const goalTarget=_ringGoal||total;
+    if(mode==='income'){
+      if(activeGoal){
+        const goalFraction=Math.min(1,total/activeGoal.target);
+        const goalArc=drawArc(svg,ns,GOAL_R,goalFraction,'#e8b84b',GOAL_SW,0,'ring-arc goal-arc');
+        if(goalArc){goalArc.setAttribute('data-idx','goal');goalArc.style.filter='drop-shadow(0 0 3px rgba(232,184,75,0.5))';}
+        const goalPct=Math.round((total/activeGoal.target)*100);
+        const goalRow=document.createElement('div');goalRow.className='legend-goal-row';
+        goalRow.innerHTML=`<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 ${activeGoal.name}</span><div class="legend-goal-right"><span class="legend-goal-pct">${goalPct}%</span><span class="legend-goal-sub">of $${activeGoal.target.toLocaleString()}</span></div>`;
+        goalRow.addEventListener('click',()=>openGoalSheet());legend.appendChild(goalRow);
       } else {
-        // No goal — faint pulsing grey ring + "Set goal" tap
-        const emptyTrack = document.createElementNS(ns, 'circle');
-        emptyTrack.setAttribute('cx', CX); emptyTrack.setAttribute('cy', CY);
-        emptyTrack.setAttribute('r', GOAL_R);
-        emptyTrack.setAttribute('fill', 'none');
-        emptyTrack.setAttribute('stroke', 'rgba(0,0,0,0.12)');
-        emptyTrack.setAttribute('stroke-width', GOAL_SW);
-        emptyTrack.setAttribute('class', 'goal-ring-empty');
-        emptyTrack.setAttribute('stroke-dasharray', `${2 * Math.PI * GOAL_R * 0.6} ${2 * Math.PI * GOAL_R * 0.4}`);
-        emptyTrack.setAttribute('stroke-dashoffset', `${2 * Math.PI * GOAL_R * 0.25}`);
-        emptyTrack.setAttribute('stroke-linecap', 'round');
-        emptyTrack.addEventListener('click', () => openGoalSheet());
-        emptyTrack.addEventListener('touchend', e => { e.preventDefault(); openGoalSheet(); });
+        const emptyTrack=document.createElementNS(ns,'circle');
+        emptyTrack.setAttribute('cx',CX);emptyTrack.setAttribute('cy',CY);emptyTrack.setAttribute('r',GOAL_R);
+        emptyTrack.setAttribute('fill','none');emptyTrack.setAttribute('stroke','rgba(0,0,0,0.12)');
+        emptyTrack.setAttribute('stroke-width',GOAL_SW);emptyTrack.setAttribute('class','goal-ring-empty');
+        emptyTrack.setAttribute('stroke-dasharray',`${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);
+        emptyTrack.setAttribute('stroke-dashoffset',`${2*Math.PI*GOAL_R*0.25}`);
+        emptyTrack.setAttribute('stroke-linecap','round');
+        emptyTrack.addEventListener('click',()=>openGoalSheet());
+        emptyTrack.addEventListener('touchend',e=>{e.preventDefault();openGoalSheet();});
         svg.appendChild(emptyTrack);
-
-        // "Set goal" legend row
-        const setGoalRow = document.createElement('div');
-        setGoalRow.className = 'legend-goal-row';
-        setGoalRow.style.opacity = '0.6';
-        setGoalRow.innerHTML = `
-          <div class="legend-goal-swatch" style="background:#ccc;"></div>
-          <span class="legend-goal-name" style="color:#aaa;">Set income goal</span>
-          <div class="legend-goal-right">
-            <span class="legend-goal-pct" style="color:#ccc;">+ Goal</span>
-          </div>`;
-        setGoalRow.addEventListener('click', () => openGoalSheet());
-        legend.appendChild(setGoalRow);
+        const setGoalRow=document.createElement('div');setGoalRow.className='legend-goal-row';setGoalRow.style.opacity='0.6';
+        setGoalRow.innerHTML=`<div class="legend-goal-swatch" style="background:#ccc;"></div><span class="legend-goal-name" style="color:#aaa;">Set income goal</span><div class="legend-goal-right"><span class="legend-goal-pct" style="color:#ccc;">+ Goal</span></div>`;
+        setGoalRow.addEventListener('click',()=>openGoalSheet());legend.appendChild(setGoalRow);
       }
     }
-
-    // ── INNER RINGS: Source breakdown, each scaled to goal ───────────────
-    sorted.forEach((item, i) => {
-      const r  = GOAL_R - RING_GAP - i * RING_GAP; // start one ring in from goal
-      if (r < 10) return;
-      const sw      = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
-      const color   = getBrand(item.name).color;
-      // Each source fills relative to goal target (or total if no goal)
-      const fraction = Math.min(1, item.amount / goalTarget);
-
-      const arc = drawArc(svg, ns, r, fraction, color, sw, 0.08 + i * 0.1, 'ring-arc');
-      if (arc) {
-        arc.setAttribute('data-idx', i);
-        arc.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
-        arc.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
-        arc.addEventListener('click',      () => pinRing(i));
-        arc.addEventListener('touchend',   e  => { e.preventDefault(); pinRing(i); });
+    sorted.forEach((item,i)=>{
+      const r=GOAL_R-RING_GAP-i*RING_GAP;if(r<10)return;
+      const sw=Math.max(MIN_SW,BASE_SW-i*SW_STEP);
+      const color=getBrand(item.name).color;
+      const fraction=Math.min(1,item.amount/goalTarget);
+      const arc=drawArc(svg,ns,r,fraction,color,sw,0.08+i*0.1,'ring-arc');
+      if(arc){
+        arc.setAttribute('data-idx',i);
+        arc.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});
+        arc.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});
+        arc.addEventListener('click',()=>pinRing(i));
+        arc.addEventListener('touchend',e=>{e.preventDefault();pinRing(i);});
       }
-
-      // Dot markers for source rings (stored separately for highlight)
-      const dotEl = svg.querySelector(`[data-dot="${i}"]`); // will be added by drawArc above implicitly via lastChild logic
-      // We need to tag the dot — find it (it's the last circle child with same fill color)
-      const allCircles = svg.querySelectorAll('circle');
-      const lastDot = allCircles[allCircles.length - 1];
-      if (lastDot && lastDot.getAttribute('fill') === color) {
-        lastDot.setAttribute('data-dot', i);
-      }
+      const allCircles=svg.querySelectorAll('circle');
+      const lastDot=allCircles[allCircles.length-1];
+      if(lastDot&&lastDot.getAttribute('fill')===color){lastDot.setAttribute('data-dot',i);}
     });
-
-    // ── Centre label ─────────────────────────────────────────────────────
-    const centerAmt = document.createElementNS(ns, 'text');
-    centerAmt.setAttribute('id', 'ring-center-amt');
-    centerAmt.setAttribute('x', CX); centerAmt.setAttribute('y', CY - 8);
-    centerAmt.setAttribute('text-anchor', 'middle');
-    centerAmt.setAttribute('dominant-baseline', 'middle');
-    centerAmt.setAttribute('font-size', '15');
-    centerAmt.setAttribute('font-weight', '700');
-    centerAmt.setAttribute('fill', '#222');
-    centerAmt.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
-    centerAmt.textContent = '$' + total.toLocaleString();
-    svg.appendChild(centerAmt);
-
-    const centerLbl = document.createElementNS(ns, 'text');
-    centerLbl.setAttribute('id', 'ring-center-lbl');
-    centerLbl.setAttribute('x', CX); centerLbl.setAttribute('y', CY + 10);
-    centerLbl.setAttribute('text-anchor', 'middle');
-    centerLbl.setAttribute('dominant-baseline', 'middle');
-    centerLbl.setAttribute('font-size', '9');
-    centerLbl.setAttribute('fill', '#aaa');
-    centerLbl.setAttribute('font-family', '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
-    centerLbl.textContent = activeGoal
-      ? Math.round((total / activeGoal.target) * 100) + '% of goal'
-      : 'total';
+    const centerAmt=document.createElementNS(ns,'text');
+    centerAmt.setAttribute('id','ring-center-amt');centerAmt.setAttribute('x',CX);centerAmt.setAttribute('y',CY-8);
+    centerAmt.setAttribute('text-anchor','middle');centerAmt.setAttribute('dominant-baseline','middle');
+    centerAmt.setAttribute('font-size','15');centerAmt.setAttribute('font-weight','700');centerAmt.setAttribute('fill','#222');
+    centerAmt.setAttribute('font-family','-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
+    centerAmt.textContent='$'+total.toLocaleString();svg.appendChild(centerAmt);
+    const centerLbl=document.createElementNS(ns,'text');
+    centerLbl.setAttribute('id','ring-center-lbl');centerLbl.setAttribute('x',CX);centerLbl.setAttribute('y',CY+10);
+    centerLbl.setAttribute('text-anchor','middle');centerLbl.setAttribute('dominant-baseline','middle');
+    centerLbl.setAttribute('font-size','9');centerLbl.setAttribute('fill','#aaa');
+    centerLbl.setAttribute('font-family','-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');
+    centerLbl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';
     svg.appendChild(centerLbl);
-
-    // ── Source legend rows ───────────────────────────────────────────────
-    sorted.forEach((item, i) => {
-      const pct    = Math.round((item.amount / (activeGoal ? activeGoal.target : total)) * 100);
-      const goalPctLabel = activeGoal ? `${pct}% of goal` : `${Math.round((item.amount/total)*100)}%`;
-      const row    = document.createElement('div');
-      row.className   = 'legend-item';
-      row.dataset.idx = i;
-      row.innerHTML   = `
-        ${iconHTML(item.name, 22)}
-        <span class="legend-name">${item.name}</span>
-        <div class="legend-right">
-          <span class="legend-amt">$${item.amount.toLocaleString()}</span>
-          <span class="legend-pct">${goalPctLabel}</span>
-        </div>
-        <span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
-      row.addEventListener('mouseenter', () => { if (pinnedIdx < 0) setRingState(i); });
-      row.addEventListener('mouseleave', () => { if (pinnedIdx < 0) setRingState(-1); });
-      row.addEventListener('click',      () => pinRing(i));
+    sorted.forEach((item,i)=>{
+      const pct=Math.round((item.amount/(activeGoal?activeGoal.target:total))*100);
+      const goalPctLabel=activeGoal?`${pct}% of goal`:`${Math.round((item.amount/total)*100)}%`;
+      const row=document.createElement('div');row.className='legend-item';row.dataset.idx=i;
+      row.innerHTML=`${iconHTML(item.name,22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${goalPctLabel}</span></div><span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;
+      row.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});
+      row.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});
+      row.addEventListener('click',()=>pinRing(i));
       legend.appendChild(row);
     });
   }
 
-  function setRingState(activeIdx) {
-    const svg    = document.getElementById('rings-svg');
-    const legend = document.getElementById('rings-legend');
-
-    svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el => {
-      const i = parseInt(el.dataset.idx);
-      el.classList.toggle('dimmed',      activeIdx !== -1 && i !== activeIdx);
-      el.classList.toggle('highlighted', activeIdx !== -1 && i === activeIdx);
+  function setRingState(activeIdx){
+    const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');
+    svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el=>{
+      const i=parseInt(el.dataset.idx);
+      el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);
+      el.classList.toggle('highlighted',activeIdx!==-1&&i===activeIdx);
     });
-    svg.querySelectorAll('[data-dot]').forEach(el => {
-      const i = parseInt(el.dataset.dot);
-      el.style.opacity = (activeIdx === -1 || i === activeIdx) ? '1' : '0.2';
+    svg.querySelectorAll('[data-dot]').forEach(el=>{
+      const i=parseInt(el.dataset.dot);
+      el.style.opacity=(activeIdx===-1||i===activeIdx)?'1':'0.2';
     });
-    legend.querySelectorAll('.legend-item').forEach(el => {
-      const i = parseInt(el.dataset.idx);
-      el.classList.toggle('dimmed', activeIdx !== -1 && i !== activeIdx);
+    legend.querySelectorAll('.legend-item').forEach(el=>{
+      const i=parseInt(el.dataset.idx);
+      el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);
     });
-
-    const amtEl = document.getElementById('ring-center-amt');
-    const lblEl = document.getElementById('ring-center-lbl');
-    if (!amtEl) return;
-
-    const activeGoal = (mode === 'income' && goals.length > 0) ? goals[0] : null;
-    const total = getTotal((months[String(offset)] || {income:{items:[]},expense:{items:[]}}) [mode].items);
-
-    if (activeIdx === -1) {
-      amtEl.textContent = '$' + total.toLocaleString();
-      lblEl.textContent = activeGoal
-        ? Math.round((total / activeGoal.target) * 100) + '% of goal'
-        : 'total';
+    const amtEl=document.getElementById('ring-center-amt'),lblEl=document.getElementById('ring-center-lbl');
+    if(!amtEl)return;
+    const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;
+    const total=getTotal((months[String(offset)]||{income:{items:[]},expense:{items:[]}})[mode].items);
+    if(activeIdx===-1){
+      amtEl.textContent='$'+total.toLocaleString();
+      lblEl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';
     } else {
-      const item = _ringSorted[activeIdx];
-      amtEl.textContent = '$' + item.amount.toLocaleString();
-      lblEl.textContent = item.name;
+      const item=_ringSorted[activeIdx];
+      amtEl.textContent='$'+item.amount.toLocaleString();lblEl.textContent=item.name;
     }
   }
 
-  function pinRing(idx) {
-    if (pinnedIdx === idx) { pinnedIdx = -1; setRingState(-1); }
-    else { pinnedIdx = idx; setRingState(idx); }
-  }
+  function pinRing(idx){ if(pinnedIdx===idx){pinnedIdx=-1;setRingState(-1);}else{pinnedIdx=idx;setRingState(idx);} }
 
   // ── Stat cards ────────────────────────────────────────────────────────────
   function renderStatCards(){
@@ -1019,9 +1052,7 @@
   function buildSourceGrid(){
     const sources=entryType==="income"?INCOME_SOURCES:EXPENSE_SOURCES;
     document.getElementById('source-label').textContent=entryType==="income"?"Source":"Category";
-    selectedSource=null;
-    document.getElementById('custom-input-row').classList.remove('show');
-    document.getElementById('input-custom').value='';
+    selectedSource=null;document.getElementById('custom-input-row').classList.remove('show');document.getElementById('input-custom').value='';
     document.getElementById('source-grid').innerHTML=
       sources.map(s=>{
         const b=getBrand(s),isEmoji=/\p{Emoji}/u.test(b.initials);
@@ -1043,6 +1074,7 @@
     if(idx>-1){list.splice(idx,1);saveData();render();showToast(name+' removed');}
   }
 
+  // ── Main render ───────────────────────────────────────────────────────────
   function render(){
     const d=months[String(offset)];if(!d)return;
     const prev=months[String(offset-1)],data=d[mode],items=data.items,total=getTotal(items);
@@ -1059,7 +1091,10 @@
     netEl.textContent=(net>=0?'+':'-')+'$'+Math.abs(net).toLocaleString();
     netEl.className=net>=0?'net-positive':'net-negative';
     updateGoalBanner();
-    requestAnimationFrame(()=>renderRings(items,total));
+    requestAnimationFrame(()=>{
+      renderMiniBarChart();
+      renderRings(items,total);
+    });
   }
 
   function setMode(m){
@@ -1139,10 +1174,12 @@
 
   function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 
+  // ── Init ──────────────────────────────────────────────────────────────────
   ensureCurrentMonth();
   offset=0;
   render();
   switchPage('home');
+  initMiniBarEvents();
   initDragDismiss('sheet-handle-main','sheet-main','overlay',closeSheet);
   initDragDismiss('sheet-handle-edit','sheet-edit','edit-overlay',closeEditSheet);
   initDragDismiss('sheet-handle-goal','sheet-goal','goal-overlay',closeGoalSheet);
