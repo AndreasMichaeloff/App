@@ -1040,29 +1040,179 @@
   }
 
   function renderTrends(){
-    const keys=Object.keys(months).map(Number).sort((a,b)=>a-b);
-    const labels=keys.map(k=>getMonthLabel(k));
-    const incData=keys.map(k=>getTotal(months[String(k)].income.items));
-    const expData=keys.map(k=>getTotal(months[String(k)].expense.items));
-    const netData=keys.map(k=>getTotal(months[String(k)].income.items)-getTotal(months[String(k)].expense.items));
+    const today = new Date(); today.setHours(23,59,59,999);
+    const start = new Date(today); start.setDate(start.getDate()-89); start.setHours(0,0,0,0);
+
+    const dayMap = {};
+    Object.values(months).forEach(mo => {
+      ['income','expense'].forEach(type => {
+        mo[type].items.forEach(item => {
+          if(!item.date) return;
+          const d = new Date(item.date);
+          if(d < start || d > today) return;
+          const key = d.toISOString().slice(0,10);
+          if(!dayMap[key]) dayMap[key] = {inc:0,exp:0};
+          if(type==='income')  dayMap[key].inc += item.amount;
+          if(type==='expense') dayMap[key].exp += item.amount;
+        });
+      });
+    });
+
+    const labels=[], incDaily=[], expDaily=[];
+    for(let i=0;i<90;i++){
+      const d = new Date(start); d.setDate(start.getDate()+i);
+      const key = d.toISOString().slice(0,10);
+      incDaily.push(dayMap[key]?.inc||0);
+      expDaily.push(dayMap[key]?.exp||0);
+      const isFirst=d.getDate()===1, isMid=d.getDate()===15;
+      labels.push((isFirst||isMid)?d.toLocaleString('default',{month:'short',day:'numeric'}):'');
+    }
+
     if(trendsChart){trendsChart.destroy();trendsChart=null;}
-    trendsChart=new Chart(document.getElementById('trends-canvas'),{
+
+    const canvas = document.getElementById('trends-canvas');
+
+    function makeGrad(c, chartArea, r,g,b){
+      const grad = c.createLinearGradient(0,chartArea.top,0,chartArea.bottom);
+      grad.addColorStop(0,   `rgba(${r},${g},${b},0.28)`);
+      grad.addColorStop(0.65,`rgba(${r},${g},${b},0.07)`);
+      grad.addColorStop(1,   `rgba(${r},${g},${b},0.01)`);
+      return grad;
+    }
+
+    const crosshairPlugin = {
+      id:'crosshair',
+      afterDraw(chart){
+        if(chart._hoverX==null) return;
+        const {ctx,chartArea:{top,bottom}}=chart;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(chart._hoverX,top);
+        ctx.lineTo(chart._hoverX,bottom);
+        ctx.strokeStyle='rgba(0,0,0,0.1)';
+        ctx.lineWidth=1;
+        ctx.setLineDash([4,3]);
+        ctx.stroke();
+        ctx.restore();
+      }
+    };
+
+    trendsChart = new Chart(canvas, {
       type:'line',
-      data:{labels,datasets:[
-        {label:'Income',  data:incData,borderColor:'#e8b84b',borderWidth:2.5,pointBackgroundColor:'#e8b84b',pointRadius:5,pointHoverRadius:7,tension:0.35,fill:false},
-        {label:'Expenses',data:expData,borderColor:'#a0622a',borderWidth:2.5,pointBackgroundColor:'#a0622a',pointRadius:5,pointHoverRadius:7,tension:0.35,fill:false},
-        {label:'Net',     data:netData,borderColor:'#6a9e40',borderWidth:2,  pointBackgroundColor:'#6a9e40',pointRadius:4,pointHoverRadius:6, tension:0.35,fill:false,borderDash:[5,3]},
-      ]},
+      plugins:[crosshairPlugin],
+      data:{
+        labels,
+        datasets:[
+          {
+            label:'Income',
+            data: incDaily,
+            borderColor:'#e8b84b',
+            borderWidth:2.5,
+            pointRadius:0,
+            pointHoverRadius:5,
+            pointHoverBackgroundColor:'#e8b84b',
+            pointHoverBorderColor:'#fff',
+            pointHoverBorderWidth:2,
+            tension:0.4,
+            fill:'origin',
+            backgroundColor: ctx => {
+              const {ctx:c,chartArea}=ctx.chart;
+              if(!chartArea) return 'rgba(232,184,75,0.1)';
+              return makeGrad(c,chartArea,232,184,75);
+            },
+            yAxisID:'yInc',
+          },
+          {
+            label:'Expenses',
+            data: expDaily,
+            borderColor:'#a0622a',
+            borderWidth:1.8,
+            pointRadius:0,
+            pointHoverRadius:4,
+            pointHoverBackgroundColor:'#a0622a',
+            pointHoverBorderColor:'#fff',
+            pointHoverBorderWidth:2,
+            tension:0.4,
+            fill:'origin',
+            backgroundColor: ctx => {
+              const {ctx:c,chartArea}=ctx.chart;
+              if(!chartArea) return 'rgba(160,98,42,0.1)';
+              return makeGrad(c,chartArea,160,98,42);
+            },
+            yAxisID:'yExp',
+          },
+        ]
+      },
       options:{
-        responsive:true,maintainAspectRatio:false,
+        responsive:true,
+        maintainAspectRatio:false,
         interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',titleColor:'#222',bodyColor:'#555',borderColor:'#eee',borderWidth:1,padding:10,callbacks:{label:ctx=>` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}`}}},
+        onHover(e,els,chart){
+          chart._hoverX = els.length ? els[0].element.x : null;
+          chart.draw();
+        },
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'#fff',
+            titleColor:'#222',
+            bodyColor:'#555',
+            borderColor:'#eee',
+            borderWidth:1,
+            padding:12,
+            callbacks:{
+              title: ctx => {
+                const i=ctx[0].dataIndex;
+                const d=new Date(start); d.setDate(start.getDate()+i);
+                return d.toLocaleDateString('default',{weekday:'short',month:'short',day:'numeric'});
+              },
+              label: ctx => {
+                const val=ctx.raw;
+                if(val===0) return null;
+                const sign=ctx.datasetIndex===0?'+':'-';
+                return ` ${ctx.dataset.label}: ${sign}$${val.toLocaleString()}`;
+              }
+            }
+          }
+        },
         scales:{
-          x:{grid:{display:false},ticks:{color:'#aaa',font:{size:11},autoSkip:false,maxRotation:45},border:{color:'#eee'}},
-          y:{grid:{color:'#f5f5f5'},ticks:{color:'#aaa',font:{size:11},callback:v=>'$'+(v>=1000?(v/1000).toFixed(0)+'k':v)},border:{display:false}}
+          x:{
+            grid:{display:false},
+            ticks:{
+              color:'#aaa',
+              font:{size:10},
+              maxRotation:0,
+              autoSkip:false,
+              callback(val,i){ return labels[i]||''; }
+            },
+            border:{color:'#eee'}
+          },
+          yInc:{
+            position:'right',
+            grid:{color:'#f5f5f5'},
+            ticks:{
+              color:'#c49a3a',
+              font:{size:10},
+              maxTicksLimit:5,
+              callback:v=>v===0?'$0':'$'+(v>=1000?(v/1000).toFixed(1)+'k':v),
+            },
+            border:{display:false},
+          },
+          yExp:{
+            position:'left',
+            grid:{display:false},
+            ticks:{
+              color:'#b07040',
+              font:{size:10},
+              maxTicksLimit:4,
+              callback:v=>v===0?'':'$'+(v>=1000?(v/1000).toFixed(1)+'k':v),
+            },
+            border:{display:false},
+          },
         }
       }
     });
+
     renderStatCards();
   }
 
