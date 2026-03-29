@@ -774,8 +774,15 @@
     if(activeIdx===-1){amtEl.textContent='$'+total.toLocaleString();lblEl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';}
     else{const item=_ringSorted[activeIdx];amtEl.textContent='$'+item.amount.toLocaleString();lblEl.textContent=item.name;}
   }
-  function pinRing(idx){if(pinnedIdx===idx){pinnedIdx=-1;setRingState(-1);}else{pinnedIdx=idx;setRingState(idx);}}
-
+function pinRing(idx){
+  if(pinnedIdx===idx){
+    pinnedIdx=-1;
+    setRingState(-1);
+  }else{
+    pinnedIdx=idx;
+    setRingState(idx);
+  }
+}
   // ── Stat cards ────────────────────────────────────────────────────────────
   function renderStatCards(){
     const keys=Object.keys(months).map(Number);if(!keys.length){document.getElementById('stat-cards').innerHTML='';return;}
@@ -944,6 +951,15 @@
 
   window.addEventListener('load',()=>{ setTimeout(()=>{const s=document.getElementById('splash-screen');s.classList.add('hide');setTimeout(()=>s.style.display='none',400);},1200);setTimeout(()=>render(),80); });
   window.addEventListener('resize',()=>{if(document.getElementById('page-home').classList.contains('active'))render();});
+  document.addEventListener('click', (e) => {
+  const isLegendItem = e.target.closest('.legend-item');
+  const isRing = e.target.closest('#rings-svg');
+
+  if (!isLegendItem && !isRing) {
+    pinnedIdx = -1;
+    setRingState(-1);
+  }
+});
   </script>
 </body>
 </html>
