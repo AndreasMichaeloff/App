@@ -186,12 +186,17 @@
     .source-chip.custom-chip { border-style: dashed; color: #bbb; justify-content: center; font-size: 13px; }
     .custom-input-row { display: none; margin-bottom: 10px; }
     .custom-input-row.show { display: block; }
-    .form-row input { width: 100%; padding: 14px; border: 0.5px solid #e0e0e0; border-radius: 12px; font-size: 17px; color: #222; background: #fafafa; outline: none; }
+    .form-row input[type="number"],
+    .form-row input[type="text"],
+    .form-row input[type="date"] { width: 100%; padding: 14px; border: 0.5px solid #e0e0e0; border-radius: 12px; font-size: 17px; color: #222; background: #fafafa; outline: none; font-family: inherit; }
+    .form-row input[type="date"] { font-size: 15px; }
     .form-row input:focus { border-color: #e8b84b; background: #fff; }
     .sheet-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
     .btn-cancel { flex: 1; padding: 14px; border: 0.5px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; background: transparent; color: #888; }
     .btn-add { flex: 2; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; background: #e8b84b; color: #fff; transition: background 0.15s, transform 0.1s; }
     .btn-add:active { transform: scale(0.97); background: #c49a3a; }
+    .btn-delete { width: 100%; padding: 14px; border: 1.5px solid #a0622a; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; background: #fff; color: #a0622a; transition: background 0.15s, transform 0.1s; margin-bottom: 10px; }
+    .btn-delete:active { transform: scale(0.97); background: #fdf0e6; }
     .edit-amount-hint { font-size: 12px; color: #bbb; margin-top: 6px; text-align: center; }
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 12px 22px; border-radius: 22px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
@@ -388,6 +393,10 @@
         <label>Amount ($)</label>
         <input type="number" id="input-amount" placeholder="0.00" min="0" inputmode="decimal"/>
       </div>
+      <div class="form-row">
+        <label>Date</label>
+        <input type="date" id="input-date"/>
+      </div>
       <div class="sheet-actions">
         <button class="btn-cancel" onclick="closeSheet()">Cancel</button>
         <button class="btn-add"    onclick="addTransaction()">Add</button>
@@ -401,13 +410,18 @@
       <div class="sheet-handle" id="sheet-handle-edit"></div>
       <h2 id="edit-sheet-title">Edit transaction</h2>
       <div class="form-row">
-        <label>New amount ($)</label>
+        <label>Amount ($)</label>
         <input type="number" id="edit-amount" placeholder="0.00" min="0" inputmode="decimal"/>
-        <div class="edit-amount-hint">Update the amount or delete this transaction</div>
+      </div>
+      <div class="form-row">
+        <label>Date</label>
+        <input type="date" id="edit-date"/>
+      </div>
+      <div class="sheet-actions" style="margin-top: 0.5rem;">
+        <button class="btn-delete" onclick="saveEdit()">Delete transaction</button>
       </div>
       <div class="sheet-actions">
         <button class="btn-cancel" onclick="closeEditSheet()">Cancel</button>
-        <button class="btn-add"    onclick="saveEdit()" style="background:#a0622a; flex:1;">Delete</button>
         <button class="btn-add"    onclick="confirmEdit()">Save</button>
       </div>
     </div>
@@ -466,12 +480,55 @@
   function formatDate(ts){ return new Date(ts).toLocaleDateString('default',{month:'short',day:'numeric',year:'numeric'}); }
   function getDateMonthKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
   function getDateMonthLabel(ts){ return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
-  function getMonthLabel(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'short',year:'numeric'}); }
   function getMonthLabelFull(off){ const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);return d.toLocaleString('default',{month:'long',year:'numeric'}); }
 
+  // ── Date helpers ─────────────────────────────────────────────────────────
+  function toDateInputValue(ts){
+    const d=new Date(ts);
+    const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function getDefaultDateForOffset(off){
+    if(off===0) return toDateInputValue(Date.now());
+    const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off); d.setDate(15);
+    return toDateInputValue(d.getTime());
+  }
+  function dateInputToTs(val){
+    if(!val) return Date.now();
+    const [y,m,day]=val.split('-').map(Number);
+    return new Date(y,m-1,day,12,0,0).getTime();
+  }
+  // Min/max date for the date picker scoped to the current viewed month
+  function getMonthDateRange(off){
+    const now=new Date();
+    const first=new Date(now.getFullYear(),now.getMonth()+off,1);
+    const last=new Date(now.getFullYear(),now.getMonth()+off+1,0);
+    return { min: toDateInputValue(first.getTime()), max: toDateInputValue(last.getTime()) };
+  }
+
   const DEFAULT_MONTHS = {
-    "-1":{label:getMonthLabelFull(-1),income:{items:[{name:"YouTube",amount:3200,date:Date.now()-864e5*20},{name:"Venmo",amount:1980,date:Date.now()-864e5*18},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*15},{name:"Cash App",amount:730,date:Date.now()-864e5*10}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*28},{name:"Software",amount:1000,date:Date.now()-864e5*22},{name:"Food",amount:850,date:Date.now()-864e5*16},{name:"Other",amount:1000,date:Date.now()-864e5*12}]}},
-    "-2":{label:getMonthLabelFull(-2),income:{items:[{name:"YouTube",amount:2900,date:Date.now()-864e5*50},{name:"Venmo",amount:1850,date:Date.now()-864e5*48},{name:"Direct deposit",amount:1600,date:Date.now()-864e5*45},{name:"Cash App",amount:730,date:Date.now()-864e5*40}]},expense:{items:[{name:"Rent",amount:2200,date:Date.now()-864e5*58},{name:"Software",amount:1050,date:Date.now()-864e5*52},{name:"Food",amount:900,date:Date.now()-864e5*46},{name:"Other",amount:1000,date:Date.now()-864e5*42}]}},
+    "-1":{label:getMonthLabelFull(-1),income:{items:[
+      {name:"YouTube",      amount:3200, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(5);  return d.getTime(); })()},
+      {name:"Venmo",        amount:1980, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(10); return d.getTime(); })()},
+      {name:"Direct deposit",amount:1600,date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(15); return d.getTime(); })()},
+      {name:"Cash App",     amount:730,  date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(22); return d.getTime(); })()},
+    ]},expense:{items:[
+      {name:"Rent",     amount:2200, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(1);  return d.getTime(); })()},
+      {name:"Software", amount:1000, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(8);  return d.getTime(); })()},
+      {name:"Food",     amount:850,  date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(16); return d.getTime(); })()},
+      {name:"Other",    amount:1000, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-1); d.setDate(24); return d.getTime(); })()},
+    ]}},
+    "-2":{label:getMonthLabelFull(-2),income:{items:[
+      {name:"YouTube",      amount:2900, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(5);  return d.getTime(); })()},
+      {name:"Venmo",        amount:1850, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(10); return d.getTime(); })()},
+      {name:"Direct deposit",amount:1600,date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(15); return d.getTime(); })()},
+      {name:"Cash App",     amount:730,  date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(22); return d.getTime(); })()},
+    ]},expense:{items:[
+      {name:"Rent",     amount:2200, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(1);  return d.getTime(); })()},
+      {name:"Software", amount:1050, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(8);  return d.getTime(); })()},
+      {name:"Food",     amount:900,  date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(16); return d.getTime(); })()},
+      {name:"Other",    amount:1000, date: (() => { const d=new Date(); d.setMonth(d.getMonth()-2); d.setDate(24); return d.getTime(); })()},
+    ]}},
   };
 
   const store=(()=>{
@@ -518,7 +575,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // ✦ MINI BAR CHART — click navigates to that month, no tooltip
+  // MINI BAR CHART
   // ══════════════════════════════════════════════════════════════════════════
   let miniBarRects = [];
 
@@ -566,7 +623,6 @@
     const rect=canvas.getBoundingClientRect(), x=clientX-rect.left;
     for(const bar of miniBarRects){
       if(x>=bar.x && x<=bar.x+bar.w){
-        // Navigate to the clicked month
         if(bar.relOffset!==offset){
           if(!months[String(bar.relOffset)]){
             months[String(bar.relOffset)]={label:getMonthLabelFull(bar.relOffset),income:{items:[]},expense:{items:[]}};
@@ -621,28 +677,35 @@
     });
     document.getElementById('tx-list').innerHTML=html;
   }
+
   function openEditSheet(monthKey,type,itemIdx){
     editContext={monthKey,type,itemIdx};
     const item=months[monthKey][type].items[itemIdx];if(!item)return;
     document.getElementById('edit-sheet-title').textContent=`Edit — ${item.name}`;
     document.getElementById('edit-amount').value=item.amount;
+    document.getElementById('edit-date').value=item.date?toDateInputValue(item.date):'';
     document.getElementById('edit-overlay').classList.add('open');
   }
   function closeEditSheet(){ document.getElementById('edit-overlay').classList.remove('open');editContext=null; }
   function closeEditIfOutside(e){ if(e.target===document.getElementById('edit-overlay'))closeEditSheet(); }
   function confirmEdit(){
     if(!editContext)return;
-    const {monthKey,type,itemIdx}=editContext,newAmt=parseFloat(document.getElementById('edit-amount').value);
+    const {monthKey,type,itemIdx}=editContext;
+    const newAmt=parseFloat(document.getElementById('edit-amount').value);
+    const newDate=document.getElementById('edit-date').value;
     if(isNaN(newAmt)||newAmt<=0){showToast('Enter a valid amount');return;}
     months[monthKey][type].items[itemIdx].amount=newAmt;
+    if(newDate) months[monthKey][type].items[itemIdx].date=dateInputToTs(newDate);
     saveData();closeEditSheet();render();renderTransactions();showToast('Updated!');
   }
   function saveEdit(){
     if(!editContext)return;
     const {monthKey,type,itemIdx}=editContext,name=months[monthKey][type].items[itemIdx].name;
+    if(!confirm(`Delete ${name}?`))return;
     months[monthKey][type].items.splice(itemIdx,1);
     saveData();closeEditSheet();render();renderTransactions();showToast(name+' removed');
   }
+
   function updateGoalBanner(){
     const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji');
     if(!goals.length){banner.classList.add('hidden');return;}
@@ -803,8 +866,23 @@
       <div class="stat-card"><div class="stat-label">Top source</div><div class="stat-value stat-dark" style="font-size:${topSource.length>10?'15px':'20px'};">${topSource}</div><div class="stat-sub">$${topSourceTotal.toLocaleString()} total</div></div>`;
   }
 
-  // ── Trends chart (wavy Catmull-Rom splines) ───────────────────────────────
-  function catmullRomPath(ctx,pts,tension=0.4){
+  // ── Trends chart — Gaussian smoothed Catmull-Rom splines ─────────────────
+  function gaussSmooth(arr, sigma=4){
+    const r=Math.ceil(sigma*2.5), out=new Array(arr.length);
+    for(let i=0;i<arr.length;i++){
+      let sum=0,wsum=0;
+      for(let j=-r;j<=r;j++){
+        const idx=i+j; if(idx<0||idx>=arr.length)continue;
+        const w=Math.exp(-(j*j)/(2*sigma*sigma));
+        sum+=arr[idx]*w; wsum+=w;
+      }
+      out[i]=sum/wsum;
+    }
+    return out;
+  }
+
+  function catmullRomPath(ctx,pts,tension=0.35){
+    ctx.moveTo(pts[0].x,pts[0].y);
     for(let i=0;i<pts.length-1;i++){
       const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
       const cp1x=p1.x+(p2.x-p0.x)*tension,cp1y=p1.y+(p2.y-p0.y)*tension;
@@ -812,7 +890,7 @@
       ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);
     }
   }
-  function sampleSpline(pts,t,tension=0.4){
+  function sampleSpline(pts,t,tension=0.35){
     const n=pts.length,i=Math.max(0,Math.min(n-2,Math.floor(t))),u=t-i;
     const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];
     const cp1y=p1.y+(p2.y-p0.y)*tension,cp2y=p2.y-(p3.y-p1.y)*tension;
@@ -844,14 +922,10 @@
       labels.push((isFirst||isMid)?d.toLocaleString('default',{month:'short',day:'numeric'}):'');
       dateObjs.push(new Date(d));
     }
-    function smooth(arr,w=9){
-      return arr.map((_,i)=>{
-        const half=Math.floor(w/2),from=Math.max(0,i-half),to=Math.min(arr.length-1,i+half);
-        let s=0,c=0; for(let j=from;j<=to;j++){s+=arr[j];c++;} return s/c;
-      });
-    }
-    const incData=smooth(incRaw),expData=smooth(expRaw);
-    if(trendsChart){trendsChart.destroy();trendsChart=null;}
+
+    // ── Gaussian smooth for wavy, natural curves ──────────────────────────
+    const incData=gaussSmooth(incRaw,4), expData=gaussSmooth(expRaw,4);
+
     const canvas=document.getElementById('trends-canvas');
     const dpr=window.devicePixelRatio||1,wrap=canvas.parentElement;
     const W=wrap.clientWidth-16,H=wrap.clientHeight-20;
@@ -899,20 +973,20 @@
     drawFillRegion((i,e)=>i>=e,'rgba(232,184,75,0.28)');
     drawFillRegion((i,e)=>e>i, 'rgba(160,98,42,0.24)');
     // Base fills
-    ctx.beginPath(); ctx.moveTo(incPts[0].x,incPts[0].y); catmullRomPath(ctx,incPts);
+    ctx.beginPath(); catmullRomPath(ctx,incPts);
     ctx.lineTo(xAt(n-1),H-PAD_B); ctx.lineTo(xAt(0),H-PAD_B); ctx.closePath();
     const ig=ctx.createLinearGradient(0,PAD_T,0,H-PAD_B);
     ig.addColorStop(0,'rgba(232,184,75,0.10)'); ig.addColorStop(1,'rgba(232,184,75,0.01)');
     ctx.fillStyle=ig; ctx.fill();
-    ctx.beginPath(); ctx.moveTo(expPts[0].x,expPts[0].y); catmullRomPath(ctx,expPts);
+    ctx.beginPath(); catmullRomPath(ctx,expPts);
     ctx.lineTo(xAt(n-1),H-PAD_B); ctx.lineTo(xAt(0),H-PAD_B); ctx.closePath();
     const eg=ctx.createLinearGradient(0,PAD_T,0,H-PAD_B);
     eg.addColorStop(0,'rgba(160,98,42,0.08)'); eg.addColorStop(1,'rgba(160,98,42,0.01)');
     ctx.fillStyle=eg; ctx.fill();
     // Lines
-    ctx.beginPath(); ctx.moveTo(incPts[0].x,incPts[0].y); catmullRomPath(ctx,incPts);
+    ctx.beginPath(); catmullRomPath(ctx,incPts);
     ctx.strokeStyle='#e8b84b'; ctx.lineWidth=2.5; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(expPts[0].x,expPts[0].y); catmullRomPath(ctx,expPts);
+    ctx.beginPath(); catmullRomPath(ctx,expPts);
     ctx.strokeStyle='#a0622a'; ctx.lineWidth=2; ctx.stroke();
     // X labels
     ctx.fillStyle='#bbb'; ctx.font='9px -apple-system,sans-serif';
@@ -1040,7 +1114,13 @@
     entryType=mode;
     document.getElementById('type-income').className ='type-btn'+(entryType==='income'?' active income':' income');
     document.getElementById('type-expense').className='type-btn'+(entryType==='expense'?' active expense':' expense');
-    buildSourceGrid(); document.getElementById('input-amount').value='';
+    buildSourceGrid();
+    document.getElementById('input-amount').value='';
+    // Set date picker default to the currently viewed month
+    document.getElementById('input-date').value=getDefaultDateForOffset(offset);
+    const range=getMonthDateRange(offset);
+    document.getElementById('input-date').min=range.min;
+    document.getElementById('input-date').max=range.max;
     document.getElementById('overlay').classList.add('open');
   }
   function closeSheet(){ document.getElementById('overlay').classList.remove('open'); }
@@ -1055,11 +1135,13 @@
     let name=selectedSource;
     if(name==='__custom__') name=document.getElementById('input-custom').value.trim();
     const amount=parseFloat(document.getElementById('input-amount').value);
+    const dateVal=document.getElementById('input-date').value;
     if(!name||!amount||amount<=0){showToast('Pick a source and enter an amount');return;}
+    const entryDate=dateVal?dateInputToTs(dateVal):Date.now();
     const mo=months[String(offset)],list=mo[entryType].items;
     const existing=list.find(x=>x.name.toLowerCase()===name.toLowerCase());
-    if(existing){existing.amount+=amount;if(!existing.date)existing.date=Date.now();}
-    else{list.push({name,amount,date:Date.now()});}
+    if(existing){existing.amount+=amount;if(!existing.date)existing.date=entryDate;}
+    else{list.push({name,amount,date:entryDate});}
     saveData(); closeSheet();
     if(mode!==entryType)setMode(entryType);else render();
     showToast('$'+amount.toLocaleString()+' added to '+name);
