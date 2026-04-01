@@ -61,12 +61,6 @@
     .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
     .header-left { display: flex; flex-direction: column; }
     .header p { font-size: clamp(12px,1.6vh,14px); color: #bbb; margin-bottom: 3px; }
-    .header img {
-  height: 34px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-}
 
     /* ── Streak badge ── */
     .streak-badge {
@@ -372,11 +366,12 @@
     <div class="onb-sub">Choose your default view.<br/>You can always switch later.</div>
     <div class="onb-cards">
       <div class="onb-card" onclick="pickView('daily')">
+        <div class="onb-icon">📅</div>
         <div class="onb-label">Daily</div>
         <div class="onb-desc">See today's income &amp; spending day by day</div>
       </div>
       <div class="onb-card" onclick="pickView('monthly')">
-        <div class="onb-icon"></div
+        <div class="onb-icon">📊</div>
         <div class="onb-label">Monthly</div>
         <div class="onb-desc">Track totals &amp; trends month by month</div>
       </div>
