@@ -17,12 +17,39 @@
     html, body { height: 100%; overscroll-behavior: none; }
     body { font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
 
+    /* ── Splash ── */
     #splash-screen { position: fixed; inset: 0; background: #fffdf7; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s ease; }
     #splash-screen.hide { opacity: 0; pointer-events: none; }
     .splash-logo { width: 110px; height: auto; animation: logoPop 0.7s ease forwards; }
     .splash-fallback { font-size: 56px; font-weight: 700; color: #e8b84b; letter-spacing: -2px; animation: logoPop 0.7s ease forwards; display: none; }
     @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
 
+    /* ── Onboarding overlay ── */
+    #onboarding-overlay {
+      position: fixed; inset: 0; background: #fffdf7; z-index: 9998;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; padding: 2rem;
+      animation: fadeIn 0.4s ease;
+    }
+    #onboarding-overlay.hide { opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+    .onb-logo { margin-bottom: 1.5rem; }
+    .onb-title { font-size: 26px; font-weight: 700; color: #222; margin-bottom: 8px; text-align: center; }
+    .onb-sub { font-size: 15px; color: #aaa; margin-bottom: 2.5rem; text-align: center; line-height: 1.5; }
+    .onb-cards { display: flex; gap: 14px; width: 100%; max-width: 360px; }
+    .onb-card {
+      flex: 1; border: 2px solid #e0d8c8; border-radius: 22px; padding: 1.5rem 1rem;
+      background: #fff; cursor: pointer; text-align: center;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .onb-card:active { transform: scale(0.96); }
+    .onb-card:hover { border-color: #e8b84b; box-shadow: 0 4px 20px rgba(232,184,75,0.18); }
+    .onb-card .onb-icon { font-size: 36px; }
+    .onb-card .onb-label { font-size: 16px; font-weight: 700; color: #222; }
+    .onb-card .onb-desc { font-size: 12px; color: #bbb; line-height: 1.4; }
+    .onb-card.selected { border-color: #e8b84b; background: #fffbf0; box-shadow: 0 4px 20px rgba(232,184,75,0.22); }
+
+    /* ── Pages ── */
     .page { display: none; height: calc(100dvh - 72px); overflow: hidden; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; }
     .page.active { display: flex; flex-direction: column; }
 
@@ -31,26 +58,35 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; }
+    .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; flex-direction: column; }
     .header p { font-size: clamp(12px,1.6vh,14px); color: #bbb; margin-bottom: 3px; }
 
-    /* ── View toggle pill — grey, no icon ── */
-    .view-toggle-pill {
-      display: inline-flex;
-      align-items: center;
-      background: #efefef;
-      border: 1px solid #ddd;
-      border-radius: 999px;
-      padding: 5px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #888;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      white-space: nowrap;
+    /* ── Streak badge ── */
+    .streak-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, #fff8e6, #fff3d0);
+      border: 1.5px solid #e8c96a; border-radius: 999px;
+      padding: 5px 12px; cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.15s;
       flex-shrink: 0;
-      user-select: none;
-      font-family: inherit;
+    }
+    .streak-badge:active { transform: scale(0.95); }
+    .streak-badge .streak-fire { font-size: 16px; }
+    .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
+    .streak-badge .streak-label { font-size: 10px; font-weight: 600; color: #c49a3a; }
+    .streak-badge.streak-zero { background: #f5f5f5; border-color: #e0e0e0; }
+    .streak-badge.streak-zero .streak-fire { filter: grayscale(1); opacity: 0.4; }
+    .streak-badge.streak-zero .streak-count { color: #bbb; }
+    .streak-badge.streak-zero .streak-label { color: #ccc; }
+
+    /* ── View toggle pill ── */
+    .view-toggle-pill {
+      display: inline-flex; align-items: center; background: #efefef;
+      border: 1px solid #ddd; border-radius: 999px; padding: 5px 14px;
+      font-size: 12px; font-weight: 600; color: #888; cursor: pointer;
+      transition: background 0.15s, transform 0.1s; white-space: nowrap;
+      flex-shrink: 0; user-select: none; font-family: inherit;
     }
     .view-toggle-pill:active { transform: scale(0.95); background: #e0e0e0; }
     .view-toggle-pill:hover { background: #e5e5e5; }
@@ -69,7 +105,7 @@
     .today-btn { background: #e8b84b !important; color: #fff !important; border: none !important; border-radius: 999px !important; font-size: clamp(10px,1.3vh,12px) !important; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,14px) !important; cursor: pointer; font-family: inherit; font-weight: 600; transition: background 0.15s, transform 0.1s; }
     .today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
 
-    /* ── Income/Expense toggle — no yellow on active state change, pill shaped ── */
+    /* ── Income/Expense toggle ── */
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px,1vh,11px) 10px; font-size: clamp(13px,1.6vh,15px); font-weight: 600; border: 2px solid; border-radius: 999px; cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .toggle-btn:active { transform: scale(0.97); }
@@ -93,10 +129,7 @@
     .total-card-chart { flex: 1; min-width: 0; height: clamp(44px, 6vh, 62px); position: relative; }
     #mini-bar-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
 
-    #bar-tooltip {
-      position: fixed; z-index: 9000; pointer-events: none; opacity: 0;
-      transition: opacity 0.18s ease; min-width: 180px;
-    }
+    #bar-tooltip { position: fixed; z-index: 9000; pointer-events: none; opacity: 0; transition: opacity 0.18s ease; min-width: 180px; }
     #bar-tooltip.show { opacity: 1; }
     .tip-inner { background: #1a1208; border-radius: 16px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.18); position: relative; }
     .tip-inner::after { content: ''; position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid #1a1208; }
@@ -121,7 +154,7 @@
 
     .sources-title { font-size: clamp(9px,1.1vh,11px); font-weight: 600; color: #bbb; margin-bottom: clamp(4px,0.8vh,8px); margin-top: clamp(8px,1.2vh,14px); text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
 
-    /* ── Monthly concentric rings chart ── */
+    /* ── Monthly concentric rings ── */
     .chart-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 22px; border: 1.5px solid #e0d8c8; display: flex; flex-direction: row; align-items: center; overflow: hidden; padding: 0; }
     .rings-col { flex-shrink: 0; width: clamp(130px, 38vw, 190px); height: 100%; display: flex; align-items: center; justify-content: center; padding: clamp(10px,2vh,18px); }
     #rings-svg { width: 100%; height: 100%; max-height: 100%; display: block; overflow: visible; }
@@ -150,14 +183,15 @@
     .net-positive { color: #6a9e40; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
 
-    /* ── Daily donut chart section — same flex:1 as monthly chart-section ── */
+    /* ── Daily donut chart ── */
     .donut-section { flex: 1; min-height: 0; background: #f7f2e8; border-radius: 22px; border: 1.5px solid #e0d8c8; display: flex; flex-direction: row; align-items: center; overflow: hidden; padding: 0; }
     .donut-col { flex-shrink: 0; width: clamp(130px, 38vw, 190px); height: 100%; display: flex; align-items: center; justify-content: center; padding: clamp(10px,2vh,18px); }
     #donut-canvas { display: block; }
-    .donut-legend { flex: 1; min-width: 0; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; padding: clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0; gap: 2px; }
+    .donut-legend { flex: 1; min-width: 0; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; padding: clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0; gap: 0; }
     .donut-legend-item { display: flex; align-items: center; gap: 8px; padding: clamp(4px,0.65vh,7px) 0; border-bottom: 0.5px solid rgba(0,0,0,0.07); }
     .donut-legend-item:last-child { border-bottom: none; }
-    .donut-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .donut-icon { width: clamp(20px,3vh,26px); height: clamp(20px,3vh,26px); border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(7px,1vh,10px); font-weight: 700; color: #fff; overflow: hidden; }
+    .donut-icon img { width: 100%; height: 100%; border-radius: 7px; object-fit: cover; }
     .donut-name { font-size: clamp(10px,1.4vh,13px); color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .donut-amt { font-size: clamp(10px,1.4vh,13px); font-weight: 600; color: #222; white-space: nowrap; }
     .donut-pct { font-size: clamp(9px,1.1vh,10px); color: #bbb; display: block; text-align: right; }
@@ -230,6 +264,22 @@
     .settings-row-label { font-size: 15px; color: #222; }
     .settings-row-value { font-size: 14px; color: #bbb; }
     .settings-row-arrow { font-size: 16px; color: #ddd; }
+
+    /* ── Streak tooltip popup ── */
+    .streak-popup {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.85);
+      background: #fff; border: 2px solid #e8c96a; border-radius: 24px;
+      padding: 2rem 1.75rem; text-align: center; z-index: 9500;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18); max-width: 300px; width: 88%;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+    }
+    .streak-popup.show { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+    .streak-popup-fire { font-size: 52px; margin-bottom: 10px; }
+    .streak-popup-title { font-size: 22px; font-weight: 700; color: #222; margin-bottom: 6px; }
+    .streak-popup-sub { font-size: 14px; color: #aaa; line-height: 1.5; }
+    .streak-popup-close { margin-top: 1.25rem; padding: 10px 28px; background: #e8b84b; color: #fff; border: none; border-radius: 999px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .streak-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 9400; display: none; }
+    .streak-popup-overlay.show { display: block; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 72px; background: #fff; border-top: 1.5px solid #e0e0e0; display: flex; justify-content: space-around; align-items: center; z-index: 300; padding-bottom: env(safe-area-inset-bottom,0px); }
     .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0 24px 0; transition: transform 0.1s; }
@@ -306,6 +356,37 @@
     </div>
   </div>
 
+  <!-- ONBOARDING -->
+  <div id="onboarding-overlay" style="display:none;">
+    <div class="onb-logo">
+      <img src="logo.png" alt="Filo" height="60" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
+      <span style="display:none; font-size:42px; font-weight:700; color:#e8b84b;">filo</span>
+    </div>
+    <div class="onb-title">How do you track?</div>
+    <div class="onb-sub">Choose your default view.<br/>You can always switch later.</div>
+    <div class="onb-cards">
+      <div class="onb-card" onclick="pickView('daily')">
+        <div class="onb-icon">📅</div>
+        <div class="onb-label">Daily</div>
+        <div class="onb-desc">See today's income &amp; spending day by day</div>
+      </div>
+      <div class="onb-card" onclick="pickView('monthly')">
+        <div class="onb-icon">📊</div>
+        <div class="onb-label">Monthly</div>
+        <div class="onb-desc">Track totals &amp; trends month by month</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Streak popup -->
+  <div class="streak-popup-overlay" id="streak-overlay" onclick="closeStreakPopup()"></div>
+  <div class="streak-popup" id="streak-popup">
+    <div class="streak-popup-fire" id="streak-popup-fire">🔥</div>
+    <div class="streak-popup-title" id="streak-popup-title">3-day streak!</div>
+    <div class="streak-popup-sub" id="streak-popup-sub">Keep logging in every day to build your streak.</div>
+    <button class="streak-popup-close" onclick="closeStreakPopup()">Nice!</button>
+  </div>
+
   <!-- HOME -->
   <div class="page active" id="page-home">
     <div class="pull-indicator" id="pull-indicator">
@@ -313,10 +394,15 @@
       <span id="pull-text">Pull to refresh</span>
     </div>
     <div class="header">
-      <div>
+      <div class="header-left">
         <p>Your money, layered.</p>
         <img src="logo.png" alt="filo" height="52" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
         <span style="display:none; font-size:38px; font-weight:700; color:#e8b84b;">filo</span>
+      </div>
+      <div class="streak-badge" id="streak-badge" onclick="openStreakPopup()">
+        <span class="streak-fire">🔥</span>
+        <span class="streak-count" id="streak-count">0</span>
+        <span class="streak-label">day streak</span>
       </div>
     </div>
 
@@ -372,7 +458,6 @@
 
       <div class="sources-title" id="daily-breakdown-title">Today's income</div>
 
-      <!-- Donut chart — fills same space as monthly concentric rings -->
       <div class="donut-section" id="donut-section">
         <div class="donut-col" id="donut-col">
           <canvas id="donut-canvas"></canvas>
@@ -386,7 +471,7 @@
       </div>
 
       <div class="net-card">
-        <span class="net-label">Net this month so far</span>
+        <span class="net-label" id="daily-net-month-label">Net this month so far</span>
         <span class="net-positive" id="daily-net-month">$0</span>
       </div>
     </div>
@@ -604,6 +689,7 @@
   </div>
 
   <script>
+  // ── Brand data ────────────────────────────────────────────────────────────
   const SOURCE_BRANDS = {
     "YouTube":        {color:"#FF0000",initials:"YT",logo:"https://www.google.com/s2/favicons?domain=youtube.com&sz=64"},
     "Venmo":          {color:"#3D95CE",initials:"V", logo:"https://www.google.com/s2/favicons?domain=venmo.com&sz=64"},
@@ -626,12 +712,24 @@
   };
 
   function getBrand(n){ return SOURCE_BRANDS[n]||{color:"#e8b84b",initials:n.slice(0,2).toUpperCase(),logo:null}; }
-  function iconHTML(name,size=24){
+
+  // Build icon HTML — used by monthly rings legend & donut legend
+  function iconHTML(name, size=24){
     const b=getBrand(name);
     if(b.logo) return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.5)}px';"/></div>`;
     const isEmoji=/\p{Emoji}/u.test(b.initials),fs=isEmoji?Math.round(size*0.55):Math.round(size*0.38);
     return `<div class="source-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${fs}px;">${b.initials}</div>`;
   }
+
+  // Build donut-icon HTML (uses .donut-icon class for correct border-radius)
+  function donutIconHTML(name, size=22){
+    const b=getBrand(name);
+    if(b.logo) return `<div class="donut-icon" style="width:${size}px;height:${size}px;background:${b.color};"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='${Math.round(size*0.45)}px';"/></div>`;
+    const isEmoji=/\p{Emoji}/u.test(b.initials),fs=isEmoji?Math.round(size*0.55):Math.round(size*0.38);
+    return `<div class="donut-icon" style="width:${size}px;height:${size}px;background:${b.color};font-size:${fs}px;">${b.initials}</div>`;
+  }
+
+  // ── Date helpers ──────────────────────────────────────────────────────────
   function formatDate(ts){ return new Date(ts).toLocaleDateString('default',{month:'short',day:'numeric',year:'numeric'}); }
   function getDateMonthKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
   function getDateMonthLabel(ts){ return new Date(ts).toLocaleString('default',{month:'long',year:'numeric'}); }
@@ -641,31 +739,45 @@
   function dateInputToTs(val){ if(!val)return Date.now(); const [y,m,day]=val.split('-').map(Number); return new Date(y,m-1,day,12,0,0).getTime(); }
   function getMonthDateRange(off){ const now=new Date(); const first=new Date(now.getFullYear(),now.getMonth()+off,1); const last=new Date(now.getFullYear(),now.getMonth()+off+1,0); return{min:toDateInputValue(first.getTime()),max:toDateInputValue(last.getTime())}; }
 
+  // Returns "YYYY-MM" key for a given offset from current month
+  function getMonthKey(off){
+    const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+
   // ── Daily date helpers ────────────────────────────────────────────────────
   function dateToDayKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
   function dayKeyToTs(dk){ const [y,m,d]=dk.split('-').map(Number); return new Date(y,m-1,d,12,0,0).getTime(); }
   function offsetDayKey(dk,delta){ return dateToDayKey(dayKeyToTs(dk)+delta*86400000); }
+
+  // Get month offset (relative to today) for a given day-key
   function getMonthOffsetForDayKey(dk){
     const [ty,tm]=dk.slice(0,7).split('-').map(Number);
     const now=new Date();
     return (ty-now.getFullYear())*12+(tm-1-now.getMonth());
   }
+
+  // Get "YYYY-MM" string for a given month offset
+  function monthKeyForOffset(off){
+    const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+off);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  // Find month data by "YYYY-MM" key — searches all stored offsets
   function findMonthByKey(mk){
     for(const key of Object.keys(months)){
-      const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+parseInt(key));
-      const yk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-      if(yk===mk) return months[key];
+      if(monthKeyForOffset(parseInt(key))===mk) return months[key];
     }
     return null;
   }
-  function getDayItems(dk,type){
+
+  function getDayItems(dk, type){
     const mk=dk.slice(0,7);
     const mo=findMonthByKey(mk);
     if(!mo) return [];
     return mo[type].items.filter(item=>item.date&&dateToDayKey(item.date)===dk);
   }
 
-  // ── Day label: "Today (1 Apr)" / "Yesterday (31 Mar)" / "Mon, 28 Mar" ────
   function formatDayLabel(dk){
     const d=new Date(dayKeyToTs(dk));
     const today=dateToDayKey(Date.now());
@@ -678,6 +790,7 @@
     return d.toLocaleDateString('default',{weekday:'short',month:'short',day:'numeric'});
   }
 
+  // ── Default data ──────────────────────────────────────────────────────────
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[
       {name:"YouTube",      amount:3200,date:(()=>{const d=new Date();d.setMonth(d.getMonth()-1);d.setDate(5);return d.getTime();})()},
@@ -703,6 +816,7 @@
     ]}},
   };
 
+  // ── Storage ───────────────────────────────────────────────────────────────
   const store=(()=>{ try{localStorage.setItem('_t','1');localStorage.removeItem('_t');return localStorage;}catch(e){const m={};return{getItem:k=>m[k]||null,setItem:(k,v)=>m[k]=v,removeItem:k=>delete m[k],clear:()=>Object.keys(m).forEach(k=>delete m[k])};} })();
   function saveData(){ store.setItem('filo_months',JSON.stringify(months));store.setItem('filo_goals',JSON.stringify(goals)); }
   function loadData(){ try{const s=store.getItem('filo_months');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_MONTHS));}catch(e){return JSON.parse(JSON.stringify(DEFAULT_MONTHS));} }
@@ -722,9 +836,85 @@
   let currentDayKey=dateToDayKey(Date.now());
   let dailyMode='income';
 
+  // ── Streak ────────────────────────────────────────────────────────────────
+  function loadStreak(){
+    try{
+      const s=store.getItem('filo_streak');
+      return s?JSON.parse(s):{count:0,lastDate:null};
+    }catch(e){return{count:0,lastDate:null};}
+  }
+  function saveStreak(s){ store.setItem('filo_streak',JSON.stringify(s)); }
+
+  function updateStreak(){
+    const today=dateToDayKey(Date.now());
+    let s=loadStreak();
+    if(s.lastDate===today) return s; // already logged today
+    const yesterday=dateToDayKey(Date.now()-86400000);
+    if(s.lastDate===yesterday){
+      s.count+=1;
+    } else {
+      s.count=1;
+    }
+    s.lastDate=today;
+    saveStreak(s);
+    return s;
+  }
+
+  function renderStreakBadge(){
+    const s=loadStreak();
+    const badge=document.getElementById('streak-badge');
+    const countEl=document.getElementById('streak-count');
+    countEl.textContent=s.count;
+    if(s.count===0){ badge.classList.add('streak-zero'); }
+    else { badge.classList.remove('streak-zero'); }
+  }
+
+  function openStreakPopup(){
+    const s=loadStreak();
+    const fire=s.count>=7?'🔥🔥':'🔥';
+    const title=s.count===0?'No streak yet':s.count===1?'1-day streak!':s.count+'-day streak!';
+    const sub=s.count===0
+      ? 'Open Filo every day to build your streak!'
+      : s.count>=30?`Incredible! ${s.count} days in a row. You're unstoppable! 🏆`
+      : s.count>=7?`${s.count} days in a row! You're on fire. Keep it going! 💪`
+      : `${s.count} day${s.count>1?'s':''} in a row. Keep logging in every day!`;
+    document.getElementById('streak-popup-fire').textContent=fire;
+    document.getElementById('streak-popup-title').textContent=title;
+    document.getElementById('streak-popup-sub').textContent=sub;
+    document.getElementById('streak-overlay').classList.add('show');
+    document.getElementById('streak-popup').classList.add('show');
+  }
+  function closeStreakPopup(){
+    document.getElementById('streak-overlay').classList.remove('show');
+    document.getElementById('streak-popup').classList.remove('show');
+  }
+
+  // ── Onboarding ────────────────────────────────────────────────────────────
+  function pickView(view){
+    homeView=view;
+    store.setItem('filo_homeview', view);
+    const onb=document.getElementById('onboarding-overlay');
+    onb.classList.add('hide');
+    setTimeout(()=>onb.style.display='none', 400);
+    applyHomeView();
+  }
+
+  function applyHomeView(){
+    const dv=document.getElementById('daily-view');
+    const mv=document.getElementById('monthly-view');
+    if(homeView==='daily'){
+      dv.style.display=''; mv.style.display='none';
+      renderDaily();
+    } else {
+      mv.style.display='flex'; dv.style.display='none';
+      render(); initMiniBarEvents();
+    }
+  }
+
   // ── View switch ───────────────────────────────────────────────────────────
   function switchHomeView(view){
     homeView=view;
+    store.setItem('filo_homeview', view);
     const dv=document.getElementById('daily-view');
     const mv=document.getElementById('monthly-view');
     if(view==='daily'){
@@ -774,7 +964,7 @@
     renderDaily();
   }
 
-  // ── Daily 7-day spark chart ───────────────────────────────────────────────
+  // ── Daily spark chart ─────────────────────────────────────────────────────
   function renderDailySparkChart(){
     const canvas=document.getElementById('daily-spark-canvas'); if(!canvas)return;
     const isIncome=dailyMode==='income';
@@ -805,7 +995,7 @@
     });
   }
 
-  // ── Daily donut chart ─────────────────────────────────────────────────────
+  // ── Daily donut chart (FIXED: no weird gaps, icons in legend) ─────────────
   function renderDonutChart(items, total){
     const col    = document.getElementById('donut-col');
     const canvas  = document.getElementById('donut-canvas');
@@ -817,55 +1007,84 @@
     if(!items.length || total === 0){
       col.style.display='none'; legend.style.display='none'; empty.style.display='flex'; return;
     }
-    col.style.display=''; legend.style.display=''; empty.style.display='none';
+    col.style.display=''; legend.style.display='flex'; empty.style.display='none';
 
     // Aggregate by name
     const agg={};
     items.forEach(item=>{ agg[item.name]=(agg[item.name]||0)+item.amount; });
-    const segments=Object.entries(agg).map(([name,amount])=>({name,amount,color:getBrand(name).color})).sort((a,b)=>b.amount-a.amount);
+    const segments=Object.entries(agg)
+      .map(([name,amount])=>({name,amount,color:getBrand(name).color}))
+      .sort((a,b)=>b.amount-a.amount);
 
-    // Size canvas to the column
+    // Size canvas
     const dpr=window.devicePixelRatio||1;
-    const size=Math.min(col.clientWidth, col.clientHeight) * 0.92;
+    const availW=col.clientWidth - 20; // subtract padding
+    const availH=col.clientHeight - 20;
+    const size=Math.min(availW, availH, 160);
     canvas.width=Math.round(size*dpr); canvas.height=Math.round(size*dpr);
     canvas.style.width=size+'px'; canvas.style.height=size+'px';
     const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
     ctx.clearRect(0,0,size,size);
 
-    const cx=size/2, cy=size/2, outerR=size/2-4, innerR=outerR*0.56;
-    const GAP=0.03; // gap between segments in radians
-    let startAngle=-Math.PI/2;
+    const cx=size/2, cy=size/2, outerR=size/2-3, innerR=outerR*0.56;
 
-    segments.forEach(seg=>{
-      const slice=(seg.amount/total)*(2*Math.PI - GAP*segments.length);
-      const endAngle=startAngle+slice;
+    if(segments.length===1){
+      // Single segment: full circle, no gaps needed
       ctx.beginPath();
-      ctx.moveTo(cx+Math.cos(startAngle+GAP/2)*innerR, cy+Math.sin(startAngle+GAP/2)*innerR);
-      ctx.arc(cx,cy,outerR,startAngle+GAP/2,endAngle-GAP/2);
-      ctx.arc(cx,cy,innerR,endAngle-GAP/2,startAngle+GAP/2,true);
+      ctx.arc(cx,cy,outerR,0,Math.PI*2);
+      ctx.arc(cx,cy,innerR,Math.PI*2,0,true);
       ctx.closePath();
-      ctx.fillStyle=seg.color;
+      ctx.fillStyle=segments[0].color;
       ctx.fill();
-      startAngle=endAngle;
-    });
+    } else {
+      // Multiple segments: use angular gap between each slice
+      const GAP_DEG=3; // degrees gap between slices
+      const GAP_RAD=GAP_DEG*(Math.PI/180);
+      const totalGap=GAP_RAD*segments.length;
+      const availableAngle=Math.PI*2-totalGap;
+
+      let startAngle=-Math.PI/2;
+
+      segments.forEach(seg=>{
+        const sliceAngle=(seg.amount/total)*availableAngle;
+        const endAngle=startAngle+sliceAngle;
+
+        ctx.beginPath();
+        ctx.arc(cx,cy,outerR,startAngle,endAngle);
+        ctx.arc(cx,cy,innerR,endAngle,startAngle,true);
+        ctx.closePath();
+        ctx.fillStyle=seg.color;
+        ctx.fill();
+
+        startAngle=endAngle+GAP_RAD;
+      });
+    }
 
     // Center text
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillStyle='#222';
-    ctx.font=`700 ${Math.round(size*0.13)}px 'Inter Tight',-apple-system,sans-serif`;
-    ctx.fillText('$'+total.toLocaleString(), cx, cy-size*0.06);
+    const fontSize=Math.round(size*0.13);
+    ctx.font=`700 ${fontSize}px 'Inter Tight',-apple-system,sans-serif`;
+    ctx.fillText('$'+total.toLocaleString(), cx, cy-size*0.07);
     ctx.fillStyle='#aaa';
     ctx.font=`500 ${Math.round(size*0.075)}px 'Inter Tight',-apple-system,sans-serif`;
-    ctx.fillText('today', cx, cy+size*0.08);
+    ctx.fillText('total', cx, cy+size*0.09);
 
-    // Legend
+    // Legend — with brand icons
     segments.forEach(seg=>{
       const pct=Math.round((seg.amount/total)*100);
       const row=document.createElement('div');
       row.className='donut-legend-item';
-      row.innerHTML=`<div class="donut-swatch" style="background:${seg.color};"></div><span class="donut-name">${seg.name}</span><div style="text-align:right;flex-shrink:0;"><span class="donut-amt">$${seg.amount.toLocaleString()}</span><span class="donut-pct">${pct}%</span></div>`;
+      row.innerHTML=`${donutIconHTML(seg.name,22)}<span class="donut-name">${seg.name}</span><div style="text-align:right;flex-shrink:0;"><span class="donut-amt">$${seg.amount.toLocaleString()}</span><span class="donut-pct">${pct}%</span></div>`;
       legend.appendChild(row);
     });
+  }
+
+  // ── Get net for a specific month offset (not using global `offset`) ───────
+  function getNetForMonthOffset(mo){
+    const d=months[String(mo)];
+    if(!d) return 0;
+    return getTotal(d.income.items)-getTotal(d.expense.items);
   }
 
   // ── Daily render ──────────────────────────────────────────────────────────
@@ -903,15 +1122,24 @@
 
     document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown';
 
-    const mo=getMonthOffsetForDayKey(currentDayKey);
-    const moData=months[String(mo)];
-    const moInc=moData?getTotal(moData.income.items):0;
-    const moExp=moData?getTotal(moData.expense.items):0;
-    const moNet=moInc-moExp;
+    // ── Net this month: use the month of the viewed day, NOT always offset 0 ──
+    const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey);
+    const moNet=getNetForMonthOffset(viewedMonthOff);
     const netMonEl=document.getElementById('daily-net-month');
     netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();
     netMonEl.className=moNet>=0?'net-positive':'net-negative';
 
+    // Update label to reflect which month we're showing
+    const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); // e.g. "March"
+    const netLabelEl=document.getElementById('daily-net-month-label');
+    if(viewedMonthOff===0){
+      netLabelEl.textContent='Net this month so far';
+    } else {
+      netLabelEl.textContent=`Net in ${moLabel}`;
+    }
+
+    const moData=months[String(viewedMonthOff)];
+    const moInc=moData?getTotal(moData.income.items):0;
     updateDailyGoalBanner(moInc);
 
     requestAnimationFrame(()=>{
@@ -1023,7 +1251,17 @@
   function saveEdit(){ if(!editContext)return; const {monthKey,type,itemIdx}=editContext,name=months[monthKey][type].items[itemIdx].name; if(!confirm(`Delete ${name}?`))return; months[monthKey][type].items.splice(itemIdx,1); saveData();closeEditSheet();renderAll();showToast(name+' removed'); }
   function renderAll(){ if(homeView==='daily')renderDaily();else render();renderTransactions(); }
 
-  function updateGoalBanner(){ const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji');if(!goals.length){banner.classList.add('hidden');return;}const cur=getTotal((months["0"]||{income:{items:[]}}).income.items),g=goals[0],pct=Math.round((cur/g.target)*100);if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Goal crushed!</strong> You hit $${g.target.toLocaleString()} this month!`;}else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to your goal</strong> — $${(g.target-cur).toLocaleString()} away.`;}else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway there!</strong> $${cur.toLocaleString()} of $${g.target.toLocaleString()}.`;}else{banner.classList.add('hidden');} }
+  // ── Monthly goal banner (uses current viewed offset) ──────────────────────
+  function updateGoalBanner(){
+    const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji');
+    if(!goals.length){banner.classList.add('hidden');return;}
+    const cur=getTotal((months[String(offset)]||{income:{items:[]}}).income.items);
+    const g=goals[0],pct=Math.round((cur/g.target)*100);
+    if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Goal crushed!</strong> You hit $${g.target.toLocaleString()} this month!`;}
+    else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to your goal</strong> — $${(g.target-cur).toLocaleString()} away.`;}
+    else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway there!</strong> $${cur.toLocaleString()} of $${g.target.toLocaleString()}.`;}
+    else{banner.classList.add('hidden');}
+  }
 
   // ── Monthly concentric rings ──────────────────────────────────────────────
   const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
@@ -1150,16 +1388,23 @@
     renderStatCards();
   }
 
-  function renderGoals(){ const cur=getTotal((months[String(offset)]||months["0"]||{income:{items:[]}}).income.items);if(!goals.length){document.getElementById('goals-list').innerHTML='<div class="tx-empty" style="padding:2rem 0;">No goals yet. Add one below!</div>';return;}document.getElementById('goals-list').innerHTML=goals.map((g,i)=>{const pct=Math.min(100,Math.round((cur/g.target)*100));return `<div class="goal-card"><div class="goal-header"><span class="goal-name">${g.name}</span><div style="display:flex;align-items:center;gap:8px;"><span class="goal-pct">${pct}%</span><span class="goal-delete" onclick="deleteGoal(${i})">×</span></div></div><div class="goal-amounts">$<span>${cur.toLocaleString()}</span> of $<span>${g.target.toLocaleString()}</span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;"></div></div></div>`;}).join('');}
+  function renderGoals(){
+    // Use current month (offset 0), not the globally navigated offset
+    const cur=getTotal((months["0"]||{income:{items:[]}}).income.items);
+    if(!goals.length){document.getElementById('goals-list').innerHTML='<div class="tx-empty" style="padding:2rem 0;">No goals yet. Add one below!</div>';return;}
+    document.getElementById('goals-list').innerHTML=goals.map((g,i)=>{const pct=Math.min(100,Math.round((cur/g.target)*100));return `<div class="goal-card"><div class="goal-header"><span class="goal-name">${g.name}</span><div style="display:flex;align-items:center;gap:8px;"><span class="goal-pct">${pct}%</span><span class="goal-delete" onclick="deleteGoal(${i})">×</span></div></div><div class="goal-amounts">$<span>${cur.toLocaleString()}</span> of $<span>${g.target.toLocaleString()}</span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;"></div></div></div>`;}).join('');
+  }
   function deleteGoal(i){ goals.splice(i,1);saveData();renderGoals();if(homeView==='daily')renderDaily();else render();showToast('Goal removed'); }
 
   function buildSourceGrid(){ const sources=entryType==="income"?INCOME_SOURCES:EXPENSE_SOURCES;document.getElementById('source-label').textContent=entryType==="income"?"Source":"Category";selectedSource=null;document.getElementById('custom-input-row').classList.remove('show');document.getElementById('input-custom').value='';document.getElementById('source-grid').innerHTML=sources.map(s=>{const b=getBrand(s),isEmoji=/\p{Emoji}/u.test(b.initials);const icon=b.logo?`<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';this.parentElement.style.fontSize='16px';"/></div>`:`<div class="chip-icon" style="background:${b.color};font-size:${isEmoji?'16px':'12px'};">${b.initials}</div>`;return `<div class="source-chip" onclick="selectSource('${s}',this)">${icon}${s}</div>`;}).join('')+`<div class="source-chip custom-chip" onclick="selectSource('__custom__',this)">+ Custom</div>`; }
   function selectSource(name,el){ selectedSource=name;document.querySelectorAll('.source-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');if(name==='__custom__'){document.getElementById('custom-input-row').classList.add('show');document.getElementById('input-custom').focus();}else{document.getElementById('custom-input-row').classList.remove('show');} }
   function deleteItem(name){ const d=months[String(offset)]||months['0'],list=d[mode].items,idx=list.findIndex(x=>x.name===name);if(idx>-1){list.splice(idx,1);saveData();render();showToast(name+' removed');} }
 
+  // ── Monthly render (uses `offset` which may differ from month 0) ──────────
   function render(){
     const d=months[String(offset)];if(!d)return;
     const prev=months[String(offset-1)],data=d[mode],items=data.items,total=getTotal(items);
+    // Net uses the currently viewed offset
     const net=getTotal(d.income.items)-getTotal(d.expense.items);
     document.getElementById('month-label').textContent=d.label;
     document.getElementById('total-amount').textContent='$'+total.toLocaleString();
@@ -1231,26 +1476,50 @@
   function closeGoalSheet(){ document.getElementById('goal-overlay').classList.remove('open'); }
   function closeGoalIfOutside(e){ if(e.target===document.getElementById('goal-overlay'))closeGoalSheet(); }
   function saveGoal(){ const name=document.getElementById('goal-name').value.trim(),target=parseFloat(document.getElementById('goal-target').value);if(!name||!target||target<=0){showToast('Enter a name and target amount');return;}goals.push({name,target});saveData();closeGoalSheet();renderGoals();if(homeView==='daily')renderDaily();else render();showToast('Goal added!'); }
-  function confirmReset(){ if(confirm('Reset all data? This cannot be undone.')){store.clear();months=JSON.parse(JSON.stringify(DEFAULT_MONTHS));goals=[{name:"Monthly income",target:10000}];ensureCurrentMonth();offset=0;currentDayKey=dateToDayKey(Date.now());if(homeView==='daily')renderDaily();else render();showToast('Data reset');} }
+  function confirmReset(){ if(confirm('Reset all data? This cannot be undone.')){store.clear();months=JSON.parse(JSON.stringify(DEFAULT_MONTHS));goals=[{name:"Monthly income",target:10000}];ensureCurrentMonth();offset=0;currentDayKey=dateToDayKey(Date.now());homeView='daily';applyHomeView();showToast('Data reset');} }
   function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 
   // ── Init ──────────────────────────────────────────────────────────────────
   ensureCurrentMonth();
   offset=0;
   currentDayKey=dateToDayKey(Date.now());
-  switchPage('home');
-  document.getElementById('daily-view').style.display='';
-  document.getElementById('monthly-view').style.display='none';
-  renderDaily();
+
+  // Update streak on open
+  updateStreak();
+  renderStreakBadge();
+
+  // Check if user has a stored view preference
+  const savedView=store.getItem('filo_homeview');
+  const isFirstTime=!savedView;
 
   initDragDismiss('sheet-handle-main','sheet-main','overlay',closeSheet);
   initDragDismiss('sheet-handle-edit','sheet-edit','edit-overlay',closeEditSheet);
   initDragDismiss('sheet-handle-goal','sheet-goal','goal-overlay',closeGoalSheet);
 
   window.addEventListener('load',()=>{
-    setTimeout(()=>{const s=document.getElementById('splash-screen');s.classList.add('hide');setTimeout(()=>s.style.display='none',400);},1200);
-    setTimeout(()=>renderDaily(),80);
+    setTimeout(()=>{
+      const s=document.getElementById('splash-screen');
+      s.classList.add('hide');
+      setTimeout(()=>{
+        s.style.display='none';
+        if(isFirstTime){
+          // Show onboarding
+          document.getElementById('onboarding-overlay').style.display='flex';
+        } else {
+          // Go straight to preferred view
+          homeView=savedView;
+          switchPage('home');
+          applyHomeView();
+        }
+      },400);
+    },1200);
   });
+
+  // Initial setup while splash is showing
+  switchPage('home');
+  document.getElementById('daily-view').style.display='';
+  document.getElementById('monthly-view').style.display='none';
+
   window.addEventListener('resize',()=>{
     if(document.getElementById('page-home').classList.contains('active')){if(homeView==='daily')renderDaily();else render();}
   });
