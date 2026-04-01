@@ -31,10 +31,39 @@
     .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; }
     .header p { font-size: clamp(12px,1.6vh,14px); color: #bbb; margin-bottom: 3px; }
 
+    /* ── View toggle pill ── */
+    .view-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #f5f0e8;
+      border: 1.5px solid #e0d8c8;
+      border-radius: 20px;
+      padding: 5px 12px 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #a07010;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .view-toggle-pill:active { transform: scale(0.95); }
+    .view-toggle-pill:hover { background: #ffe9a0; box-shadow: 0 2px 8px rgba(232,184,75,0.18); }
+    .view-toggle-pill .pill-icon { font-size: 14px; line-height: 1; }
+
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
     .month-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 10px; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,16px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; }
     .month-nav button:active { transform: scale(0.95); }
     .month-nav span { font-size: clamp(13px,1.7vh,15px); font-weight: 600; flex: 1; text-align: center; color: #222; }
+
+    /* ── Day nav (daily view) ── */
+    .day-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
+    .day-nav button { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 10px; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,16px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; }
+    .day-nav button:active { transform: scale(0.95); }
+    .day-nav span { font-size: clamp(13px,1.7vh,15px); font-weight: 600; flex: 1; text-align: center; color: #222; }
+    .today-btn { background: #e8b84b !important; color: #fff !important; border-color: #e8b84b !important; font-size: clamp(10px,1.3vh,12px) !important; padding: clamp(5px,0.9vh,9px) clamp(8px,1.5vw,12px) !important; }
 
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px,1vh,11px) 10px; font-size: clamp(13px,1.6vh,15px); font-weight: 600; border: 2px solid; border-radius: 12px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
@@ -58,6 +87,10 @@
     .total-card .change-label { font-size: clamp(10px,1.2vh,12px); color: rgba(255,255,255,0.75); }
     .total-card-chart { flex: 1; min-width: 0; height: clamp(44px, 6vh, 62px); position: relative; }
     #mini-bar-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+
+    /* Daily view: today's spark bars */
+    .total-card-chart.daily-spark { display: flex; align-items: flex-end; gap: 3px; padding: 4px 0; }
+    .daily-spark-bar { flex: 1; border-radius: 3px 3px 0 0; transition: opacity 0.2s; min-height: 3px; }
 
     #bar-tooltip {
       position: fixed;
@@ -132,6 +165,33 @@
     .net-label    { font-size: clamp(11px,1.4vh,13px); color: #aaa; }
     .net-positive { color: #6a9e40; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
     .net-negative { color: #a0622a; font-size: clamp(14px,2.2vh,20px); font-weight: 700; }
+
+    /* ── Daily transactions list (inside home page) ── */
+    .daily-tx-list { flex: 1; min-height: 0; overflow-y: auto; border-radius: 18px; background: #f7f2e8; border: 1.5px solid #e0d8c8; padding: clamp(10px,1.5vh,16px); }
+    .daily-tx-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; transition: background 0.15s; }
+    .daily-tx-item:last-child { margin-bottom: 0; }
+    .daily-tx-item:active { background: #fffaf0; }
+    .daily-tx-icon { width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: #fff; overflow: hidden; }
+    .daily-tx-icon img { width: 34px; height: 34px; object-fit: cover; border-radius: 10px; }
+    .daily-tx-info { flex: 1; min-width: 0; }
+    .daily-tx-name { font-size: 13px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .daily-tx-time { font-size: 10px; color: #bbb; margin-top: 1px; }
+    .daily-tx-amount-income  { font-size: 14px; font-weight: 700; color: #6a9e40; flex-shrink: 0; }
+    .daily-tx-amount-expense { font-size: 14px; font-weight: 700; color: #a0622a; flex-shrink: 0; }
+    .daily-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 100%; min-height: 80px; text-align: center; }
+    .daily-empty-icon { font-size: 28px; }
+    .daily-empty-text { font-size: 13px; font-weight: 600; color: #888; }
+    .daily-empty-sub { font-size: 11px; color: #bbb; line-height: 1.4; }
+
+    /* Daily stats row */
+    .daily-stats-row { display: flex; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
+    .daily-stat-chip { flex: 1; background: #f7f2e8; border: 1.5px solid #e0d8c8; border-radius: 12px; padding: 8px 10px; text-align: center; }
+    .daily-stat-chip .dsc-label { font-size: 9px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+    .daily-stat-chip .dsc-val { font-size: clamp(13px,1.8vh,16px); font-weight: 700; }
+    .dsc-inc { color: #e8b84b; }
+    .dsc-exp { color: #a0622a; }
+    .dsc-net-pos { color: #6a9e40; }
+    .dsc-net-neg { color: #a0622a; }
 
     #page-trends, #page-goals, #page-settings, #page-transactions { height: auto; min-height: calc(100dvh - 72px); overflow-y: auto; padding: 2vh 4vw 90px; }
     .page-title    { font-size: 24px; font-weight: 700; color: #222; margin-bottom: 4px; }
@@ -244,6 +304,10 @@
     @keyframes goalPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.7; } }
     .goal-ring-empty { animation: goalPulse 2s ease-in-out infinite; cursor: pointer; }
 
+    /* View transition animation */
+    .view-fade-in { animation: viewFadeIn 0.22s ease forwards; }
+    @keyframes viewFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
     @media (min-width: 768px) {
       .page { max-width: 100%; height: auto; min-height: calc(100dvh - 72px); overflow: visible; padding: 2rem 6rem 90px; display: block; }
       .page.active { display: block; }
@@ -276,52 +340,133 @@
         <span style="display:none; font-size:38px; font-weight:700; color:#e8b84b;">filo</span>
       </div>
     </div>
-    <div class="month-nav">
-      <button onclick="changeMonth(-1)">&#8592;</button>
-      <span id="month-label"></span>
-      <button onclick="changeMonth(1)">&#8594;</button>
-    </div>
-    <div class="toggle-row">
-      <button class="toggle-btn income-active"    id="btn-income"  onclick="setMode('income')">Income</button>
-      <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
-    </div>
-    <div class="total-card-wrap">
-      <div class="total-card income" id="total-card">
-        <div class="total-card-left">
-          <div class="label"  id="total-label">Total income</div>
-          <div class="amount" id="total-amount">$0</div>
-          <div class="change-row">
-            <span class="change-pill pill-good" id="change-pill">—</span>
-            <span class="change-label" id="change-label">no prior data</span>
+
+    <!-- ── DAILY VIEW ── -->
+    <div id="daily-view">
+      <div class="day-nav">
+        <button onclick="changeDay(-1)">&#8592;</button>
+        <span id="day-label"></span>
+        <button class="today-btn" id="today-btn" onclick="goToday()">Today</button>
+        <button onclick="changeDay(1)">&#8594;</button>
+        <button class="view-toggle-pill" onclick="switchHomeView('monthly')" title="Switch to monthly view">
+          <span class="pill-icon">📅</span> Monthly
+        </button>
+      </div>
+      <div class="toggle-row">
+        <button class="toggle-btn income-active"    id="daily-btn-income"  onclick="setDailyMode('income')">Income</button>
+        <button class="toggle-btn inactive-expense" id="daily-btn-expense" onclick="setDailyMode('expense')">Expenses</button>
+      </div>
+      <div class="total-card-wrap">
+        <div class="total-card income" id="daily-total-card">
+          <div class="total-card-left">
+            <div class="label"  id="daily-total-label">Today's income</div>
+            <div class="amount" id="daily-total-amount">$0</div>
+            <div class="change-row">
+              <span class="change-pill pill-good" id="daily-change-pill">—</span>
+              <span class="change-label" id="daily-change-label">vs yesterday</span>
+            </div>
+          </div>
+          <!-- 7-day spark for daily card -->
+          <div class="total-card-chart" id="daily-spark-wrap">
+            <canvas id="daily-spark-canvas"></canvas>
           </div>
         </div>
-        <div class="total-card-chart">
-          <canvas id="mini-bar-canvas"></canvas>
+        <button class="add-btn" onclick="openSheet()">+</button>
+      </div>
+
+      <div class="goal-banner hidden" id="daily-goal-banner">
+        <span class="banner-emoji" id="daily-banner-emoji">🎯</span>
+        <span class="banner-text"  id="daily-banner-text"></span>
+      </div>
+
+      <!-- Daily stats row: inc / exp / net for today -->
+      <div class="daily-stats-row">
+        <div class="daily-stat-chip">
+          <div class="dsc-label">Income</div>
+          <div class="dsc-val dsc-inc" id="dsc-inc">$0</div>
+        </div>
+        <div class="daily-stat-chip">
+          <div class="dsc-label">Expenses</div>
+          <div class="dsc-val dsc-exp" id="dsc-exp">$0</div>
+        </div>
+        <div class="daily-stat-chip">
+          <div class="dsc-label">Net</div>
+          <div class="dsc-val dsc-net-pos" id="dsc-net">$0</div>
         </div>
       </div>
-      <button class="add-btn" onclick="openSheet()">+</button>
-    </div>
-    <div id="bar-tooltip"><div class="tip-inner" id="tip-inner"></div></div>
 
-    <div class="goal-banner hidden" id="goal-banner">
-      <span class="banner-emoji" id="banner-emoji">🎯</span>
-      <span class="banner-text"  id="banner-text"></span>
-    </div>
-    <div class="sources-title" id="breakdown-title">Income breakdown</div>
-    <div class="chart-section" id="chart-section">
-      <div class="rings-col" id="rings-col">
-        <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="sources-title" id="daily-breakdown-title">Today's income</div>
+      <!-- Rings chart stays the same for daily (monthly totals vs goal) -->
+      <div class="chart-section" id="daily-chart-section">
+        <div class="rings-col" id="daily-rings-col">
+          <svg id="daily-rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="rings-legend" id="daily-rings-legend"></div>
+        <div id="daily-empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
+          <div style="font-size:34px;">💰</div>
+          <div style="font-size:14px; font-weight:600; color:#555;">Nothing today</div>
+          <div style="font-size:12px; color:#bbb; text-align:center; line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add a transaction</div>
+        </div>
       </div>
-      <div class="rings-legend" id="rings-legend"></div>
-      <div id="empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
-        <div style="font-size:34px;">💰</div>
-        <div style="font-size:14px; font-weight:600; color:#555;">No transactions yet</div>
-        <div style="font-size:12px; color:#bbb; text-align:center; line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add your first transaction</div>
+
+      <div class="net-card">
+        <span class="net-label">Net this month so far</span>
+        <span class="net-positive" id="daily-net-month">$0</span>
       </div>
     </div>
-    <div class="net-card">
-      <span class="net-label">Net this month</span>
-      <span class="net-positive" id="net-amount">$0</span>
+
+    <!-- ── MONTHLY VIEW ── -->
+    <div id="monthly-view" style="display:none; flex-direction:column; flex:1; min-height:0;">
+      <div class="month-nav">
+        <button onclick="changeMonth(-1)">&#8592;</button>
+        <span id="month-label"></span>
+        <button onclick="changeMonth(1)">&#8594;</button>
+        <button class="view-toggle-pill" onclick="switchHomeView('daily')" title="Switch to daily view">
+          <span class="pill-icon">📆</span> Daily
+        </button>
+      </div>
+      <div class="toggle-row">
+        <button class="toggle-btn income-active"    id="btn-income"  onclick="setMode('income')">Income</button>
+        <button class="toggle-btn inactive-expense" id="btn-expense" onclick="setMode('expense')">Expenses</button>
+      </div>
+      <div class="total-card-wrap">
+        <div class="total-card income" id="total-card">
+          <div class="total-card-left">
+            <div class="label"  id="total-label">Total income</div>
+            <div class="amount" id="total-amount">$0</div>
+            <div class="change-row">
+              <span class="change-pill pill-good" id="change-pill">—</span>
+              <span class="change-label" id="change-label">no prior data</span>
+            </div>
+          </div>
+          <div class="total-card-chart">
+            <canvas id="mini-bar-canvas"></canvas>
+          </div>
+        </div>
+        <button class="add-btn" onclick="openSheet()">+</button>
+      </div>
+      <div id="bar-tooltip"><div class="tip-inner" id="tip-inner"></div></div>
+
+      <div class="goal-banner hidden" id="goal-banner">
+        <span class="banner-emoji" id="banner-emoji">🎯</span>
+        <span class="banner-text"  id="banner-text"></span>
+      </div>
+      <div class="sources-title" id="breakdown-title">Income breakdown</div>
+      <div class="chart-section" id="chart-section">
+        <div class="rings-col" id="rings-col">
+          <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="rings-legend" id="rings-legend"></div>
+        <div id="empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
+          <div style="font-size:34px;">💰</div>
+          <div style="font-size:14px; font-weight:600; color:#555;">No transactions yet</div>
+          <div style="font-size:12px; color:#bbb; text-align:center; line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add your first transaction</div>
+        </div>
+      </div>
+      <div class="net-card">
+        <span class="net-label">Net this month</span>
+        <span class="net-positive" id="net-amount">$0</span>
+      </div>
     </div>
   </div>
 
@@ -484,7 +629,6 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script>
   const SOURCE_BRANDS = {
     "YouTube":        {color:"#FF0000",initials:"YT",logo:"https://www.google.com/s2/favicons?domain=youtube.com&sz=64"},
@@ -522,6 +666,51 @@
   function getDefaultDateForOffset(off){ if(off===0)return toDateInputValue(Date.now()); const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+off);d.setDate(15);return toDateInputValue(d.getTime()); }
   function dateInputToTs(val){ if(!val)return Date.now(); const [y,m,day]=val.split('-').map(Number); return new Date(y,m-1,day,12,0,0).getTime(); }
   function getMonthDateRange(off){ const now=new Date(); const first=new Date(now.getFullYear(),now.getMonth()+off,1); const last=new Date(now.getFullYear(),now.getMonth()+off+1,0); return{min:toDateInputValue(first.getTime()),max:toDateInputValue(last.getTime())}; }
+
+  // ── Daily date helpers ────────────────────────────────────────────────────
+  function dateToDayKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  function dayKeyToMonthKey(dk){ return dk.slice(0,7); }
+  function dayKeyToTs(dk){ const [y,m,d]=dk.split('-').map(Number); return new Date(y,m-1,d,12,0,0).getTime(); }
+  function formatDayLabel(dk){
+    const d=new Date(dayKeyToTs(dk));
+    const today=dateToDayKey(Date.now());
+    const yesterday=dateToDayKey(Date.now()-86400000);
+    if(dk===today) return 'Today';
+    if(dk===yesterday) return 'Yesterday';
+    return d.toLocaleDateString('default',{weekday:'short',month:'short',day:'numeric'});
+  }
+  function offsetDayKey(dk,delta){
+    const ts=dayKeyToTs(dk)+delta*86400000;
+    return dateToDayKey(ts);
+  }
+
+  // Get all items for a given day
+  function getDayItems(dk,type){
+    const mk=dayKeyToMonthKey(dk);
+    // find month offset
+    const mo=findMonthByKey(mk);
+    if(!mo) return [];
+    return mo[type].items.filter(item=>item.date&&dateToDayKey(item.date)===dk);
+  }
+  function findMonthByKey(mk){
+    // iterate all stored month offsets
+    for(const key of Object.keys(months)){
+      const mo=months[key];
+      if(mo&&mo.label){
+        // check if any item's date matches, or compute label
+        const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+parseInt(key));
+        const yk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        if(yk===mk) return mo;
+      }
+    }
+    return null;
+  }
+  function getMonthOffsetForDayKey(dk){
+    const mk=dk.slice(0,7);
+    const [ty,tm]=mk.split('-').map(Number);
+    const now=new Date();
+    return (ty-now.getFullYear())*12+(tm-1-now.getMonth());
+  }
 
   const DEFAULT_MONTHS = {
     "-1":{label:getMonthLabelFull(-1),income:{items:[
@@ -564,12 +753,38 @@
   let trendsChart=null,txFilter='all',editContext=null,pinnedIdx=-1;
   let _ringSorted=[],_ringGoal=0;
 
+  // ── Daily view state ──────────────────────────────────────────────────────
+  let homeView='daily'; // 'daily' | 'monthly'
+  let currentDayKey=dateToDayKey(Date.now());
+  let dailyMode='income'; // 'income' | 'expense'
+  let dailyPinnedIdx=-1;
+  let _dailyRingSorted=[];
+
+  // ── View switch ───────────────────────────────────────────────────────────
+  function switchHomeView(view){
+    homeView=view;
+    const dv=document.getElementById('daily-view');
+    const mv=document.getElementById('monthly-view');
+    if(view==='daily'){
+      dv.style.display=''; mv.style.display='none';
+      dv.classList.add('view-fade-in');
+      setTimeout(()=>dv.classList.remove('view-fade-in'),300);
+      renderDaily();
+    } else {
+      mv.style.display='flex'; dv.style.display='none';
+      mv.classList.add('view-fade-in');
+      setTimeout(()=>mv.classList.remove('view-fade-in'),300);
+      render();
+      initMiniBarEvents();
+    }
+  }
+
   // ── Pull to refresh ───────────────────────────────────────────────────────
   let pullStartY=0,pulling=false;
   const homeEl=document.getElementById('page-home');
   homeEl.addEventListener('touchstart',e=>{if(homeEl.scrollTop===0){pullStartY=e.touches[0].clientY;pulling=true;}},{passive:true});
   homeEl.addEventListener('touchmove', e=>{if(!pulling)return;if(e.touches[0].clientY-pullStartY>40){document.getElementById('pull-indicator').classList.add('visible');document.getElementById('pull-text').style.display='inline';document.getElementById('pull-spinner').style.display='none';}},{passive:true});
-  homeEl.addEventListener('touchend',  e=>{if(!pulling)return;const dist=e.changedTouches[0].clientY-pullStartY;pulling=false;if(dist>40){document.getElementById('pull-text').style.display='none';document.getElementById('pull-spinner').style.display='block';setTimeout(()=>{months=loadData();goals=loadGoals();ensureCurrentMonth();render();document.getElementById('pull-indicator').classList.remove('visible');document.getElementById('pull-spinner').style.display='none';document.getElementById('pull-text').style.display='inline';showToast('Refreshed');},600);}else{document.getElementById('pull-indicator').classList.remove('visible');}},{passive:true});
+  homeEl.addEventListener('touchend',  e=>{if(!pulling)return;const dist=e.changedTouches[0].clientY-pullStartY;pulling=false;if(dist>40){document.getElementById('pull-text').style.display='none';document.getElementById('pull-spinner').style.display='block';setTimeout(()=>{months=loadData();goals=loadGoals();ensureCurrentMonth();if(homeView==='daily')renderDaily();else render();document.getElementById('pull-indicator').classList.remove('visible');document.getElementById('pull-spinner').style.display='none';document.getElementById('pull-text').style.display='inline';showToast('Refreshed');},600);}else{document.getElementById('pull-indicator').classList.remove('visible');}},{passive:true});
 
   function initDragDismiss(handleId,sheetId,overlayId,closeFn){
     const handle=document.getElementById(handleId),sheet=document.getElementById(sheetId),overlay=document.getElementById(overlayId);
@@ -580,7 +795,246 @@
     handle.addEventListener('click',closeFn);
   }
 
-  // ── Mini bar chart + tooltip ──────────────────────────────────────────────
+  // ── Daily navigation ──────────────────────────────────────────────────────
+  function changeDay(delta){
+    const newKey=offsetDayKey(currentDayKey,delta);
+    const today=dateToDayKey(Date.now());
+    if(delta>0&&newKey>today) return; // don't go into future
+    currentDayKey=newKey;
+    // ensure the month exists for this day
+    const mo=getMonthOffsetForDayKey(currentDayKey);
+    if(!months[String(mo)]){
+      months[String(mo)]={label:getMonthLabelFull(mo),income:{items:[]},expense:{items:[]}};
+      saveData();
+    }
+    renderDaily();
+  }
+  function goToday(){ currentDayKey=dateToDayKey(Date.now()); renderDaily(); }
+  function setDailyMode(m){
+    dailyMode=m;
+    document.getElementById('daily-btn-income').className='toggle-btn'+(m==='income'?' income-active':' inactive-income');
+    document.getElementById('daily-btn-expense').className='toggle-btn'+(m==='expense'?' expense-active':' inactive-expense');
+    renderDaily();
+  }
+
+  // ── Daily spark chart (7 days) ────────────────────────────────────────────
+  function renderDailySparkChart(){
+    const canvas=document.getElementById('daily-spark-canvas');if(!canvas)return;
+    const isIncome=dailyMode==='income';
+    const data=[];
+    for(let i=-6;i<=0;i++){
+      const dk=offsetDayKey(currentDayKey,i);
+      const items=getDayItems(dk,dailyMode);
+      const val=getTotal(items);
+      const d=new Date(dayKeyToTs(dk));
+      data.push({dk,label:d.toLocaleString('default',{weekday:'short'}).slice(0,2),value:val,isCurrent:i===0});
+    }
+    const dpr=window.devicePixelRatio||1;
+    const wrap=canvas.parentElement;
+    const W=wrap.clientWidth,H=wrap.clientHeight;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    canvas.style.width=W+'px';canvas.style.height=H+'px';
+    const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+    const LABEL_H=13,maxVal=Math.max(...data.map(d=>d.value),1);
+    const n=data.length,gap=3,barW=(W-gap*(n-1))/n,maxBarH=H-LABEL_H-4;
+    const colors={normal:isIncome?'rgba(255,255,255,0.38)':'rgba(255,255,255,0.32)',active:isIncome?'rgba(255,255,255,0.95)':'rgba(255,255,255,0.88)',empty:isIncome?'rgba(255,255,255,0.14)':'rgba(255,255,255,0.10)',label:isIncome?'rgba(255,255,255,0.55)':'rgba(255,255,255,0.48)'};
+    data.forEach((d,i)=>{
+      const x=i*(barW+gap),pct=d.value/maxVal,barH=Math.max(d.value>0?3:2,pct*maxBarH),y=H-LABEL_H-barH,r=Math.min(3,barW/2);
+      ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+barW-r,y);ctx.quadraticCurveTo(x+barW,y,x+barW,y+r);ctx.lineTo(x+barW,H-LABEL_H);ctx.lineTo(x,H-LABEL_H);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+      ctx.fillStyle=d.isCurrent?colors.active:d.value===0?colors.empty:colors.normal;ctx.fill();
+    });
+    ctx.font='500 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textBaseline='bottom';
+    data.forEach((d,i)=>{
+      ctx.fillStyle=d.isCurrent?(isIncome?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.82)'):colors.label;
+      ctx.textAlign='center';ctx.fillText(d.label,i*(barW+gap)+barW/2,H);
+    });
+  }
+
+  // ── Daily render ──────────────────────────────────────────────────────────
+  function renderDaily(){
+    const today=dateToDayKey(Date.now());
+    const isTodayKey=currentDayKey===today;
+
+    // Label
+    document.getElementById('day-label').textContent=formatDayLabel(currentDayKey);
+    // Today btn - show/hide based on whether we're already on today
+    const todayBtn=document.getElementById('today-btn');
+    todayBtn.style.display=isTodayKey?'none':'block';
+
+    // Get today's items
+    const incItems=getDayItems(currentDayKey,'income');
+    const expItems=getDayItems(currentDayKey,'expense');
+    const dayInc=getTotal(incItems);
+    const dayExp=getTotal(expItems);
+    const dayNet=dayInc-dayExp;
+    const dayItems=dailyMode==='income'?incItems:expItems;
+    const dayTotal=dailyMode==='income'?dayInc:dayExp;
+
+    // Yesterday comparison
+    const prevDk=offsetDayKey(currentDayKey,-1);
+    const prevItems=getDayItems(prevDk,dailyMode);
+    const prevTotal=getTotal(prevItems);
+
+    // Card
+    const card=document.getElementById('daily-total-card');
+    card.className='total-card '+dailyMode;
+    document.getElementById('daily-total-label').textContent=
+      isTodayKey?(dailyMode==='income'?"Today's income":"Today's expenses")
+      :(dailyMode==='income'?"Income":"Expenses");
+    document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString();
+
+    const pill=document.getElementById('daily-change-pill'),lbl=document.getElementById('daily-change-label');
+    if(prevTotal>0){
+      const ch=calcChange(dayTotal,prevTotal,dailyMode);
+      if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs yesterday';}
+      else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}
+    }else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}
+
+    // Stats chips
+    document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString();
+    document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString();
+    const netEl=document.getElementById('dsc-net');
+    netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString();
+    netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg');
+
+    // Breakdown title
+    document.getElementById('daily-breakdown-title').textContent=
+      (isTodayKey?"Today's ":"Day's ")+(dailyMode==='income'?'income':'expenses');
+
+    // Net month card — use month offset for this day
+    const mo=getMonthOffsetForDayKey(currentDayKey);
+    const moData=months[String(mo)];
+    const moInc=moData?getTotal(moData.income.items):0;
+    const moExp=moData?getTotal(moData.expense.items):0;
+    const moNet=moInc-moExp;
+    const netMonEl=document.getElementById('daily-net-month');
+    netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();
+    netMonEl.className=moNet>=0?'net-positive':'net-negative';
+
+    // Goal banner (monthly goal)
+    updateDailyGoalBanner(moInc);
+
+    // Rings — same concentric chart but showing day's items
+    requestAnimationFrame(()=>{
+      renderDailySparkChart();
+      renderDailyRings(dayItems, dayTotal, moInc);
+    });
+  }
+
+  function updateDailyGoalBanner(moInc){
+    const banner=document.getElementById('daily-goal-banner'),bt=document.getElementById('daily-banner-text'),be=document.getElementById('daily-banner-emoji');
+    if(!goals.length){banner.classList.add('hidden');return;}
+    const g=goals[0],pct=Math.round((moInc/g.target)*100);
+    if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Monthly goal hit!</strong> $${g.target.toLocaleString()} reached.`;}
+    else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to monthly goal</strong> — $${(g.target-moInc).toLocaleString()} away.`;}
+    else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway to monthly goal!</strong> $${moInc.toLocaleString()} of $${g.target.toLocaleString()}.`;}
+    else{banner.classList.add('hidden');}
+  }
+
+  // ── Daily rings (same concentric chart, uses day's items, vs monthly goal) ─
+  const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
+  function degToRad(d){return(d*Math.PI)/180;}
+
+  function drawArcGeneric(svg,ns,r,fraction,color,sw,delay,extraClass=''){
+    const cf=Math.min(1,Math.max(0,fraction)),sd=cf*360;
+    const track=document.createElementNS(ns,'circle');track.setAttribute('cx',CX);track.setAttribute('cy',CY);track.setAttribute('r',r);track.setAttribute('fill','none');track.setAttribute('stroke','rgba(0,0,0,0.07)');track.setAttribute('stroke-width',sw);track.setAttribute('pointer-events','none');svg.appendChild(track);
+    if(cf<=0)return null;
+    const s=degToRad(START_DEG),e=degToRad(START_DEG+sd);
+    const x1=CX+r*Math.cos(s),y1=CY+r*Math.sin(s),x2=CX+r*Math.cos(e),y2=CY+r*Math.sin(e),la=sd>180?1:0;
+    const arc=document.createElementNS(ns,'path');arc.setAttribute('d',`M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}`);arc.setAttribute('fill','none');arc.setAttribute('stroke',color);arc.setAttribute('stroke-width',sw);arc.setAttribute('stroke-linecap','round');if(extraClass)arc.setAttribute('class',extraClass);
+    const circ=2*Math.PI*r,dashLen=circ*cf;arc.style.setProperty('--circ',circ);arc.style.setProperty('--dash-offset',circ-dashLen);arc.style.setProperty('--sw-hi',sw+3);arc.setAttribute('stroke-dasharray',`${circ} ${circ}`);arc.setAttribute('stroke-dashoffset',circ);arc.style.animation=`ringDraw 0.7s ease ${delay}s forwards`;svg.appendChild(arc);
+    const dotRad=degToRad(START_DEG),dx=CX+r*Math.cos(dotRad),dy=CY+r*Math.sin(dotRad);const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',dx);dot.setAttribute('cy',dy);dot.setAttribute('r',sw/2+0.5);dot.setAttribute('fill',color);dot.setAttribute('pointer-events','none');svg.appendChild(dot);
+    return arc;
+  }
+
+  function renderDailyRings(items, total, moInc){
+    const svg=document.getElementById('daily-rings-svg');
+    const legend=document.getElementById('daily-rings-legend');
+    const empty=document.getElementById('daily-empty-state');
+    const ringsCol=document.getElementById('daily-rings-col');
+    svg.innerHTML='';legend.innerHTML='';
+    const ns='http://www.w3.org/2000/svg';
+
+    if(!items.length||total===0){
+      ringsCol.style.display='none';legend.style.display='none';empty.style.display='flex';return;
+    }
+    ringsCol.style.display='';legend.style.display='';empty.style.display='none';
+
+    const sorted=[...items].sort((a,b)=>b.amount-a.amount);
+    // Aggregate by name for day
+    const agg={};
+    sorted.forEach(item=>{agg[item.name]=(agg[item.name]||0)+item.amount;});
+    const aggArr=Object.entries(agg).map(([name,amount])=>({name,amount})).sort((a,b)=>b.amount-a.amount);
+    _dailyRingSorted=aggArr;
+    dailyPinnedIdx=-1;
+
+    // Goal ring — always monthly goal
+    const activeGoal=(dailyMode==='income'&&goals.length>0)?goals[0]:null;
+    const goalTarget=activeGoal?activeGoal.target:total;
+
+    if(dailyMode==='income'){
+      if(activeGoal){
+        // Show month progress on outer ring
+        const gf=Math.min(1,moInc/activeGoal.target);
+        const gArc=drawArcGeneric(svg,ns,GOAL_R,gf,'#e8b84b',GOAL_SW,0,'ring-arc goal-arc');
+        if(gArc){gArc.setAttribute('data-idx','goal');gArc.style.filter='drop-shadow(0 0 3px rgba(232,184,75,0.5))';}
+        const gPct=Math.round((moInc/activeGoal.target)*100);
+        const gRow=document.createElement('div');gRow.className='legend-goal-row';
+        gRow.innerHTML=`<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 ${activeGoal.name}</span><div class="legend-goal-right"><span class="legend-goal-pct">${gPct}%</span><span class="legend-goal-sub">month • $${activeGoal.target.toLocaleString()}</span></div>`;
+        gRow.addEventListener('click',()=>openGoalSheet());legend.appendChild(gRow);
+      } else {
+        const et=document.createElementNS(ns,'circle');et.setAttribute('cx',CX);et.setAttribute('cy',CY);et.setAttribute('r',GOAL_R);et.setAttribute('fill','none');et.setAttribute('stroke','rgba(0,0,0,0.12)');et.setAttribute('stroke-width',GOAL_SW);et.setAttribute('class','goal-ring-empty');et.setAttribute('stroke-dasharray',`${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);et.setAttribute('stroke-dashoffset',`${2*Math.PI*GOAL_R*0.25}`);et.setAttribute('stroke-linecap','round');et.addEventListener('click',()=>openGoalSheet());et.addEventListener('touchend',e=>{e.preventDefault();openGoalSheet();});svg.appendChild(et);
+        const sgr=document.createElement('div');sgr.className='legend-goal-row';sgr.style.opacity='0.6';sgr.innerHTML=`<div class="legend-goal-swatch" style="background:#ccc;"></div><span class="legend-goal-name" style="color:#aaa;">Set monthly goal</span><div class="legend-goal-right"><span class="legend-goal-pct" style="color:#ccc;">+ Goal</span></div>`;sgr.addEventListener('click',()=>openGoalSheet());legend.appendChild(sgr);
+      }
+    }
+
+    aggArr.forEach((item,i)=>{
+      const r=GOAL_R-RING_GAP-i*RING_GAP;if(r<10)return;
+      const sw=Math.max(MIN_SW,BASE_SW-i*SW_STEP),color=getBrand(item.name).color;
+      // fraction of TODAY's total (not monthly)
+      const fraction=Math.min(1,item.amount/total);
+      const arc=drawArcGeneric(svg,ns,r,fraction,color,sw,0.08+i*0.1,'ring-arc');
+      if(arc){
+        arc.setAttribute('data-idx',i);
+        arc.addEventListener('mouseenter',()=>{if(dailyPinnedIdx<0)setDailyRingState(i);});
+        arc.addEventListener('mouseleave',()=>{if(dailyPinnedIdx<0)setDailyRingState(-1);});
+        arc.addEventListener('click',()=>pinDailyRing(i));
+        arc.addEventListener('touchend',e=>{e.preventDefault();pinDailyRing(i);});
+      }
+      const allCircles=svg.querySelectorAll('circle'),lastDot=allCircles[allCircles.length-1];
+      if(lastDot&&lastDot.getAttribute('fill')===color){lastDot.setAttribute('data-dot',i);}
+    });
+
+    // Center text — today's total
+    const ca=document.createElementNS(ns,'text');ca.setAttribute('id','daily-ring-center-amt');ca.setAttribute('x',CX);ca.setAttribute('y',CY-8);ca.setAttribute('text-anchor','middle');ca.setAttribute('dominant-baseline','middle');ca.setAttribute('font-size','15');ca.setAttribute('font-weight','700');ca.setAttribute('fill','#222');ca.setAttribute('font-family','-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');ca.textContent='$'+total.toLocaleString();svg.appendChild(ca);
+    const cl=document.createElementNS(ns,'text');cl.setAttribute('id','daily-ring-center-lbl');cl.setAttribute('x',CX);cl.setAttribute('y',CY+10);cl.setAttribute('text-anchor','middle');cl.setAttribute('dominant-baseline','middle');cl.setAttribute('font-size','9');cl.setAttribute('fill','#aaa');cl.setAttribute('font-family','-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif');cl.textContent='today';svg.appendChild(cl);
+
+    aggArr.forEach((item,i)=>{
+      const pct=Math.round((item.amount/total)*100);
+      const row=document.createElement('div');row.className='legend-item';row.dataset.idx=i;
+      row.innerHTML=`${iconHTML(item.name,22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${pct}% today</span></div>`;
+      row.addEventListener('mouseenter',()=>{if(dailyPinnedIdx<0)setDailyRingState(i);});
+      row.addEventListener('mouseleave',()=>{if(dailyPinnedIdx<0)setDailyRingState(-1);});
+      row.addEventListener('click',()=>pinDailyRing(i));
+      legend.appendChild(row);
+    });
+  }
+
+  function setDailyRingState(activeIdx){
+    const svg=document.getElementById('daily-rings-svg'),legend=document.getElementById('daily-rings-legend');
+    svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);el.classList.toggle('highlighted',activeIdx!==-1&&i===activeIdx);});
+    svg.querySelectorAll('[data-dot]').forEach(el=>{const i=parseInt(el.dataset.dot);el.style.opacity=(activeIdx===-1||i===activeIdx)?'1':'0.2';});
+    legend.querySelectorAll('.legend-item').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);});
+    const amtEl=document.getElementById('daily-ring-center-amt'),lblEl=document.getElementById('daily-ring-center-lbl');if(!amtEl)return;
+    const incItems=getDayItems(currentDayKey,'income'),expItems=getDayItems(currentDayKey,'expense');
+    const dayItems=dailyMode==='income'?incItems:expItems;
+    const total=getTotal(dayItems);
+    if(activeIdx===-1){amtEl.textContent='$'+total.toLocaleString();lblEl.textContent='today';}
+    else{const item=_dailyRingSorted[activeIdx];amtEl.textContent='$'+(item?item.amount.toLocaleString():'0');lblEl.textContent=item?item.name:'';}
+  }
+  function pinDailyRing(idx){ if(dailyPinnedIdx===idx){dailyPinnedIdx=-1;setDailyRingState(-1);}else{dailyPinnedIdx=idx;setDailyRingState(idx);} }
+
+  // ── Monthly bar chart + tooltip ───────────────────────────────────────────
   let miniBarRects=[], tooltipTimer=null;
 
   function getMiniBarColors(isIncome){
@@ -679,16 +1133,14 @@
 
   function initMiniBarEvents(){
     const canvas=document.getElementById('mini-bar-canvas');
-    canvas.addEventListener('click', e=>{ e.stopPropagation(); handleMiniBarClick(e.clientX); });
-    canvas.addEventListener('touchend',e=>{ e.preventDefault(); e.stopPropagation(); handleMiniBarClick(e.changedTouches[0].clientX); });
-
-    // ── FIX: Dismiss tooltip on any click/touch outside the canvas ──
-    document.addEventListener('click', e=>{
-      if(e.target!==canvas) dismissTooltip();
-    });
-    document.addEventListener('touchend', e=>{
-      if(e.target!==canvas) dismissTooltip();
-    },{passive:true});
+    canvas.removeEventListener('click', canvas._clickHandler);
+    canvas.removeEventListener('touchend', canvas._touchHandler);
+    canvas._clickHandler = e=>{ e.stopPropagation(); handleMiniBarClick(e.clientX); };
+    canvas._touchHandler = e=>{ e.preventDefault(); e.stopPropagation(); handleMiniBarClick(e.changedTouches[0].clientX); };
+    canvas.addEventListener('click', canvas._clickHandler);
+    canvas.addEventListener('touchend', canvas._touchHandler);
+    document.addEventListener('click', e=>{ if(e.target!==canvas) dismissTooltip(); });
+    document.addEventListener('touchend', e=>{ if(e.target!==canvas) dismissTooltip(); },{passive:true});
   }
 
   // ── Transactions ──────────────────────────────────────────────────────────
@@ -708,25 +1160,17 @@
   function openEditSheet(monthKey,type,itemIdx){ editContext={monthKey,type,itemIdx}; const item=months[monthKey][type].items[itemIdx];if(!item)return; document.getElementById('edit-sheet-title').textContent=`Edit — ${item.name}`; document.getElementById('edit-amount').value=item.amount; document.getElementById('edit-date').value=item.date?toDateInputValue(item.date):''; document.getElementById('edit-overlay').classList.add('open'); }
   function closeEditSheet(){ document.getElementById('edit-overlay').classList.remove('open');editContext=null; }
   function closeEditIfOutside(e){ if(e.target===document.getElementById('edit-overlay'))closeEditSheet(); }
-  function confirmEdit(){ if(!editContext)return; const {monthKey,type,itemIdx}=editContext; const newAmt=parseFloat(document.getElementById('edit-amount').value); const newDate=document.getElementById('edit-date').value; if(isNaN(newAmt)||newAmt<=0){showToast('Enter a valid amount');return;} months[monthKey][type].items[itemIdx].amount=newAmt; if(newDate)months[monthKey][type].items[itemIdx].date=dateInputToTs(newDate); saveData();closeEditSheet();render();renderTransactions();showToast('Updated!'); }
-  function saveEdit(){ if(!editContext)return; const {monthKey,type,itemIdx}=editContext,name=months[monthKey][type].items[itemIdx].name; if(!confirm(`Delete ${name}?`))return; months[monthKey][type].items.splice(itemIdx,1); saveData();closeEditSheet();render();renderTransactions();showToast(name+' removed'); }
+  function confirmEdit(){ if(!editContext)return; const {monthKey,type,itemIdx}=editContext; const newAmt=parseFloat(document.getElementById('edit-amount').value); const newDate=document.getElementById('edit-date').value; if(isNaN(newAmt)||newAmt<=0){showToast('Enter a valid amount');return;} months[monthKey][type].items[itemIdx].amount=newAmt; if(newDate)months[monthKey][type].items[itemIdx].date=dateInputToTs(newDate); saveData();closeEditSheet();renderAll();showToast('Updated!'); }
+  function saveEdit(){ if(!editContext)return; const {monthKey,type,itemIdx}=editContext,name=months[monthKey][type].items[itemIdx].name; if(!confirm(`Delete ${name}?`))return; months[monthKey][type].items.splice(itemIdx,1); saveData();closeEditSheet();renderAll();showToast(name+' removed'); }
+  function renderAll(){ if(homeView==='daily')renderDaily();else render();renderTransactions(); }
 
   function updateGoalBanner(){ const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji'); if(!goals.length){banner.classList.add('hidden');return;} const cur=getTotal((months["0"]||{income:{items:[]}}).income.items),g=goals[0],pct=Math.round((cur/g.target)*100); if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Goal crushed!</strong> You hit $${g.target.toLocaleString()} this month!`;} else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to your goal</strong> — $${(g.target-cur).toLocaleString()} away.`;} else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway there!</strong> $${cur.toLocaleString()} of $${g.target.toLocaleString()}.`;} else{banner.classList.add('hidden');} }
 
-  // ── Rings chart ───────────────────────────────────────────────────────────
-  const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
-  function degToRad(d){return(d*Math.PI)/180;}
+  // ── Monthly rings ─────────────────────────────────────────────────────────
   function drawArc(svg,ns,r,fraction,color,sw,delay,extraClass=''){
-    const cf=Math.min(1,Math.max(0,fraction)),sd=cf*360;
-    const track=document.createElementNS(ns,'circle');track.setAttribute('cx',CX);track.setAttribute('cy',CY);track.setAttribute('r',r);track.setAttribute('fill','none');track.setAttribute('stroke','rgba(0,0,0,0.07)');track.setAttribute('stroke-width',sw);track.setAttribute('pointer-events','none');svg.appendChild(track);
-    if(cf<=0)return null;
-    const s=degToRad(START_DEG),e=degToRad(START_DEG+sd);
-    const x1=CX+r*Math.cos(s),y1=CY+r*Math.sin(s),x2=CX+r*Math.cos(e),y2=CY+r*Math.sin(e),la=sd>180?1:0;
-    const arc=document.createElementNS(ns,'path');arc.setAttribute('d',`M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}`);arc.setAttribute('fill','none');arc.setAttribute('stroke',color);arc.setAttribute('stroke-width',sw);arc.setAttribute('stroke-linecap','round');if(extraClass)arc.setAttribute('class',extraClass);
-    const circ=2*Math.PI*r,dashLen=circ*cf;arc.style.setProperty('--circ',circ);arc.style.setProperty('--dash-offset',circ-dashLen);arc.style.setProperty('--sw-hi',sw+3);arc.setAttribute('stroke-dasharray',`${circ} ${circ}`);arc.setAttribute('stroke-dashoffset',circ);arc.style.animation=`ringDraw 0.7s ease ${delay}s forwards`;svg.appendChild(arc);
-    const dotRad=degToRad(START_DEG),dx=CX+r*Math.cos(dotRad),dy=CY+r*Math.sin(dotRad);const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',dx);dot.setAttribute('cy',dy);dot.setAttribute('r',sw/2+0.5);dot.setAttribute('fill',color);dot.setAttribute('pointer-events','none');svg.appendChild(dot);
-    return arc;
+    return drawArcGeneric(svg,ns,r,fraction,color,sw,delay,extraClass);
   }
+
   function renderRings(items,total){
     const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');
     const empty=document.getElementById('empty-state'),ringsCol=document.getElementById('rings-col');
@@ -763,6 +1207,7 @@
       legend.appendChild(row);
     });
   }
+
   function setRingState(activeIdx){
     const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');
     svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);el.classList.toggle('highlighted',activeIdx!==-1&&i===activeIdx);});
@@ -774,15 +1219,9 @@
     if(activeIdx===-1){amtEl.textContent='$'+total.toLocaleString();lblEl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';}
     else{const item=_ringSorted[activeIdx];amtEl.textContent='$'+item.amount.toLocaleString();lblEl.textContent=item.name;}
   }
-function pinRing(idx){
-  if(pinnedIdx===idx){
-    pinnedIdx=-1;
-    setRingState(-1);
-  }else{
-    pinnedIdx=idx;
-    setRingState(idx);
-  }
-}
+
+  function pinRing(idx){ if(pinnedIdx===idx){pinnedIdx=-1;setRingState(-1);}else{pinnedIdx=idx;setRingState(idx);} }
+
   // ── Stat cards ────────────────────────────────────────────────────────────
   function renderStatCards(){
     const keys=Object.keys(months).map(Number);if(!keys.length){document.getElementById('stat-cards').innerHTML='';return;}
@@ -799,12 +1238,6 @@ function pinRing(idx){
   }
 
   // ── Trends chart ──────────────────────────────────────────────────────────
-  // KEY: The canvas y-axis is inverted — low y = top of screen = high value.
-  // So when income > expense, the income LINE sits at a LOWER y value (higher up).
-  // The fill region between lines:
-  //   incS[s] < expS[s]  → income line is ABOVE expense line → income winning → GREEN
-  //   expS[s] < incS[s]  → expense line is ABOVE income line → expenses winning → RED
-
   function gaussSmooth(arr,sigma=4){ const r=Math.ceil(sigma*2.5),out=new Array(arr.length); for(let i=0;i<arr.length;i++){let sum=0,wsum=0;for(let j=-r;j<=r;j++){const idx=i+j;if(idx<0||idx>=arr.length)continue;const w=Math.exp(-(j*j)/(2*sigma*sigma));sum+=arr[idx]*w;wsum+=w;}out[i]=sum/wsum;}return out; }
   function catmullRomPath(ctx,pts,tension=0.35){ ctx.moveTo(pts[0].x,pts[0].y); for(let i=0;i<pts.length-1;i++){const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];const cp1x=p1.x+(p2.x-p0.x)*tension,cp1y=p1.y+(p2.y-p0.y)*tension;const cp2x=p2.x-(p3.x-p1.x)*tension,cp2y=p2.y-(p3.y-p1.y)*tension;ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);} }
   function sampleSpline(pts,t,tension=0.35){ const n=pts.length,i=Math.max(0,Math.min(n-2,Math.floor(t))),u=t-i;const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];const cp1y=p1.y+(p2.y-p0.y)*tension,cp2y=p2.y-(p3.y-p1.y)*tension;return Math.pow(1-u,3)*p1.y+3*Math.pow(1-u,2)*u*cp1y+3*(1-u)*u*u*cp2y+u*u*u*p2.y; }
@@ -832,17 +1265,12 @@ function pinRing(idx){
     const incPts=incData.map((v,i)=>({x:xAt(i),y:yAt(v)}));
     const expPts=expData.map((v,i)=>({x:xAt(i),y:yAt(v)}));
 
-    // Grid
     ctx.strokeStyle='#f0ead8';ctx.lineWidth=1;
     for(let i=0;i<=4;i++){ const y=PAD_T+(i/4)*plotH; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(PAD_L+plotW,y);ctx.stroke(); const val=Math.round(maxVal*(1-i/4)); if(val>0){ctx.fillStyle='#ccc';ctx.font='9px -apple-system,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('$'+(val>=1000?(val/1000).toFixed(0)+'k':val),PAD_L-4,y);} }
 
     const STEPS=plotW,incS=[],expS=[];
     for(let s=0;s<=STEPS;s++){ const t=(s/STEPS)*(n-1); incS.push(sampleSpline(incPts,t)); expS.push(sampleSpline(expPts,t)); }
 
-    // ── Fill regions — CORRECTED ─────────────────────────────────────────────
-    // y-axis is inverted: lower y = higher on screen = larger value
-    // incS[s] < expS[s] means income line is HIGHER on screen = income is WINNING → GREEN
-    // expS[s] < incS[s] means expense line is HIGHER on screen = expenses WINNING → RED
     function drawFillRegion(condition, fillColor){
       let inR=false,startS=0;
       for(let s=0;s<=STEPS;s++){
@@ -858,23 +1286,17 @@ function pinRing(idx){
         }
       }
     }
-
-    // incS < expS → income line is above expense line (income winning) → GREEN
     drawFillRegion((i,e) => i < e, 'rgba(80,180,100,0.38)');
-    // expS < incS → expense line is above income line (expenses winning) → RED
     drawFillRegion((i,e) => e < i, 'rgba(200,70,50,0.38)');
 
-    // Subtle base fills under each line
     ctx.beginPath();catmullRomPath(ctx,incPts);ctx.lineTo(xAt(n-1),H-PAD_B);ctx.lineTo(xAt(0),H-PAD_B);ctx.closePath();
     const ig=ctx.createLinearGradient(0,PAD_T,0,H-PAD_B);ig.addColorStop(0,'rgba(232,184,75,0.10)');ig.addColorStop(1,'rgba(232,184,75,0.01)');ctx.fillStyle=ig;ctx.fill();
     ctx.beginPath();catmullRomPath(ctx,expPts);ctx.lineTo(xAt(n-1),H-PAD_B);ctx.lineTo(xAt(0),H-PAD_B);ctx.closePath();
     const eg=ctx.createLinearGradient(0,PAD_T,0,H-PAD_B);eg.addColorStop(0,'rgba(160,98,42,0.08)');eg.addColorStop(1,'rgba(160,98,42,0.01)');ctx.fillStyle=eg;ctx.fill();
 
-    // Lines
     ctx.beginPath();catmullRomPath(ctx,incPts);ctx.strokeStyle='#e8b84b';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
     ctx.beginPath();catmullRomPath(ctx,expPts);ctx.strokeStyle='#a0622a';ctx.lineWidth=2;ctx.stroke();
 
-    // X labels
     ctx.fillStyle='#bbb';ctx.font='9px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
     labels.forEach((lbl,i)=>{if(lbl)ctx.fillText(lbl,xAt(i),H-2);});
 
@@ -901,12 +1323,13 @@ function pinRing(idx){
   }
 
   function renderGoals(){ const cur=getTotal((months[String(offset)]||months["0"]||{income:{items:[]}}).income.items); if(!goals.length){document.getElementById('goals-list').innerHTML='<div class="tx-empty" style="padding:2rem 0;">No goals yet. Add one below!</div>';return;} document.getElementById('goals-list').innerHTML=goals.map((g,i)=>{ const pct=Math.min(100,Math.round((cur/g.target)*100)); return `<div class="goal-card"><div class="goal-header"><span class="goal-name">${g.name}</span><div style="display:flex;align-items:center;gap:8px;"><span class="goal-pct">${pct}%</span><span class="goal-delete" onclick="deleteGoal(${i})">×</span></div></div><div class="goal-amounts">$<span>${cur.toLocaleString()}</span> of $<span>${g.target.toLocaleString()}</span></div><div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;"></div></div></div>`; }).join(''); }
-  function deleteGoal(i){ goals.splice(i,1);saveData();renderGoals();render();showToast('Goal removed'); }
+  function deleteGoal(i){ goals.splice(i,1);saveData();renderGoals();if(homeView==='daily')renderDaily();else render();showToast('Goal removed'); }
 
   function buildSourceGrid(){ const sources=entryType==="income"?INCOME_SOURCES:EXPENSE_SOURCES; document.getElementById('source-label').textContent=entryType==="income"?"Source":"Category"; selectedSource=null;document.getElementById('custom-input-row').classList.remove('show');document.getElementById('input-custom').value=''; document.getElementById('source-grid').innerHTML=sources.map(s=>{const b=getBrand(s),isEmoji=/\p{Emoji}/u.test(b.initials);const icon=b.logo?`<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';this.parentElement.style.fontSize='16px';"/></div>`:`<div class="chip-icon" style="background:${b.color};font-size:${isEmoji?'16px':'12px'};">${b.initials}</div>`;return `<div class="source-chip" onclick="selectSource('${s}',this)">${icon}${s}</div>`;}).join('')+`<div class="source-chip custom-chip" onclick="selectSource('__custom__',this)">+ Custom</div>`; }
   function selectSource(name,el){ selectedSource=name; document.querySelectorAll('.source-chip').forEach(c=>c.classList.remove('selected')); el.classList.add('selected'); if(name==='__custom__'){document.getElementById('custom-input-row').classList.add('show');document.getElementById('input-custom').focus();}else{document.getElementById('custom-input-row').classList.remove('show');} }
   function deleteItem(name){ const d=months[String(offset)]||months['0'],list=d[mode].items,idx=list.findIndex(x=>x.name===name); if(idx>-1){list.splice(idx,1);saveData();render();showToast(name+' removed');} }
 
+  // ── Monthly render ────────────────────────────────────────────────────────
   function render(){
     const d=months[String(offset)];if(!d)return;
     const prev=months[String(offset-1)],data=d[mode],items=data.items,total=getTotal(items);
@@ -923,43 +1346,116 @@ function pinRing(idx){
     updateGoalBanner();
     requestAnimationFrame(()=>{renderMiniBarChart();renderRings(items,total);});
   }
+
   function setMode(m){ mode=m; document.getElementById('btn-income').className='toggle-btn'+(m==='income'?' income-active':' inactive-income'); document.getElementById('btn-expense').className='toggle-btn'+(m==='expense'?' expense-active':' inactive-expense'); render(); }
+
   function switchPage(page){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.getElementById('page-'+page).classList.add('active');document.getElementById('nav-'+page).classList.add('active');
     document.querySelectorAll('.nav-item svg path, .nav-item svg rect, .nav-item svg circle').forEach(el=>{if(el.getAttribute('fill')&&el.getAttribute('fill')!=='none')el.setAttribute('fill','#ccc');if(el.getAttribute('stroke')&&el.getAttribute('stroke')!=='none')el.setAttribute('stroke','#ccc');});
     document.getElementById('nav-'+page).querySelectorAll('svg path, svg rect, svg circle').forEach(el=>{if(el.getAttribute('fill')&&el.getAttribute('fill')!=='none')el.setAttribute('fill','#e8b84b');if(el.getAttribute('stroke')&&el.getAttribute('stroke')!=='none')el.setAttribute('stroke','#e8b84b');});
+    if(page==='home'){ if(homeView==='daily')renderDaily();else{render();initMiniBarEvents();} }
     if(page==='trends')renderTrends();if(page==='goals')renderGoals();if(page==='transactions')renderTransactions();
   }
+
   function changeMonth(dir){ const next=offset+dir;if(dir>0&&next>0)return;if(!months[String(next)]){months[String(next)]={label:getMonthLabelFull(next),income:{items:[]},expense:{items:[]}};saveData();}offset=next;render(); }
-  function openSheet(){ entryType=mode;document.getElementById('type-income').className='type-btn'+(entryType==='income'?' active income':' income');document.getElementById('type-expense').className='type-btn'+(entryType==='expense'?' active expense':' expense');buildSourceGrid();document.getElementById('input-amount').value='';document.getElementById('input-date').value=getDefaultDateForOffset(offset);const range=getMonthDateRange(offset);document.getElementById('input-date').min=range.min;document.getElementById('input-date').max=range.max;document.getElementById('overlay').classList.add('open'); }
+
+  // ── Add transaction — date defaults to currently viewed day in daily mode ──
+  function openSheet(){
+    entryType=homeView==='daily'?dailyMode:mode;
+    document.getElementById('type-income').className='type-btn'+(entryType==='income'?' active income':' income');
+    document.getElementById('type-expense').className='type-btn'+(entryType==='expense'?' active expense':' expense');
+    buildSourceGrid();
+    document.getElementById('input-amount').value='';
+
+    if(homeView==='daily'){
+      // default date = currently viewed day
+      document.getElementById('input-date').value=currentDayKey;
+      document.getElementById('input-date').min='';
+      document.getElementById('input-date').max=dateToDayKey(Date.now());
+    } else {
+      document.getElementById('input-date').value=getDefaultDateForOffset(offset);
+      const range=getMonthDateRange(offset);
+      document.getElementById('input-date').min=range.min;
+      document.getElementById('input-date').max=range.max;
+    }
+    document.getElementById('overlay').classList.add('open');
+  }
+
   function closeSheet(){ document.getElementById('overlay').classList.remove('open'); }
   function closeIfOutside(e){ if(e.target===document.getElementById('overlay'))closeSheet(); }
   function setType(t){ entryType=t;document.getElementById('type-income').className='type-btn'+(t==='income'?' active income':' income');document.getElementById('type-expense').className='type-btn'+(t==='expense'?' active expense':' expense');buildSourceGrid(); }
-  function addTransaction(){ let name=selectedSource;if(name==='__custom__')name=document.getElementById('input-custom').value.trim();const amount=parseFloat(document.getElementById('input-amount').value);const dateVal=document.getElementById('input-date').value;if(!name||!amount||amount<=0){showToast('Pick a source and enter an amount');return;}const entryDate=dateVal?dateInputToTs(dateVal):Date.now();const mo=months[String(offset)],list=mo[entryType].items;const existing=list.find(x=>x.name.toLowerCase()===name.toLowerCase());if(existing){existing.amount+=amount;if(!existing.date)existing.date=entryDate;}else{list.push({name,amount,date:entryDate});}saveData();closeSheet();if(mode!==entryType)setMode(entryType);else render();showToast('$'+amount.toLocaleString()+' added to '+name); }
+
+  function addTransaction(){
+    let name=selectedSource;
+    if(name==='__custom__')name=document.getElementById('input-custom').value.trim();
+    const amount=parseFloat(document.getElementById('input-amount').value);
+    const dateVal=document.getElementById('input-date').value;
+    if(!name||!amount||amount<=0){showToast('Pick a source and enter an amount');return;}
+    const entryDate=dateVal?dateInputToTs(dateVal):Date.now();
+
+    // Find the correct month offset for the entered date
+    const entryMo=getMonthOffsetForDayKey(dateToDayKey(entryDate));
+    if(!months[String(entryMo)]){months[String(entryMo)]={label:getMonthLabelFull(entryMo),income:{items:[]},expense:{items:[]}};saveData();}
+    const mo=months[String(entryMo)],list=mo[entryType].items;
+    const existing=list.find(x=>x.name.toLowerCase()===name.toLowerCase()&&dateToDayKey(x.date||0)===dateToDayKey(entryDate));
+    if(existing){existing.amount+=amount;}
+    else{list.push({name,amount,date:entryDate});}
+    saveData();
+    closeSheet();
+
+    // Update the relevant day key if in daily view
+    if(homeView==='daily'){
+      currentDayKey=dateToDayKey(entryDate);
+      if(dailyMode!==entryType){setDailyMode(entryType);}else{renderDaily();}
+    } else {
+      offset=entryMo;
+      if(mode!==entryType)setMode(entryType);else render();
+    }
+    showToast('$'+amount.toLocaleString()+' added to '+name);
+  }
+
   function openGoalSheet(){ document.getElementById('goal-name').value='';document.getElementById('goal-target').value='';document.getElementById('goal-overlay').classList.add('open'); }
   function closeGoalSheet(){ document.getElementById('goal-overlay').classList.remove('open'); }
   function closeGoalIfOutside(e){ if(e.target===document.getElementById('goal-overlay'))closeGoalSheet(); }
-  function saveGoal(){ const name=document.getElementById('goal-name').value.trim(),target=parseFloat(document.getElementById('goal-target').value);if(!name||!target||target<=0){showToast('Enter a name and target amount');return;}goals.push({name,target});saveData();closeGoalSheet();renderGoals();render();showToast('Goal added!'); }
-  function confirmReset(){ if(confirm('Reset all data? This cannot be undone.')){store.clear();months=JSON.parse(JSON.stringify(DEFAULT_MONTHS));goals=[{name:"Monthly income",target:10000}];ensureCurrentMonth();offset=0;render();showToast('Data reset');} }
+  function saveGoal(){ const name=document.getElementById('goal-name').value.trim(),target=parseFloat(document.getElementById('goal-target').value);if(!name||!target||target<=0){showToast('Enter a name and target amount');return;}goals.push({name,target});saveData();closeGoalSheet();renderGoals();if(homeView==='daily')renderDaily();else render();showToast('Goal added!'); }
+  function confirmReset(){ if(confirm('Reset all data? This cannot be undone.')){store.clear();months=JSON.parse(JSON.stringify(DEFAULT_MONTHS));goals=[{name:"Monthly income",target:10000}];ensureCurrentMonth();offset=0;currentDayKey=dateToDayKey(Date.now());if(homeView==='daily')renderDaily();else render();showToast('Data reset');} }
   function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 
-  ensureCurrentMonth();offset=0;render();switchPage('home');initMiniBarEvents();
+  // ── Init ──────────────────────────────────────────────────────────────────
+  ensureCurrentMonth();
+  offset=0;
+  currentDayKey=dateToDayKey(Date.now());
+  switchPage('home');
+  // Default is daily view — set it up
+  document.getElementById('daily-view').style.display='';
+  document.getElementById('monthly-view').style.display='none';
+  renderDaily();
+
   initDragDismiss('sheet-handle-main','sheet-main','overlay',closeSheet);
   initDragDismiss('sheet-handle-edit','sheet-edit','edit-overlay',closeEditSheet);
   initDragDismiss('sheet-handle-goal','sheet-goal','goal-overlay',closeGoalSheet);
 
-  window.addEventListener('load',()=>{ setTimeout(()=>{const s=document.getElementById('splash-screen');s.classList.add('hide');setTimeout(()=>s.style.display='none',400);},1200);setTimeout(()=>render(),80); });
-  window.addEventListener('resize',()=>{if(document.getElementById('page-home').classList.contains('active'))render();});
-  document.addEventListener('click', (e) => {
-  const isLegendItem = e.target.closest('.legend-item');
-  const isRing = e.target.closest('#rings-svg');
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{const s=document.getElementById('splash-screen');s.classList.add('hide');setTimeout(()=>s.style.display='none',400);},1200);
+    setTimeout(()=>renderDaily(),80);
+  });
+  window.addEventListener('resize',()=>{
+    if(document.getElementById('page-home').classList.contains('active')){
+      if(homeView==='daily')renderDaily();else render();
+    }
+  });
 
-  if (!isLegendItem && !isRing) {
-    pinnedIdx = -1;
-    setRingState(-1);
-  }
-});
+  document.addEventListener('click', (e) => {
+    // Monthly rings
+    const isLegendItem = e.target.closest('.legend-item');
+    const isRing = e.target.closest('#rings-svg');
+    if (!isLegendItem && !isRing) { pinnedIdx=-1; setRingState(-1); }
+    // Daily rings
+    const isDailyLegend = e.target.closest('#daily-rings-legend .legend-item');
+    const isDailyRing = e.target.closest('#daily-rings-svg');
+    if (!isDailyLegend && !isDailyRing) { dailyPinnedIdx=-1; setDailyRingState(-1); }
+  });
   </script>
 </body>
 </html>
