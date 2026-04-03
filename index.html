@@ -17,14 +17,12 @@
     html, body { height: 100%; overscroll-behavior: none; }
     body { font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fffdf7; }
 
-    /* ── Splash ── */
     #splash-screen { position: fixed; inset: 0; background: #fffdf7; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.4s ease; }
     #splash-screen.hide { opacity: 0; pointer-events: none; }
     .splash-logo { width: 110px; height: auto; animation: logoPop 0.7s ease forwards; }
     .splash-fallback { font-size: 56px; font-weight: 700; color: #e8b84b; letter-spacing: -2px; animation: logoPop 0.7s ease forwards; display: none; }
     @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
 
-    /* ── Onboarding ── */
     #onboarding-overlay {
       position: fixed; inset: 0; background: #fffdf7; z-index: 9998;
       display: flex; align-items: center; justify-content: center;
@@ -45,17 +43,15 @@
 
     /* ══════════════════════════════════════════════════════
        PAGE SLIDE SYSTEM
-       Pages sit in a fixed viewport container.
-       Each page is absolutely positioned and slides via translateX.
-       The order array drives direction: home=0, trends=1, tx=2, goals=3, settings=4
     ══════════════════════════════════════════════════════ */
     #page-viewport {
       position: fixed;
-      inset: 0 0 72px 0;   /* full screen minus bottom nav */
+      inset: 0 0 72px 0;
       overflow: hidden;
+      /* Prevent any default touch behaviors that fight us */
+      touch-action: pan-y;
     }
 
-    /* Each page fills the viewport and sits off-screen by default */
     .page {
       position: absolute;
       inset: 0;
@@ -65,21 +61,20 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      /* start all pages off-screen to the right */
       transform: translateX(100%);
-      /* NO transition on initial paint */
       will-change: transform;
       background: #fffdf7;
+      /* We control transitions manually — no default transition here */
     }
 
-    /* The active (visible) page */
+    /* Active page sits at 0 */
     .page.page-active {
       transform: translateX(0);
     }
 
-    /* Slide animation classes added transiently */
-    .page.slide-transition {
-      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Applied only during programmatic snap animation */
+    .page.snap-transition {
+      transition: transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     /* Scrollable inner pages */
@@ -94,13 +89,11 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Header ── */
     .header { margin-bottom: 1.5vh; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .header-left { display: flex; flex-direction: column; min-width: 0; flex-shrink: 1; }
     .header p { font-size: clamp(12px,1.6vh,14px); color: #bbb; margin-bottom: 3px; }
     .header-left img { height: 52px; width: auto; max-width: 150px; object-fit: contain; display: block; flex-shrink: 0; }
 
-    /* ── Streak badge ── */
     .streak-badge { display: flex; align-items: center; gap: 5px; background: linear-gradient(135deg,#fff8e6,#fff3d0); border: 1.5px solid #e8c96a; border-radius: 999px; padding: 5px 12px; cursor: pointer; transition: transform 0.1s; flex-shrink: 0; }
     .streak-badge:active { transform: scale(0.95); }
     .streak-badge .streak-fire { font-size: 16px; }
@@ -111,18 +104,15 @@
     .streak-badge.streak-zero .streak-count { color: #bbb; }
     .streak-badge.streak-zero .streak-label { color: #ccc; }
 
-    /* ── View toggle pill ── */
     .view-toggle-pill { display: inline-flex; align-items: center; background: #efefef; border: 1px solid #ddd; border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: #888; cursor: pointer; transition: background 0.15s, transform 0.1s; white-space: nowrap; flex-shrink: 0; user-select: none; font-family: inherit; }
     .view-toggle-pill:active { transform: scale(0.95); background: #e0e0e0; }
     .view-toggle-pill:hover { background: #e5e5e5; }
 
-    /* ── Month nav ── */
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
     .month-nav button:not(.view-toggle-pill) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .month-nav button:not(.view-toggle-pill):active { transform: scale(0.95); }
     .month-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; }
 
-    /* ── Day nav ── */
     .day-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
     .day-nav button:not(.view-toggle-pill):not(.today-btn) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .day-nav button:not(.view-toggle-pill):not(.today-btn):active { transform: scale(0.95); }
@@ -130,7 +120,6 @@
     .today-btn { background: #e8b84b !important; color: #fff !important; border: none !important; border-radius: 999px !important; font-size: clamp(10px,1.3vh,12px) !important; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,14px) !important; cursor: pointer; font-family: inherit; font-weight: 600; transition: background 0.15s, transform 0.1s; }
     .today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
 
-    /* ── Income/Expense toggle ── */
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px,1vh,11px) 10px; font-size: clamp(13px,1.6vh,15px); font-weight: 600; border: 2px solid; border-radius: 999px; cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .toggle-btn:active { transform: scale(0.97); }
@@ -177,7 +166,6 @@
 
     .sources-title { font-size:clamp(9px,1.1vh,11px); font-weight:600; color:#bbb; margin-bottom:clamp(4px,0.8vh,8px); margin-top:clamp(8px,1.2vh,14px); text-transform:uppercase; letter-spacing:0.06em; flex-shrink:0; }
 
-    /* ── Monthly concentric rings ── */
     .chart-section { flex:1; min-height:0; background:#f7f2e8; border-radius:22px; border:1.5px solid #e0d8c8; display:flex; flex-direction:row; align-items:center; overflow:hidden; padding:0; }
     .rings-col { flex-shrink:0; width:clamp(130px,38vw,190px); height:100%; display:flex; align-items:center; justify-content:center; padding:clamp(10px,2vh,18px); }
     #rings-svg { width:100%; height:100%; max-height:100%; display:block; overflow:visible; }
@@ -206,7 +194,6 @@
     .net-positive { color:#6a9e40; font-size:clamp(14px,2.2vh,20px); font-weight:700; }
     .net-negative { color:#a0622a; font-size:clamp(14px,2.2vh,20px); font-weight:700; }
 
-    /* ── Daily donut ── */
     .donut-section { flex:1; min-height:0; background:#f7f2e8; border-radius:22px; border:1.5px solid #e0d8c8; display:flex; flex-direction:row; align-items:center; overflow:hidden; padding:0; }
     .donut-col { flex-shrink:0; width:clamp(130px,38vw,190px); height:100%; display:flex; align-items:center; justify-content:center; padding:clamp(10px,2vh,18px); }
     #donut-canvas { display:block; }
@@ -229,7 +216,6 @@
     .dsc-net-pos { color:#6a9e40; }
     .dsc-net-neg { color:#a0622a; }
 
-    /* ── Non-home pages extra scroll padding ── */
     .page-title { font-size:24px; font-weight:700; color:#222; margin-bottom:4px; }
     .page-subtitle { font-size:14px; color:#bbb; margin-bottom:1rem; }
 
@@ -287,7 +273,6 @@
     .settings-row-value { font-size:14px; color:#bbb; }
     .settings-row-arrow { font-size:16px; color:#ddd; }
 
-    /* ── Streak popup ── */
     .streak-popup { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.85); background:#fff; border:2px solid #e8c96a; border-radius:24px; padding:2rem 1.75rem; text-align:center; z-index:9500; box-shadow:0 20px 60px rgba(0,0,0,0.18); max-width:300px; width:88%; opacity:0; pointer-events:none; transition:opacity 0.2s,transform 0.2s; }
     .streak-popup.show { opacity:1; pointer-events:all; transform:translate(-50%,-50%) scale(1); }
     .streak-popup-fire { font-size:52px; margin-bottom:10px; }
@@ -297,7 +282,6 @@
     .streak-popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.25); z-index:9400; display:none; }
     .streak-popup-overlay.show { display:block; }
 
-    /* ── Bottom nav ── */
     .bottom-nav { position:fixed; bottom:0; left:0; right:0; height:72px; background:#fff; border-top:1.5px solid #e0e0e0; display:flex; justify-content:space-around; align-items:center; z-index:300; padding-bottom:env(safe-area-inset-bottom,0px); }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0 24px 0; transition:transform 0.1s; }
     .nav-item:active { transform:scale(0.9); }
@@ -305,7 +289,6 @@
     .nav-label { font-size:9px; font-weight:500; color:#ccc; }
     .nav-item.active .nav-label { color:#e8b84b; font-weight:700; }
 
-    /* ── Sheets / overlays ── */
     .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:200; align-items:flex-end; justify-content:center; }
     .overlay.open { display:flex; animation:fadeInAnim 0.2s ease; }
     @keyframes fadeInAnim { from{opacity:0} to{opacity:1} }
@@ -352,7 +335,6 @@
     @keyframes goalPulse { 0%,100%{opacity:0.35} 50%{opacity:0.7} }
     .goal-ring-empty { animation:goalPulse 2s ease-in-out infinite; cursor:pointer; }
 
-    /* Home subview fade (daily ↔ monthly) */
     .view-fade-in { animation:viewFadeIn 0.22s ease forwards; }
     @keyframes viewFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
@@ -374,7 +356,6 @@
     </div>
   </div>
 
-  <!-- ONBOARDING -->
   <div id="onboarding-overlay" style="display:none;">
     <div class="onb-logo">
       <img src="logo.png" alt="Filo" height="60" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
@@ -396,7 +377,6 @@
     </div>
   </div>
 
-  <!-- Streak popup -->
   <div class="streak-popup-overlay" id="streak-overlay" onclick="closeStreakPopup()"></div>
   <div class="streak-popup" id="streak-popup">
     <div class="streak-popup-fire" id="streak-popup-fire">🔥</div>
@@ -405,10 +385,8 @@
     <button class="streak-popup-close" onclick="closeStreakPopup()">Nice!</button>
   </div>
 
-  <!-- PAGE VIEWPORT -->
   <div id="page-viewport">
 
-    <!-- HOME -->
     <div class="page page-active" id="page-home">
       <div class="pull-indicator" id="pull-indicator">
         <div class="pull-spinner" id="pull-spinner" style="display:none;"></div>
@@ -429,7 +407,6 @@
         </div>
       </div>
 
-      <!-- DAILY VIEW -->
       <div id="daily-view">
         <div class="day-nav">
           <button onclick="changeDay(-1)">&#8592;</button>
@@ -481,7 +458,6 @@
         </div>
       </div>
 
-      <!-- MONTHLY VIEW -->
       <div id="monthly-view" style="display:none; flex-direction:column; flex:1; min-height:0;">
         <div class="month-nav">
           <button onclick="changeMonth(-1)">&#8592;</button>
@@ -531,7 +507,6 @@
       </div>
     </div>
 
-    <!-- TRENDS -->
     <div class="page" id="page-trends">
       <div class="page-title">Trends</div>
       <div class="page-subtitle">Last 90 days</div>
@@ -546,7 +521,6 @@
       <div class="stat-cards" id="stat-cards"></div>
     </div>
 
-    <!-- TRANSACTIONS -->
     <div class="page" id="page-transactions">
       <div class="page-title">Transactions</div>
       <div class="page-subtitle">Every transaction, all in one place</div>
@@ -558,7 +532,6 @@
       <div id="tx-list"></div>
     </div>
 
-    <!-- GOALS -->
     <div class="page" id="page-goals">
       <div class="page-title">Goals</div>
       <div class="page-subtitle">Set targets, track progress</div>
@@ -566,7 +539,6 @@
       <button class="add-goal-btn" onclick="openGoalSheet()">+ Add a goal</button>
     </div>
 
-    <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="page-title">Settings</div>
       <div class="page-subtitle">Manage your Filo</div>
@@ -590,9 +562,8 @@
       </div>
     </div>
 
-  </div><!-- end #page-viewport -->
+  </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
       <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="8" height="8" rx="2.5" fill="#e8b84b"/><rect x="12" y="2" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/><rect x="2" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/><rect x="12" y="12" width="8" height="8" rx="2.5" fill="#e8b84b" opacity="0.4"/></svg></div>
@@ -618,7 +589,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- ADD TRANSACTION -->
   <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
     <div class="sheet" id="sheet-main">
       <div class="sheet-handle" id="sheet-handle-main"></div>
@@ -649,7 +619,6 @@
     </div>
   </div>
 
-  <!-- EDIT TRANSACTION -->
   <div class="overlay" id="edit-overlay" onclick="closeEditIfOutside(event)">
     <div class="sheet" id="sheet-edit">
       <div class="sheet-handle" id="sheet-handle-edit"></div>
@@ -672,7 +641,6 @@
     </div>
   </div>
 
-  <!-- ADD GOAL -->
   <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
     <div class="sheet" id="sheet-goal">
       <div class="sheet-handle" id="sheet-handle-goal"></div>
@@ -702,11 +670,6 @@
 
   function pageIndex(name) { return PAGE_ORDER.indexOf(name); }
 
-  /**
-   * Slide from currentPage → toPage.
-   * direction: +1 = slide left (toPage comes from right)
-   *            -1 = slide right (toPage comes from left)
-   */
   function slideTo(toPage, direction) {
     if (toPage === currentPage || _transitioning) return;
     _transitioning = true;
@@ -714,49 +677,41 @@
     const fromEl = document.getElementById('page-' + currentPage);
     const toEl   = document.getElementById('page-' + toPage);
 
-    // Position the incoming page just off-screen in the correct direction
+    // Position incoming page just off-screen
     toEl.style.transition = 'none';
     toEl.style.transform  = direction > 0 ? 'translateX(100%)' : 'translateX(-100%)';
     toEl.classList.remove('page-active');
 
-    // Force reflow so the starting position registers
-    toEl.getBoundingClientRect();
+    toEl.getBoundingClientRect(); // force reflow
 
-    // Now animate both pages
-    fromEl.classList.add('slide-transition');
-    toEl.classList.add('slide-transition');
+    // Snap with a smooth spring-like curve
+    fromEl.classList.add('snap-transition');
+    toEl.classList.add('snap-transition');
 
     fromEl.style.transform = direction > 0 ? 'translateX(-100%)' : 'translateX(100%)';
     toEl.style.transform   = 'translateX(0)';
     toEl.classList.add('page-active');
 
     const done = () => {
-      fromEl.classList.remove('slide-transition', 'page-active');
-      toEl.classList.remove('slide-transition');
+      fromEl.classList.remove('snap-transition', 'page-active');
+      toEl.classList.remove('snap-transition');
       fromEl.style.transform = '';
       toEl.style.transform   = '';
       _transitioning = false;
       currentPage = toPage;
-
-      // Render page content after transition
       onPageEnter(toPage);
     };
 
-    // Listen on incoming page for transition end
     toEl.addEventListener('transitionend', done, { once: true });
-    // Safety fallback
     setTimeout(done, 400);
   }
 
   function switchPage(page) {
     if (page === currentPage) return;
     const dir = pageIndex(page) > pageIndex(currentPage) ? 1 : -1;
-
-    // Update nav highlight immediately
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('nav-' + page).classList.add('active');
     updateNavIcons(page);
-
     slideTo(page, dir);
   }
 
@@ -781,72 +736,200 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  // SWIPE NAVIGATION
-  // Attaches to the viewport. Horizontal swipes > 50px and faster than 0.3s
-  // trigger a page slide. We ignore swipes that start on interactive elements
-  // (sliders, canvases used for charts, sheets).
+  // LIVE SWIPE NAVIGATION
+  // Pages follow your finger in real time, then snap on release.
   // ══════════════════════════════════════════════════════════════════════════
   (function initSwipe() {
     const vp = document.getElementById('page-viewport');
-    let startX = 0, startY = 0, startTime = 0, swiping = false;
 
-    const SWIPE_THRESHOLD = 55;    // px horizontal
-    const ANGLE_THRESHOLD = 35;    // degrees from horizontal — ignore vertical scrolls
-    const VELOCITY_MIN    = 0.2;   // px/ms
+    // State
+    let touchStartX   = 0;
+    let touchStartY   = 0;
+    let touchStartTime = 0;
+    let dragging      = false;      // actively tracking a horizontal swipe
+    let directionLocked = null;     // 'h' | 'v' | null — locked after first 8px
+    let neighborEl    = null;       // the page being dragged into view
+    let neighborDir   = 0;          // +1 = dragging left (next), -1 = dragging right (prev)
+    let vpWidth       = vp.offsetWidth;
+
+    const LOCK_DISTANCE    = 8;    // px before we lock direction
+    const MIN_SWIPE_PX     = 50;   // minimum distance to commit a page change
+    const MIN_VELOCITY     = 0.25; // px/ms to commit even if < MIN_SWIPE_PX
+    const RUBBER_BAND_MAX  = 60;   // max px of rubber-band when no neighbor page
 
     function isInteractive(el) {
-      // Don't hijack swipes on buttons, inputs, canvases (charts), overlays
-      return el.closest('button, input, select, canvas, .overlay, .sheet, .day-nav, .month-nav, .toggle-row');
+      return el.closest('button, input, select, canvas, .overlay, .sheet, .day-nav, .month-nav, .toggle-row, .view-toggle-pill');
+    }
+
+    function setPageX(el, x) {
+      el.style.transition = 'none';
+      el.style.transform  = x === 0 ? 'translateX(0)' : `translateX(${x}px)`;
+    }
+
+    function cancelDrag() {
+      if (!dragging) return;
+      dragging = false;
+      directionLocked = null;
+
+      const fromEl = document.getElementById('page-' + currentPage);
+
+      // Snap current page back to 0
+      fromEl.classList.add('snap-transition');
+      fromEl.style.transform = 'translateX(0)';
+
+      if (neighborEl) {
+        neighborEl.classList.add('snap-transition');
+        neighborEl.style.transform = neighborDir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+
+        const cleanup = () => {
+          if (neighborEl) {
+            neighborEl.classList.remove('snap-transition', 'page-active');
+            neighborEl.style.transform = '';
+            neighborEl = null;
+          }
+          fromEl.classList.remove('snap-transition');
+          fromEl.style.transform = '';
+        };
+        neighborEl.addEventListener('transitionend', cleanup, { once: true });
+        setTimeout(cleanup, 400);
+      } else {
+        const cleanup = () => {
+          fromEl.classList.remove('snap-transition');
+          fromEl.style.transform = '';
+        };
+        fromEl.addEventListener('transitionend', cleanup, { once: true });
+        setTimeout(cleanup, 400);
+      }
     }
 
     vp.addEventListener('touchstart', e => {
-      if (isInteractive(e.target)) { swiping = false; return; }
-      startX    = e.touches[0].clientX;
-      startY    = e.touches[0].clientY;
-      startTime = Date.now();
-      swiping   = true;
+      if (_transitioning) return;
+      if (isInteractive(e.target)) return;
+
+      touchStartX    = e.touches[0].clientX;
+      touchStartY    = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      dragging       = true;
+      directionLocked = null;
+      neighborEl     = null;
+      neighborDir    = 0;
+      vpWidth        = vp.offsetWidth;
     }, { passive: true });
 
-    vp.addEventListener('touchend', e => {
-      if (!swiping) return;
-      swiping = false;
+    vp.addEventListener('touchmove', e => {
+      if (!dragging || _transitioning) return;
 
-      const dx       = e.changedTouches[0].clientX - startX;
-      const dy       = e.changedTouches[0].clientY - startY;
-      const dt       = Date.now() - startTime;
-      const velocity = Math.abs(dx) / dt;
-      const angle    = Math.abs(Math.atan2(Math.abs(dy), Math.abs(dx)) * 180 / Math.PI);
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
 
-      // Must be mostly horizontal, fast enough, and far enough
-      if (angle > ANGLE_THRESHOLD) return;
-      if (Math.abs(dx) < SWIPE_THRESHOLD) return;
-      if (velocity < VELOCITY_MIN) return;
+      // Lock swipe direction once we've moved enough
+      if (!directionLocked) {
+        if (Math.sqrt(dx*dx + dy*dy) < LOCK_DISTANCE) return;
+        directionLocked = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      }
+
+      if (directionLocked === 'v') {
+        dragging = false;
+        return;
+      }
+
+      // Prevent page scroll while doing horizontal swipe
+      e.preventDefault();
 
       const curIdx = pageIndex(currentPage);
-      if (dx < 0) {
-        // Swipe left → go to next page
-        if (curIdx < PAGE_ORDER.length - 1) {
-          const next = PAGE_ORDER[curIdx + 1];
-          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-          document.getElementById('nav-' + next).classList.add('active');
-          updateNavIcons(next);
-          slideTo(next, 1);
+      const fromEl = document.getElementById('page-' + currentPage);
+
+      // Determine neighbor
+      let targetPage = null;
+      if (dx < 0 && curIdx < PAGE_ORDER.length - 1) {
+        targetPage  = PAGE_ORDER[curIdx + 1];
+        neighborDir = 1;
+      } else if (dx > 0 && curIdx > 0) {
+        targetPage  = PAGE_ORDER[curIdx - 1];
+        neighborDir = -1;
+      }
+
+      // If we just acquired a neighbor, set it up
+      if (targetPage && (!neighborEl || neighborEl.id !== 'page-' + targetPage)) {
+        // Clean up previous neighbor if direction flipped
+        if (neighborEl) {
+          neighborEl.style.transform = neighborDir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+          neighborEl.classList.remove('page-active');
         }
+        neighborEl  = document.getElementById('page-' + targetPage);
+        neighborEl.style.transition = 'none';
+        neighborEl.style.transform  = neighborDir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+        neighborEl.classList.add('page-active');
+      }
+
+      if (neighborEl) {
+        // Move both pages together
+        setPageX(fromEl, dx);
+        setPageX(neighborEl, dx + (neighborDir > 0 ? vpWidth : -vpWidth));
       } else {
-        // Swipe right → go to previous page
-        if (curIdx > 0) {
-          const prev = PAGE_ORDER[curIdx - 1];
-          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-          document.getElementById('nav-' + prev).classList.add('active');
-          updateNavIcons(prev);
-          slideTo(prev, -1);
-        }
+        // Rubber-band at edges
+        const rb = dx > 0
+          ? Math.min(dx, RUBBER_BAND_MAX) * 0.3
+          : Math.max(dx, -RUBBER_BAND_MAX) * 0.3;
+        setPageX(fromEl, rb);
+      }
+    }, { passive: false });
+
+    vp.addEventListener('touchend', e => {
+      if (!dragging || _transitioning) return;
+      dragging = false;
+      directionLocked = null;
+
+      const dx       = e.changedTouches[0].clientX - touchStartX;
+      const dt       = Date.now() - touchStartTime;
+      const velocity = Math.abs(dx) / Math.max(dt, 1);
+      const committed = neighborEl && (Math.abs(dx) > MIN_SWIPE_PX || velocity > MIN_VELOCITY);
+
+      const fromEl = document.getElementById('page-' + currentPage);
+
+      if (committed) {
+        // Complete the transition
+        _transitioning = true;
+
+        fromEl.classList.add('snap-transition');
+        neighborEl.classList.add('snap-transition');
+
+        fromEl.style.transform    = neighborDir > 0 ? 'translateX(-100%)' : 'translateX(100%)';
+        neighborEl.style.transform = 'translateX(0)';
+
+        const nextPage = PAGE_ORDER[pageIndex(currentPage) + neighborDir];
+
+        // Update nav immediately
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('nav-' + nextPage).classList.add('active');
+        updateNavIcons(nextPage);
+
+        const done = () => {
+          fromEl.classList.remove('snap-transition', 'page-active');
+          neighborEl.classList.remove('snap-transition');
+          fromEl.style.transform    = '';
+          neighborEl.style.transform = '';
+          neighborEl = null;
+          _transitioning = false;
+          currentPage = nextPage;
+          onPageEnter(nextPage);
+        };
+
+        neighborEl.addEventListener('transitionend', done, { once: true });
+        setTimeout(done, 400);
+
+      } else {
+        // Cancel — snap everything back
+        cancelDrag();
       }
     }, { passive: true });
+
+    // If touch is cancelled (e.g. by a system gesture), snap back cleanly
+    vp.addEventListener('touchcancel', () => cancelDrag(), { passive: true });
   })();
 
   // ══════════════════════════════════════════════════════════════════════════
-  // ALL APP LOGIC (unchanged from your code)
+  // ALL APP LOGIC (unchanged)
   // ══════════════════════════════════════════════════════════════════════════
 
   const SOURCE_BRANDS = {
@@ -947,7 +1030,6 @@
   let currentDayKey=dateToDayKey(Date.now());
   let dailyMode='income';
 
-  // Streak
   function loadStreak(){ try{const s=store.getItem('filo_streak');return s?JSON.parse(s):{count:0,lastDate:null};}catch(e){return{count:0,lastDate:null};} }
   function saveStreak(s){ store.setItem('filo_streak',JSON.stringify(s)); }
   function updateStreak(){ const today=dateToDayKey(Date.now()); let s=loadStreak(); if(s.lastDate===today)return s; const yesterday=dateToDayKey(Date.now()-86400000); s.count=(s.lastDate===yesterday)?s.count+1:1; s.lastDate=today; saveStreak(s); return s; }
@@ -955,12 +1037,10 @@
   function openStreakPopup(){ const s=loadStreak(); const fire=s.count>=7?'🔥🔥':'🔥'; const title=s.count===0?'No streak yet':s.count===1?'1-day streak!':s.count+'-day streak!'; const sub=s.count===0?'Open Filo every day to build your streak!':s.count>=30?`Incredible! ${s.count} days in a row 🏆`:s.count>=7?`${s.count} days in a row! 💪`:`${s.count} day${s.count>1?'s':''} in a row. Keep going!`; document.getElementById('streak-popup-fire').textContent=fire; document.getElementById('streak-popup-title').textContent=title; document.getElementById('streak-popup-sub').textContent=sub; document.getElementById('streak-overlay').classList.add('show'); document.getElementById('streak-popup').classList.add('show'); }
   function closeStreakPopup(){ document.getElementById('streak-overlay').classList.remove('show'); document.getElementById('streak-popup').classList.remove('show'); }
 
-  // Onboarding
   function pickView(view){ homeView=view; store.setItem('filo_homeview',view); const onb=document.getElementById('onboarding-overlay'); onb.classList.add('hide'); setTimeout(()=>onb.style.display='none',400); applyHomeView(); }
   function applyHomeView(){ const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(homeView==='daily'){dv.style.display='';mv.style.display='none';renderDaily();}else{mv.style.display='flex';dv.style.display='none';render();initMiniBarEvents();} }
   function switchHomeView(view){ homeView=view; store.setItem('filo_homeview',view); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(view==='daily'){dv.style.display='';mv.style.display='none';dv.classList.add('view-fade-in');setTimeout(()=>dv.classList.remove('view-fade-in'),300);renderDaily();}else{mv.style.display='flex';dv.style.display='none';mv.classList.add('view-fade-in');setTimeout(()=>mv.classList.remove('view-fade-in'),300);render();initMiniBarEvents();} }
 
-  // Pull to refresh (home page only)
   let pullStartY=0, pulling=false;
   const homeEl=document.getElementById('page-home');
   homeEl.addEventListener('touchstart',e=>{if(homeEl.scrollTop===0){pullStartY=e.touches[0].clientY;pulling=true;}},{passive:true});
@@ -969,25 +1049,20 @@
 
   function initDragDismiss(handleId,sheetId,overlayId,closeFn){ const handle=document.getElementById(handleId),sheet=document.getElementById(sheetId),overlay=document.getElementById(overlayId); let startY=0,currentY=0,dragging=false; handle.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;dragging=true;sheet.classList.add('dragging');},{passive:true}); handle.addEventListener('touchmove',e=>{if(!dragging)return;currentY=Math.max(0,e.touches[0].clientY-startY);sheet.style.transform=`translateY(${currentY}px)`;overlay.style.opacity=Math.max(0,1-currentY/300);},{passive:true}); handle.addEventListener('touchend',()=>{if(!dragging)return;dragging=false;sheet.classList.remove('dragging');if(currentY>120){sheet.style.transform='translateY(100%)';setTimeout(()=>{sheet.style.transform='';overlay.style.opacity='';closeFn();},200);}else{sheet.style.transform='';overlay.style.opacity='1';}currentY=0;}); handle.addEventListener('click',closeFn); }
 
-  // Daily nav
   function changeDay(delta){ const newKey=offsetDayKey(currentDayKey,delta); const today=dateToDayKey(Date.now()); if(delta>0&&newKey>today)return; currentDayKey=newKey; const mo=getMonthOffsetForDayKey(currentDayKey); if(!months[String(mo)]){months[String(mo)]={label:getMonthLabelFull(mo),income:{items:[]},expense:{items:[]}};saveData();} renderDaily(); }
   function goToday(){ currentDayKey=dateToDayKey(Date.now()); renderDaily(); }
   function setDailyMode(m){ dailyMode=m; document.getElementById('daily-btn-income').className='toggle-btn'+(m==='income'?' income-active':' inactive-income'); document.getElementById('daily-btn-expense').className='toggle-btn'+(m==='expense'?' expense-active':' inactive-expense'); renderDaily(); }
 
-  // Daily spark chart
   function renderDailySparkChart(){ const canvas=document.getElementById('daily-spark-canvas');if(!canvas)return; const isIncome=dailyMode==='income'; const data=[]; for(let i=-6;i<=0;i++){const dk=offsetDayKey(currentDayKey,i);const val=getTotal(getDayItems(dk,dailyMode));const d=new Date(dayKeyToTs(dk));data.push({value:val,label:d.toLocaleString('default',{weekday:'short'}).slice(0,2),isCurrent:i===0});} const dpr=window.devicePixelRatio||1; const wrap=canvas.parentElement,W=wrap.clientWidth,H=wrap.clientHeight; canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px'; const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H); const LABEL_H=13,maxVal=Math.max(...data.map(d=>d.value),1); const n=data.length,gap=3,barW=(W-gap*(n-1))/n,maxBarH=H-LABEL_H-4; const colors={normal:isIncome?'rgba(255,255,255,0.38)':'rgba(255,255,255,0.32)',active:isIncome?'rgba(255,255,255,0.95)':'rgba(255,255,255,0.88)',empty:isIncome?'rgba(255,255,255,0.14)':'rgba(255,255,255,0.10)',label:isIncome?'rgba(255,255,255,0.55)':'rgba(255,255,255,0.48)'}; data.forEach((d,i)=>{const x=i*(barW+gap),pct=d.value/maxVal,barH=Math.max(d.value>0?3:2,pct*maxBarH),y=H-LABEL_H-barH,r=Math.min(3,barW/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+barW-r,y);ctx.quadraticCurveTo(x+barW,y,x+barW,y+r);ctx.lineTo(x+barW,H-LABEL_H);ctx.lineTo(x,H-LABEL_H);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fillStyle=d.isCurrent?colors.active:d.value===0?colors.empty:colors.normal;ctx.fill();}); ctx.font='500 9px -apple-system,sans-serif';ctx.textBaseline='bottom'; data.forEach((d,i)=>{ctx.fillStyle=d.isCurrent?(isIncome?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.82)'):colors.label;ctx.textAlign='center';ctx.fillText(d.label,i*(barW+gap)+barW/2,H);}); }
 
-  // Daily donut chart
   function renderDonutChart(items,total){ const col=document.getElementById('donut-col'),canvas=document.getElementById('donut-canvas'),legend=document.getElementById('donut-legend'),empty=document.getElementById('donut-empty'); legend.innerHTML=''; if(!items.length||total===0){col.style.display='none';legend.style.display='none';empty.style.display='flex';return;} col.style.display='';legend.style.display='flex';empty.style.display='none'; const agg={};items.forEach(item=>{agg[item.name]=(agg[item.name]||0)+item.amount;}); const segments=Object.entries(agg).map(([name,amount])=>({name,amount,color:getBrand(name).color})).sort((a,b)=>b.amount-a.amount); const dpr=window.devicePixelRatio||1; const availW=col.clientWidth-20,availH=col.clientHeight-20; const size=Math.min(availW,availH,160); canvas.width=Math.round(size*dpr);canvas.height=Math.round(size*dpr);canvas.style.width=size+'px';canvas.style.height=size+'px'; const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,size,size); const cx=size/2,cy=size/2,outerR=size/2-3,innerR=outerR*0.56; if(segments.length===1){ctx.beginPath();ctx.arc(cx,cy,outerR,0,Math.PI*2);ctx.arc(cx,cy,innerR,Math.PI*2,0,true);ctx.closePath();ctx.fillStyle=segments[0].color;ctx.fill();}else{const GAP_RAD=3*(Math.PI/180),totalGap=GAP_RAD*segments.length,availableAngle=Math.PI*2-totalGap;let startAngle=-Math.PI/2;segments.forEach(seg=>{const sliceAngle=(seg.amount/total)*availableAngle,endAngle=startAngle+sliceAngle;ctx.beginPath();ctx.arc(cx,cy,outerR,startAngle,endAngle);ctx.arc(cx,cy,innerR,endAngle,startAngle,true);ctx.closePath();ctx.fillStyle=seg.color;ctx.fill();startAngle=endAngle+GAP_RAD;});} ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#222'; const fontSize=Math.round(size*0.13);ctx.font=`700 ${fontSize}px 'Inter Tight',-apple-system,sans-serif`;ctx.fillText('$'+total.toLocaleString(),cx,cy-size*0.07);ctx.fillStyle='#aaa';ctx.font=`500 ${Math.round(size*0.075)}px 'Inter Tight',-apple-system,sans-serif`;ctx.fillText('total',cx,cy+size*0.09); segments.forEach(seg=>{const pct=Math.round((seg.amount/total)*100);const row=document.createElement('div');row.className='donut-legend-item';row.innerHTML=`${donutIconHTML(seg.name,22)}<span class="donut-name">${seg.name}</span><div style="text-align:right;flex-shrink:0;"><span class="donut-amt">$${seg.amount.toLocaleString()}</span><span class="donut-pct">${pct}%</span></div>`;legend.appendChild(row);}); }
 
   function getNetForMonthOffset(mo){ const d=months[String(mo)];if(!d)return 0;return getTotal(d.income.items)-getTotal(d.expense.items); }
 
-  // Daily render
   function renderDaily(){ const today=dateToDayKey(Date.now()),isTodayKey=currentDayKey===today; document.getElementById('day-label').textContent=formatDayLabel(currentDayKey); document.getElementById('today-btn').style.display=isTodayKey?'none':'block'; const incItems=getDayItems(currentDayKey,'income'),expItems=getDayItems(currentDayKey,'expense'); const dayInc=getTotal(incItems),dayExp=getTotal(expItems),dayNet=dayInc-dayExp; const dayItems=dailyMode==='income'?incItems:expItems,dayTotal=dailyMode==='income'?dayInc:dayExp; const prevDk=offsetDayKey(currentDayKey,-1),prevTotal=getTotal(getDayItems(prevDk,dailyMode)); document.getElementById('daily-total-card').className='total-card '+dailyMode; document.getElementById('daily-total-label').textContent=dailyMode==='income'?'Income':'Expenses'; document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString(); const pill=document.getElementById('daily-change-pill'),lbl=document.getElementById('daily-change-label'); if(prevTotal>0){const ch=calcChange(dayTotal,prevTotal,dailyMode);if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs yesterday';}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';} document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); const netEl=document.getElementById('dsc-net');netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString();netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey),moNet=getNetForMonthOffset(viewedMonthOff); const netMonEl=document.getElementById('daily-net-month');netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();netMonEl.className=moNet>=0?'net-positive':'net-negative'; const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month so far':`Net in ${moLabel}`; const moData=months[String(viewedMonthOff)],moInc=moData?getTotal(moData.income.items):0; updateDailyGoalBanner(moInc); requestAnimationFrame(()=>{renderDailySparkChart();renderDonutChart(dayItems,dayTotal);}); }
 
   function updateDailyGoalBanner(moInc){ const banner=document.getElementById('daily-goal-banner'),bt=document.getElementById('daily-banner-text'),be=document.getElementById('daily-banner-emoji'); if(!goals.length){banner.classList.add('hidden');return;} const g=goals[0],pct=Math.round((moInc/g.target)*100); if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Monthly goal hit!</strong> $${g.target.toLocaleString()} reached.`;}else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to monthly goal</strong> — $${(g.target-moInc).toLocaleString()} away.`;}else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway to monthly goal!</strong> $${moInc.toLocaleString()} of $${g.target.toLocaleString()}.`;}else{banner.classList.add('hidden');} }
 
-  // Monthly bar chart + tooltip
   let miniBarRects=[], tooltipTimer=null;
   function getMiniBarColors(isIncome){ return{normal:isIncome?'rgba(255,255,255,0.38)':'rgba(255,255,255,0.32)',active:isIncome?'rgba(255,255,255,0.95)':'rgba(255,255,255,0.88)',empty:isIncome?'rgba(255,255,255,0.14)':'rgba(255,255,255,0.10)',label:isIncome?'rgba(255,255,255,0.55)':'rgba(255,255,255,0.48)'}; }
   function renderMiniBarChart(){ const canvas=document.getElementById('mini-bar-canvas');if(!canvas)return; const data=[];for(let i=-12;i<=0;i++){const rel=offset+i,mo=months[String(rel)],val=mo?getTotal(mo[mode].items):0;const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+rel);data.push({relOffset:rel,shortLabel:d.toLocaleString('default',{month:'short'}),fullLabel:d.toLocaleString('default',{month:'long',year:'numeric'}),value:val,isViewed:i===0,income:mo?getTotal(mo.income.items):0,expense:mo?getTotal(mo.expense.items):0});} const dpr=window.devicePixelRatio||1,rect=canvas.parentElement.getBoundingClientRect(),W=rect.width,H=rect.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);const isIncome=mode==='income',colors=getMiniBarColors(isIncome);const LABEL_H=13,maxVal=Math.max(...data.map(d=>d.value),1);const n=data.length,gap=3,barW=(W-gap*(n-1))/n,maxBarH=H-LABEL_H-4;miniBarRects=[];data.forEach((d,i)=>{const x=i*(barW+gap),pct=d.value/maxVal,barH=Math.max(d.value>0?3:2,pct*maxBarH),y=H-LABEL_H-barH,r=Math.min(3,barW/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+barW-r,y);ctx.quadraticCurveTo(x+barW,y,x+barW,y+r);ctx.lineTo(x+barW,H-LABEL_H);ctx.lineTo(x,H-LABEL_H);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fillStyle=d.isViewed?colors.active:d.value===0?colors.empty:colors.normal;ctx.fill();miniBarRects.push({x,w:barW,cx:x+barW/2,relOffset:d.relOffset,label:d.fullLabel,income:d.income,expense:d.expense});});ctx.font='500 9px -apple-system,sans-serif';ctx.textBaseline='bottom';data.forEach((d,i)=>{if(i%3!==0&&!d.isViewed)return;ctx.fillStyle=d.isViewed?(isIncome?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.82)'):colors.label;ctx.textAlign='center';ctx.fillText(d.shortLabel,i*(barW+gap)+barW/2,H);}); }
@@ -996,7 +1071,6 @@
   function handleMiniBarClick(clientX){ const canvas=document.getElementById('mini-bar-canvas');if(!canvas||!miniBarRects.length)return;const rect=canvas.getBoundingClientRect(),x=(clientX-rect.left)*(parseFloat(canvas.style.width)/rect.width);for(const bar of miniBarRects){if(x>=bar.x&&x<=bar.x+bar.w){showBarTooltip(bar,canvas);return;}} }
   function initMiniBarEvents(){ const canvas=document.getElementById('mini-bar-canvas');canvas.removeEventListener('click',canvas._clickHandler);canvas.removeEventListener('touchend',canvas._touchHandler);canvas._clickHandler=e=>{e.stopPropagation();handleMiniBarClick(e.clientX);};canvas._touchHandler=e=>{e.preventDefault();e.stopPropagation();handleMiniBarClick(e.changedTouches[0].clientX);};canvas.addEventListener('click',canvas._clickHandler);canvas.addEventListener('touchend',canvas._touchHandler);document.addEventListener('click',e=>{if(e.target!==canvas)dismissTooltip();});document.addEventListener('touchend',e=>{if(e.target!==canvas)dismissTooltip();},{passive:true}); }
 
-  // Transactions
   function setTxFilter(f){ txFilter=f;document.getElementById('tx-filter-all').className='tx-filter-btn'+(f==='all'?' active-all':'');document.getElementById('tx-filter-income').className='tx-filter-btn'+(f==='income'?' active-income':'');document.getElementById('tx-filter-expense').className='tx-filter-btn'+(f==='expense'?' active-expense':'');renderTransactions(); }
   function renderTransactions(){ const allItems=[];Object.keys(months).forEach(k=>{const mo=months[k];if(txFilter!=='expense')mo.income.items.forEach((item,i)=>allItems.push({...item,type:'income',monthKey:k,itemIdx:i}));if(txFilter!=='income')mo.expense.items.forEach((item,i)=>allItems.push({...item,type:'expense',monthKey:k,itemIdx:i}));});if(!allItems.length){document.getElementById('tx-list').innerHTML='<div class="tx-empty">No transactions yet</div>';return;}allItems.sort((a,b)=>(b.date||0)-(a.date||0));const groups={},groupOrder=[];allItems.forEach(item=>{const key=item.date?getDateMonthKey(item.date):'unknown',label=item.date?getDateMonthLabel(item.date):'Unknown date';if(!groups[key]){groups[key]={label,items:[]};groupOrder.push(key);}groups[key].items.push(item);});let html='';groupOrder.forEach(key=>{const g=groups[key];html+=`<div class="tx-month-group"><div class="tx-month-label">${g.label}</div>`;g.items.forEach(item=>{const b=getBrand(item.name),isEmoji=/\p{Emoji}/u.test(b.initials);const iconHtml=b.logo?`<div class="tx-icon" style="background:${b.color};font-size:11px;"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.fontSize='18px';"/></div>`:`<div class="tx-icon" style="background:${b.color};font-size:${isEmoji?'20px':'11px'};">${b.initials}</div>`;html+=`<div class="tx-item" onclick="openEditSheet('${item.monthKey}','${item.type}',${item.itemIdx})">${iconHtml}<div class="tx-info"><div class="tx-name">${item.name}</div><div class="tx-date">${item.date?formatDate(item.date):'—'}</div></div><div class="tx-right"><div class="${item.type==='income'?'tx-amount-income':'tx-amount-expense'}">${item.type==='income'?'+':'-'}$${item.amount.toLocaleString()}</div><span class="tx-tag ${item.type==='income'?'tx-tag-income':'tx-tag-expense'}">${item.type==='income'?'Income':'Expense'}</span></div></div>`;});html+='</div>';});document.getElementById('tx-list').innerHTML=html; }
   function openEditSheet(monthKey,type,itemIdx){ editContext={monthKey,type,itemIdx};const item=months[monthKey][type].items[itemIdx];if(!item)return;document.getElementById('edit-sheet-title').textContent=`Edit — ${item.name}`;document.getElementById('edit-amount').value=item.amount;document.getElementById('edit-date').value=item.date?toDateInputValue(item.date):'';document.getElementById('edit-overlay').classList.add('open'); }
@@ -1008,7 +1082,6 @@
 
   function updateGoalBanner(){ const banner=document.getElementById('goal-banner'),bt=document.getElementById('banner-text'),be=document.getElementById('banner-emoji');if(!goals.length){banner.classList.add('hidden');return;}const cur=getTotal((months[String(offset)]||{income:{items:[]}}).income.items);const g=goals[0],pct=Math.round((cur/g.target)*100);if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Goal crushed!</strong> You hit $${g.target.toLocaleString()} this month!`;}else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to your goal</strong> — $${(g.target-cur).toLocaleString()} away.`;}else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway there!</strong> $${cur.toLocaleString()} of $${g.target.toLocaleString()}.`;}else{banner.classList.add('hidden');} }
 
-  // Monthly rings
   const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
   function degToRad(d){return(d*Math.PI)/180;}
   function drawArc(svg,ns,r,fraction,color,sw,delay,extraClass=''){ const cf=Math.min(1,Math.max(0,fraction)),sd=cf*360;const track=document.createElementNS(ns,'circle');track.setAttribute('cx',CX);track.setAttribute('cy',CY);track.setAttribute('r',r);track.setAttribute('fill','none');track.setAttribute('stroke','rgba(0,0,0,0.07)');track.setAttribute('stroke-width',sw);track.setAttribute('pointer-events','none');svg.appendChild(track);if(cf<=0)return null;const s=degToRad(START_DEG),e=degToRad(START_DEG+sd),x1=CX+r*Math.cos(s),y1=CY+r*Math.sin(s),x2=CX+r*Math.cos(e),y2=CY+r*Math.sin(e),la=sd>180?1:0;const arc=document.createElementNS(ns,'path');arc.setAttribute('d',`M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}`);arc.setAttribute('fill','none');arc.setAttribute('stroke',color);arc.setAttribute('stroke-width',sw);arc.setAttribute('stroke-linecap','round');if(extraClass)arc.setAttribute('class',extraClass);const circ=2*Math.PI*r,dashLen=circ*cf;arc.style.setProperty('--circ',circ);arc.style.setProperty('--dash-offset',circ-dashLen);arc.style.setProperty('--sw-hi',sw+3);arc.setAttribute('stroke-dasharray',`${circ} ${circ}`);arc.setAttribute('stroke-dashoffset',circ);arc.style.animation=`ringDraw 0.7s ease ${delay}s forwards`;svg.appendChild(arc);const dotRad=degToRad(START_DEG),dx=CX+r*Math.cos(dotRad),dy=CY+r*Math.sin(dotRad);const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',dx);dot.setAttribute('cy',dy);dot.setAttribute('r',sw/2+0.5);dot.setAttribute('fill',color);dot.setAttribute('pointer-events','none');svg.appendChild(dot);return arc; }
@@ -1016,10 +1089,8 @@
   function setRingState(activeIdx){ const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);el.classList.toggle('highlighted',activeIdx!==-1&&i===activeIdx);});svg.querySelectorAll('[data-dot]').forEach(el=>{const i=parseInt(el.dataset.dot);el.style.opacity=(activeIdx===-1||i===activeIdx)?'1':'0.2';});legend.querySelectorAll('.legend-item').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);});const amtEl=document.getElementById('ring-center-amt'),lblEl=document.getElementById('ring-center-lbl');if(!amtEl)return;const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;const total=getTotal((months[String(offset)]||{income:{items:[]},expense:{items:[]}})[mode].items);if(activeIdx===-1){amtEl.textContent='$'+total.toLocaleString();lblEl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';}else{const item=_ringSorted[activeIdx];amtEl.textContent='$'+item.amount.toLocaleString();lblEl.textContent=item.name;} }
   function pinRing(idx){ if(pinnedIdx===idx){pinnedIdx=-1;setRingState(-1);}else{pinnedIdx=idx;setRingState(idx);} }
 
-  // Stat cards
   function renderStatCards(){ const keys=Object.keys(months).map(Number);if(!keys.length){document.getElementById('stat-cards').innerHTML='';return;}let bestKey=keys[0],bestIncome=0;keys.forEach(k=>{const inc=getTotal(months[String(k)].income.items);if(inc>bestIncome){bestIncome=inc;bestKey=k;}});const totalIncome=keys.reduce((s,k)=>s+getTotal(months[String(k)].income.items),0);const avgIncome=Math.round(totalIncome/keys.length);const totalSaved=keys.reduce((s,k)=>{const n=getTotal(months[String(k)].income.items)-getTotal(months[String(k)].expense.items);return s+(n>0?n:0);},0);const srcTotals={};keys.forEach(k=>months[String(k)].income.items.forEach(item=>{srcTotals[item.name]=(srcTotals[item.name]||0)+item.amount;}));let topSource='—',topSourceTotal=0;Object.entries(srcTotals).forEach(([n,t])=>{if(t>topSourceTotal){topSourceTotal=t;topSource=n;}});document.getElementById('stat-cards').innerHTML=`<div class="stat-card"><div class="stat-label">Best month</div><div class="stat-value stat-gold">$${bestIncome.toLocaleString()}</div><div class="stat-sub">${months[String(bestKey)].label}</div></div><div class="stat-card"><div class="stat-label">Avg income</div><div class="stat-value stat-gold">$${avgIncome.toLocaleString()}</div><div class="stat-sub">per month</div></div><div class="stat-card"><div class="stat-label">Total saved</div><div class="stat-value stat-green">$${totalSaved.toLocaleString()}</div><div class="stat-sub">all time net</div></div><div class="stat-card"><div class="stat-label">Top source</div><div class="stat-value stat-dark" style="font-size:${topSource.length>10?'15px':'20px'};">${topSource}</div><div class="stat-sub">$${topSourceTotal.toLocaleString()} total</div></div>`; }
 
-  // Trends chart
   function gaussSmooth(arr,sigma=4){ const r=Math.ceil(sigma*2.5),out=new Array(arr.length);for(let i=0;i<arr.length;i++){let sum=0,wsum=0;for(let j=-r;j<=r;j++){const idx=i+j;if(idx<0||idx>=arr.length)continue;const w=Math.exp(-(j*j)/(2*sigma*sigma));sum+=arr[idx]*w;wsum+=w;}out[i]=sum/wsum;}return out; }
   function catmullRomPath(ctx,pts,tension=0.35){ ctx.moveTo(pts[0].x,pts[0].y);for(let i=0;i<pts.length-1;i++){const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];const cp1x=p1.x+(p2.x-p0.x)*tension,cp1y=p1.y+(p2.y-p0.y)*tension,cp2x=p2.x-(p3.x-p1.x)*tension,cp2y=p2.y-(p3.y-p1.y)*tension;ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p2.x,p2.y);} }
   function sampleSpline(pts,t,tension=0.35){ const n=pts.length,i=Math.max(0,Math.min(n-2,Math.floor(t))),u=t-i;const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)];const cp1y=p1.y+(p2.y-p0.y)*tension,cp2y=p2.y-(p3.y-p1.y)*tension;return Math.pow(1-u,3)*p1.y+3*Math.pow(1-u,2)*u*cp1y+3*(1-u)*u*u*cp2y+u*u*u*p2.y; }
@@ -1050,7 +1121,6 @@
   function confirmReset(){ if(confirm('Reset all data? This cannot be undone.')){store.clear();months=JSON.parse(JSON.stringify(DEFAULT_MONTHS));goals=[{name:"Monthly income",target:10000}];ensureCurrentMonth();offset=0;currentDayKey=dateToDayKey(Date.now());homeView='daily';applyHomeView();showToast('Data reset');} }
   function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
 
-  // Ring click outside
   document.addEventListener('click',e=>{ const isLegend=e.target.closest('.legend-item'),isRing=e.target.closest('#rings-svg'); if(!isLegend&&!isRing){pinnedIdx=-1;setRingState(-1);} });
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -1067,7 +1137,6 @@
   initDragDismiss('sheet-handle-edit','sheet-edit','edit-overlay',closeEditSheet);
   initDragDismiss('sheet-handle-goal','sheet-goal','goal-overlay',closeGoalSheet);
 
-  // Set all non-home pages off-screen to the right at init
   PAGE_ORDER.filter(p=>p!=='home').forEach(p=>{
     const el=document.getElementById('page-'+p);
     el.style.transform='translateX(100%)';
@@ -1089,7 +1158,6 @@
     },1200);
   });
 
-  // Initial render of home
   document.getElementById('daily-view').style.display='';
   document.getElementById('monthly-view').style.display='none';
   renderDaily();
