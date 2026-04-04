@@ -366,8 +366,8 @@
 
     /* ── Phyllip mascot empty state ── */
     .mascot-empty {
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
   filter: drop-shadow(0 2px 12px rgba(232,184,75,0.35));
   animation: mascotFloat 3s ease-in-out infinite;
@@ -483,10 +483,10 @@
         <div class="donut-section" id="donut-section">
           <div class="donut-col" id="donut-col"><canvas id="donut-canvas"></canvas></div>
           <div class="donut-legend" id="donut-legend"></div>
-          <div id="donut-empty" style="display:none;">
+          <div id="donut-empty" style="display:none;" onclick="openSheet()" style="cursor:pointer;">
             <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
             <div style="font-size:14px;font-weight:600;color:#555;">Nothing today</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add a transaction</div>
+            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add a transaction</div>
           </div>
         </div>
         <div class="net-card">
@@ -532,10 +532,10 @@
             <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
           </div>
           <div class="rings-legend" id="rings-legend"></div>
-          <div id="empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
+          <div id="empty-state" onclick="openSheet()" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1; cursor:pointer;">
             <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
             <div style="font-size:14px;font-weight:600;color:#555;">No transactions yet</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add your first transaction</div>
+            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add your first transaction</div>
           </div>
         </div>
         <div class="net-card">
