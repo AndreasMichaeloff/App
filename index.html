@@ -112,23 +112,37 @@
     .streak-badge.streak-zero .streak-label { color: #ccc; }
 
     /* ── View toggle pill ── */
-    .view-toggle-pill { display: inline-flex; align-items: center; background: #efefef; border: 1px solid #ddd; border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: #888; cursor: pointer; transition: background 0.15s, transform 0.1s; white-space: nowrap; flex-shrink: 0; user-select: none; font-family: inherit; }
-    .view-toggle-pill:active { transform: scale(0.95); background: #e0e0e0; }
-    .view-toggle-pill:hover { background: #e5e5e5; }
+    .view-toggle-pill { display: none; }
 
-    /* ── Month nav ── */
-    .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
-    .month-nav button:not(.view-toggle-pill) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
-    .month-nav button:not(.view-toggle-pill):active { transform: scale(0.95); }
-    .month-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; }
-
-    /* ── Day nav ── */
-    .day-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
-    .day-nav button:not(.view-toggle-pill):not(.today-btn) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
-    .day-nav button:not(.view-toggle-pill):not(.today-btn):active { transform: scale(0.95); }
-    .day-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; }
-    .today-btn { background: #e8b84b !important; color: #fff !important; border: none !important; border-radius: 999px !important; font-size: clamp(10px,1.3vh,12px) !important; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,14px) !important; cursor: pointer; font-family: inherit; font-weight: 600; transition: background 0.15s, transform 0.1s; }
-    .today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
+    .home-view-toggle {
+      display: flex;
+      background: #efefef;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 3px;
+      gap: 0;
+      flex-shrink: 0;
+      align-self: flex-end;
+      margin-bottom: 1vh;
+    }
+    .home-view-toggle .hvt-btn {
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .home-view-toggle .hvt-btn.active {
+      background: #fff;
+      color: #222;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
 
     /* ── Income/Expense toggle ── */
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
@@ -430,14 +444,20 @@
         <div class="header-left">
           <p>Your money, layered.</p>
           <img src="logo.png" alt="filo"
-               style="height:52px;width:auto;max-width:150px;object-fit:contain;display:block;"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
+             style="height:52px;width:auto;max-width:150px;object-fit:contain;display:block;"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
           <span style="display:none; font-size:38px; font-weight:700; color:#e8b84b;">filo</span>
         </div>
-        <div class="streak-badge" id="streak-badge" onclick="openStreakPopup()">
-          <span class="streak-fire"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="16" height="16"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></span>
-          <span class="streak-count" id="streak-count">0</span>
-          <span class="streak-label">day streak</span>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+          <div class="streak-badge" id="streak-badge" onclick="openStreakPopup()">
+              <span class="streak-fire"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="16" height="16"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></span>
+            <span class="streak-count" id="streak-count">0</span>
+            <span class="streak-label">day streak</span>
+          </div>
+          <div class="home-view-toggle">
+            <button class="hvt-btn active" id="hvt-daily" onclick="switchHomeView('daily')">Daily</button>
+            <button class="hvt-btn" id="hvt-monthly" onclick="switchHomeView('monthly')">Monthly</button>
+          </div>
         </div>
       </div>
 
@@ -970,8 +990,10 @@
 
   // Onboarding
   function pickView(view){ homeView=view; store.setItem('filo_homeview',view); const onb=document.getElementById('onboarding-overlay'); onb.classList.add('hide'); setTimeout(()=>onb.style.display='none',400); applyHomeView(); }
-  function applyHomeView(){ const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(homeView==='daily'){dv.style.display='';mv.style.display='none';renderDaily();}else{mv.style.display='flex';dv.style.display='none';render();initMiniBarEvents();} }
-  function switchHomeView(view){ homeView=view; store.setItem('filo_homeview',view); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(view==='daily'){dv.style.display='';mv.style.display='none';dv.classList.add('view-fade-in');setTimeout(()=>dv.classList.remove('view-fade-in'),300);renderDaily();}else{mv.style.display='flex';dv.style.display='none';mv.classList.add('view-fade-in');setTimeout(()=>mv.classList.remove('view-fade-in'),300);render();initMiniBarEvents();} }
+  function applyHomeView(){ document.getElementById('hvt-daily').classList.toggle('active', view === 'daily');
+  document.getElementById('hvt-monthly').classList.toggle('active', view === 'monthly');const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(homeView==='daily'){dv.style.display='';mv.style.display='none';renderDaily();}else{mv.style.display='flex';dv.style.display='none';render();initMiniBarEvents();} }
+  function switchHomeView(view){ document.getElementById('hvt-daily').classList.toggle('active', view === 'daily');
+  document.getElementById('hvt-monthly').classList.toggle('active', view === 'monthly'); homeView=view; store.setItem('filo_homeview',view); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(view==='daily'){dv.style.display='';mv.style.display='none';dv.classList.add('view-fade-in');setTimeout(()=>dv.classList.remove('view-fade-in'),300);renderDaily();}else{mv.style.display='flex';dv.style.display='none';mv.classList.add('view-fade-in');setTimeout(()=>mv.classList.remove('view-fade-in'),300);render();initMiniBarEvents();} }
 
   // Pull to refresh (home page only)
   let pullStartY=0, pulling=false;
