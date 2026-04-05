@@ -112,9 +112,37 @@
     .streak-badge.streak-zero .streak-label { color: #ccc; }
 
     /* ── View toggle pill ── */
-    .view-toggle-pill { display: inline-flex; align-items: center; background: #efefef; border: 1px solid #ddd; border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: #888; cursor: pointer; transition: background 0.15s, transform 0.1s; white-space: nowrap; flex-shrink: 0; user-select: none; font-family: inherit; }
-    .view-toggle-pill:active { transform: scale(0.95); background: #e0e0e0; }
-    .view-toggle-pill:hover { background: #e5e5e5; }
+    .view-toggle-pill { display: none; }
+
+.home-view-toggle {
+  display: flex;
+  background: #efefef;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 3px;
+  gap: 0;
+  flex-shrink: 0;
+  align-self: flex-end;
+  margin-bottom: 1vh;
+}
+.home-view-toggle .hvt-btn {
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.home-view-toggle .hvt-btn.active {
+  background: #fff;
+  color: #222;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
 
     /* ── Month nav ── */
     .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
