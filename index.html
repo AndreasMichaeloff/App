@@ -928,15 +928,23 @@
   }
 
   function updateNavIcons(activePage) {
-    document.querySelectorAll('.nav-item svg path, .nav-item svg rect, .nav-item svg circle').forEach(el => {
-      if (el.getAttribute('fill') && el.getAttribute('fill') !== 'none') el.setAttribute('fill', '#ccc');
-      if (el.getAttribute('stroke') && el.getAttribute('stroke') !== 'none') el.setAttribute('stroke', '#ccc');
-    });
-    document.getElementById('nav-' + activePage).querySelectorAll('svg path, svg rect, svg circle').forEach(el => {
-      if (el.getAttribute('fill') && el.getAttribute('fill') !== 'none') el.setAttribute('fill', '#e8b84b');
-      if (el.getAttribute('stroke') && el.getAttribute('stroke') !== 'none') el.setAttribute('stroke', '#e8b84b');
-    });
+  // First, reset all nav items: show unselected, hide selected
+  document.querySelectorAll('.nav-item').forEach(nav => {
+    const unselected = nav.querySelector('.unselected');
+    const selected   = nav.querySelector('.selected');
+    if (unselected) unselected.style.display = 'block';
+    if (selected)   selected.style.display   = 'none';
+  });
+
+  // Then, activate the selected nav item: show selected SVG, hide unselected
+  const activeNav = document.getElementById('nav-' + activePage);
+  if (activeNav) {
+    const unselected = activeNav.querySelector('.unselected');
+    const selected   = activeNav.querySelector('.selected');
+    if (unselected) unselected.style.display = 'none';
+    if (selected)   selected.style.display   = 'block';
   }
+}
 
   // ══════════════════════════════════════════════════════════════════════════
   // SWIPE NAVIGATION
