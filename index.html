@@ -103,7 +103,7 @@
     /* ── Streak badge ── */
     .streak-badge { display: flex; align-items: center; gap: 5px; background: linear-gradient(135deg,#fff8e6,#fff3d0); border: 1.5px solid #e8c96a; border-radius: 999px; padding: 5px 12px; cursor: pointer; transition: transform 0.1s; flex-shrink: 0; }
     .streak-badge:active { transform: scale(0.95); }
-    .streak-badge .streak-fire { width: 16px; height: 16px; flex-shrink: 0; }
+    .streak-badge .streak-fire { font-size: 16px; }
     .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
     .streak-badge .streak-label { font-size: 10px; font-weight: 600; color: #c49a3a; }
     .streak-badge.streak-zero { background: #f5f5f5; border-color: #e0e0e0; }
@@ -112,21 +112,23 @@
     .streak-badge.streak-zero .streak-label { color: #ccc; }
 
     /* ── View toggle pill ── */
-    .view-toggle-pill { display: inline-flex; align-items: center; background: #efefef; border: 1px solid #ddd; border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 600; color: #888; cursor: pointer; transition: background 0.15s, transform 0.1s; white-space: nowrap; flex-shrink: 0; user-select: none; font-family: inherit; }
-    .view-toggle-pill:active { transform: scale(0.95); background: #e0e0e0; }
-    .view-toggle-pill:hover { background: #e5e5e5; }
+    /* ── View segmented control ── */
+    .view-segment-wrap { display: flex; background: #efefef; border-radius: 999px; padding: 3px; margin-bottom: 1vh; flex-shrink: 0; align-self: center; width: fit-content; align-self: stretch; }
+    .view-seg-btn { flex: 1; padding: 7px 0; font-size: 13px; font-weight: 600; border: none; border-radius: 999px; cursor: pointer; font-family: inherit; background: transparent; color: #888; transition: background 0.18s, color 0.18s, transform 0.1s; white-space: nowrap; }
+    .view-seg-btn:active { transform: scale(0.96); }
+    .view-seg-btn.seg-active { background: #fff; color: #222; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
 
     /* ── Month nav ── */
-    .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
+    .month-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; justify-content: center; }
     .month-nav button:not(.view-toggle-pill) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .month-nav button:not(.view-toggle-pill):active { transform: scale(0.95); }
-    .month-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; }
+    .month-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; max-width: 220px; }
 
     /* ── Day nav ── */
-    .day-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; }
+    .day-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1vh; flex-shrink: 0; justify-content: center; }
     .day-nav button:not(.view-toggle-pill):not(.today-btn) { background: #f5f5f5; border: 0.5px solid #e0e0e0; border-radius: 999px; padding: clamp(5px,0.9vh,9px) clamp(12px,2.5vw,18px); font-size: clamp(12px,1.5vh,14px); cursor: pointer; color: #444; transition: background 0.15s, transform 0.1s; font-family: inherit; }
     .day-nav button:not(.view-toggle-pill):not(.today-btn):active { transform: scale(0.95); }
-    .day-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; }
+    .day-nav span { font-size: clamp(17px,2.2vh,21px); font-weight: 700; flex: 1; text-align: center; color: #222; max-width: 220px; }
     .today-btn { background: #e8b84b !important; color: #fff !important; border: none !important; border-radius: 999px !important; font-size: clamp(10px,1.3vh,12px) !important; padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,14px) !important; cursor: pointer; font-family: inherit; font-weight: 600; transition: background 0.15s, transform 0.1s; }
     .today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
 
@@ -366,11 +368,15 @@
 
     /* ── Phyllip mascot empty state ── */
     .mascot-empty {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin-bottom: -24px;
-}
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      /* strip the black background from the PNG using mix-blend-mode */
+      mix-blend-mode: lighten;
+      filter: drop-shadow(0 2px 12px rgba(232,184,75,0.35));
+      animation: mascotFloat 3s ease-in-out infinite;
+      flex-shrink: 0;
+    }
     @keyframes mascotFloat {
       0%, 100% { transform: translateY(0px); }
       50%       { transform: translateY(-5px); }
@@ -411,7 +417,7 @@
   <!-- Streak popup -->
   <div class="streak-popup-overlay" id="streak-overlay" onclick="closeStreakPopup()"></div>
   <div class="streak-popup" id="streak-popup">
-    <div class="streak-popup-fire" id="streak-popup-fire"><<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="52" height="52"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></div>
+    <div class="streak-popup-fire" id="streak-popup-fire">🔥</div>
     <div class="streak-popup-title" id="streak-popup-title">3-day streak!</div>
     <div class="streak-popup-sub" id="streak-popup-sub">Keep logging in every day.</div>
     <button class="streak-popup-close" onclick="closeStreakPopup()">Nice!</button>
@@ -435,7 +441,7 @@
           <span style="display:none; font-size:38px; font-weight:700; color:#e8b84b;">filo</span>
         </div>
         <div class="streak-badge" id="streak-badge" onclick="openStreakPopup()">
-          <span class="streak-fire"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="16" height="16"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></span>
+          <span class="streak-fire">🔥</span>
           <span class="streak-count" id="streak-count">0</span>
           <span class="streak-label">day streak</span>
         </div>
@@ -448,7 +454,6 @@
           <span id="day-label"></span>
           <button class="today-btn" id="today-btn" onclick="goToday()">Today</button>
           <button onclick="changeDay(1)">&#8594;</button>
-          <button class="view-toggle-pill" onclick="switchHomeView('monthly')">Monthly</button>
         </div>
         <div class="toggle-row">
           <button class="toggle-btn income-active"    id="daily-btn-income"  onclick="setDailyMode('income')">Income</button>
@@ -481,10 +486,10 @@
         <div class="donut-section" id="donut-section">
           <div class="donut-col" id="donut-col"><canvas id="donut-canvas"></canvas></div>
           <div class="donut-legend" id="donut-legend"></div>
-          <div id="donut-empty" style="display:none;" onclick="openSheet()" style="cursor:pointer;">
+          <div id="donut-empty" style="display:none;">
             <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
             <div style="font-size:14px;font-weight:600;color:#555;">Nothing today</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add a transaction</div>
+            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add a transaction</div>
           </div>
         </div>
         <div class="net-card">
@@ -495,11 +500,14 @@
 
       <!-- MONTHLY VIEW -->
       <div id="monthly-view" style="display:none; flex-direction:column; flex:1; min-height:0;">
+        <div class="view-segment-wrap">
+          <button class="view-seg-btn" id="seg-monthly" onclick="switchHomeView('monthly')">Monthly</button>
+          <button class="view-seg-btn" id="seg-daily" onclick="switchHomeView('daily')">Daily</button>
+        </div>
         <div class="month-nav">
           <button onclick="changeMonth(-1)">&#8592;</button>
           <span id="month-label"></span>
           <button onclick="changeMonth(1)">&#8594;</button>
-          <button class="view-toggle-pill" onclick="switchHomeView('daily')">Daily</button>
         </div>
         <div class="toggle-row">
           <button class="toggle-btn income-active"    id="btn-income"  onclick="setMode('income')">Income</button>
@@ -525,15 +533,19 @@
           <span class="banner-text"  id="banner-text"></span>
         </div>
         <div class="sources-title" id="breakdown-title">Income breakdown</div>
+        <div id="rings-total-above" style="display:none; text-align:center; margin-bottom:6px; flex-shrink:0;">
+          <span id="rings-total-amt" style="font-size:clamp(22px,3vh,28px);font-weight:700;color:#222;letter-spacing:-1px;"></span>
+          <span id="rings-total-lbl" style="font-size:12px;color:#bbb;margin-left:6px;"></span>
+        </div>
         <div class="chart-section" id="chart-section">
           <div class="rings-col" id="rings-col">
             <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
           </div>
           <div class="rings-legend" id="rings-legend"></div>
-          <div id="empty-state" onclick="openSheet()" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1; cursor:pointer;">
+          <div id="empty-state" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1;">
             <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
             <div style="font-size:14px;font-weight:600;color:#555;">No transactions yet</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add your first transaction</div>
+            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap <strong style="color:#e8b84b;">+</strong> to add your first transaction</div>
           </div>
         </div>
         <div class="net-card">
@@ -964,14 +976,19 @@
   function saveStreak(s){ store.setItem('filo_streak',JSON.stringify(s)); }
   function updateStreak(){ const today=dateToDayKey(Date.now()); let s=loadStreak(); if(s.lastDate===today)return s; const yesterday=dateToDayKey(Date.now()-86400000); s.count=(s.lastDate===yesterday)?s.count+1:1; s.lastDate=today; saveStreak(s); return s; }
   function renderStreakBadge(){ const s=loadStreak(); document.getElementById('streak-count').textContent=s.count; document.getElementById('streak-badge').classList.toggle('streak-zero',s.count===0); }
-  function openStreakPopup(){ const s=loadStreak(); const fireSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="52" height="52"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg>`;
-  const fire = fireSVG; const title=s.count===0?'No streak yet':s.count===1?'1-day streak!':s.count+'-day streak!'; const sub=s.count===0?'Open Filo every day to build your streak!':s.count>=30?`Incredible! ${s.count} days in a row 🏆`:s.count>=7?`${s.count} days in a row! 💪`:`${s.count} day${s.count>1?'s':''} in a row. Keep going!`; document.getElementById('streak-popup-fire').innerHTML=fire; document.getElementById('streak-popup-title').textContent=title; document.getElementById('streak-popup-sub').textContent=sub; document.getElementById('streak-overlay').classList.add('show'); document.getElementById('streak-popup').classList.add('show'); }
+  function openStreakPopup(){ const s=loadStreak(); const fire=s.count>=7?'🔥🔥':'🔥'; const title=s.count===0?'No streak yet':s.count===1?'1-day streak!':s.count+'-day streak!'; const sub=s.count===0?'Open Filo every day to build your streak!':s.count>=30?`Incredible! ${s.count} days in a row 🏆`:s.count>=7?`${s.count} days in a row! 💪`:`${s.count} day${s.count>1?'s':''} in a row. Keep going!`; document.getElementById('streak-popup-fire').textContent=fire; document.getElementById('streak-popup-title').textContent=title; document.getElementById('streak-popup-sub').textContent=sub; document.getElementById('streak-overlay').classList.add('show'); document.getElementById('streak-popup').classList.add('show'); }
   function closeStreakPopup(){ document.getElementById('streak-overlay').classList.remove('show'); document.getElementById('streak-popup').classList.remove('show'); }
 
   // Onboarding
   function pickView(view){ homeView=view; store.setItem('filo_homeview',view); const onb=document.getElementById('onboarding-overlay'); onb.classList.add('hide'); setTimeout(()=>onb.style.display='none',400); applyHomeView(); }
-  function applyHomeView(){ const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(homeView==='daily'){dv.style.display='';mv.style.display='none';renderDaily();}else{mv.style.display='flex';dv.style.display='none';render();initMiniBarEvents();} }
-  function switchHomeView(view){ homeView=view; store.setItem('filo_homeview',view); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(view==='daily'){dv.style.display='';mv.style.display='none';dv.classList.add('view-fade-in');setTimeout(()=>dv.classList.remove('view-fade-in'),300);renderDaily();}else{mv.style.display='flex';dv.style.display='none';mv.classList.add('view-fade-in');setTimeout(()=>mv.classList.remove('view-fade-in'),300);render();initMiniBarEvents();} }
+  function applyHomeView(){ updateSegment(homeView); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(homeView==='daily'){dv.style.display='';mv.style.display='none';renderDaily();}else{mv.style.display='flex';dv.style.display='none';render();initMiniBarEvents();} }
+  function updateSegment(view){
+    const sd=document.getElementById('seg-daily'),sm=document.getElementById('seg-monthly');
+    if(!sd||!sm)return;
+    if(view==='daily'){sd.classList.add('seg-active');sm.classList.remove('seg-active');}
+    else{sm.classList.add('seg-active');sd.classList.remove('seg-active');}
+  }
+  function switchHomeView(view){ homeView=view; store.setItem('filo_homeview',view); updateSegment(view); const dv=document.getElementById('daily-view'),mv=document.getElementById('monthly-view'); if(view==='daily'){dv.style.display='';mv.style.display='none';dv.classList.add('view-fade-in');setTimeout(()=>dv.classList.remove('view-fade-in'),300);renderDaily();}else{mv.style.display='flex';dv.style.display='none';mv.classList.add('view-fade-in');setTimeout(()=>mv.classList.remove('view-fade-in'),300);render();initMiniBarEvents();} }
 
   // Pull to refresh (home page only)
   let pullStartY=0, pulling=false;
@@ -1025,7 +1042,7 @@
   const CX=100,CY=100,GOAL_R=88,RING_GAP=14,GOAL_SW=13,BASE_SW=10,SW_STEP=1.2,MIN_SW=4,START_DEG=-90;
   function degToRad(d){return(d*Math.PI)/180;}
   function drawArc(svg,ns,r,fraction,color,sw,delay,extraClass=''){ const cf=Math.min(1,Math.max(0,fraction)),sd=cf*360;const track=document.createElementNS(ns,'circle');track.setAttribute('cx',CX);track.setAttribute('cy',CY);track.setAttribute('r',r);track.setAttribute('fill','none');track.setAttribute('stroke','rgba(0,0,0,0.07)');track.setAttribute('stroke-width',sw);track.setAttribute('pointer-events','none');svg.appendChild(track);if(cf<=0)return null;const s=degToRad(START_DEG),e=degToRad(START_DEG+sd),x1=CX+r*Math.cos(s),y1=CY+r*Math.sin(s),x2=CX+r*Math.cos(e),y2=CY+r*Math.sin(e),la=sd>180?1:0;const arc=document.createElementNS(ns,'path');arc.setAttribute('d',`M ${x1} ${y1} A ${r} ${r} 0 ${la} 1 ${x2} ${y2}`);arc.setAttribute('fill','none');arc.setAttribute('stroke',color);arc.setAttribute('stroke-width',sw);arc.setAttribute('stroke-linecap','round');if(extraClass)arc.setAttribute('class',extraClass);const circ=2*Math.PI*r,dashLen=circ*cf;arc.style.setProperty('--circ',circ);arc.style.setProperty('--dash-offset',circ-dashLen);arc.style.setProperty('--sw-hi',sw+3);arc.setAttribute('stroke-dasharray',`${circ} ${circ}`);arc.setAttribute('stroke-dashoffset',circ);arc.style.animation=`ringDraw 0.7s ease ${delay}s forwards`;svg.appendChild(arc);const dotRad=degToRad(START_DEG),dx=CX+r*Math.cos(dotRad),dy=CY+r*Math.sin(dotRad);const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',dx);dot.setAttribute('cy',dy);dot.setAttribute('r',sw/2+0.5);dot.setAttribute('fill',color);dot.setAttribute('pointer-events','none');svg.appendChild(dot);return arc; }
-  function renderRings(items,total){ const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend'),empty=document.getElementById('empty-state'),ringsCol=document.getElementById('rings-col');svg.innerHTML='';legend.innerHTML='';const ns='http://www.w3.org/2000/svg';if(!items.length||total===0){ringsCol.style.display='none';legend.style.display='none';empty.style.display='flex';return;}ringsCol.style.display='';legend.style.display='';empty.style.display='none';const sorted=[...items].sort((a,b)=>b.amount-a.amount);_ringSorted=sorted;pinnedIdx=-1;const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;_ringGoal=activeGoal?activeGoal.target:0;const goalTarget=_ringGoal||total;if(mode==='income'){if(activeGoal){const gf=Math.min(1,total/activeGoal.target);const gArc=drawArc(svg,ns,GOAL_R,gf,'#e8b84b',GOAL_SW,0,'ring-arc goal-arc');if(gArc){gArc.setAttribute('data-idx','goal');gArc.style.filter='drop-shadow(0 0 3px rgba(232,184,75,0.5))';}const gPct=Math.round((total/activeGoal.target)*100);const gRow=document.createElement('div');gRow.className='legend-goal-row';gRow.innerHTML=`<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 ${activeGoal.name}</span><div class="legend-goal-right"><span class="legend-goal-pct">${gPct}%</span><span class="legend-goal-sub">of $${activeGoal.target.toLocaleString()}</span></div>`;gRow.addEventListener('click',()=>openGoalSheet());legend.appendChild(gRow);}else{const et=document.createElementNS(ns,'circle');et.setAttribute('cx',CX);et.setAttribute('cy',CY);et.setAttribute('r',GOAL_R);et.setAttribute('fill','none');et.setAttribute('stroke','rgba(0,0,0,0.12)');et.setAttribute('stroke-width',GOAL_SW);et.setAttribute('class','goal-ring-empty');et.setAttribute('stroke-dasharray',`${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);et.setAttribute('stroke-dashoffset',`${2*Math.PI*GOAL_R*0.25}`);et.setAttribute('stroke-linecap','round');et.addEventListener('click',()=>openGoalSheet());et.addEventListener('touchend',e=>{e.preventDefault();openGoalSheet();});svg.appendChild(et);const sgr=document.createElement('div');sgr.className='legend-goal-row';sgr.style.opacity='0.6';sgr.innerHTML=`<div class="legend-goal-swatch" style="background:#ccc;"></div><span class="legend-goal-name" style="color:#aaa;">Set income goal</span><div class="legend-goal-right"><span class="legend-goal-pct" style="color:#ccc;">+ Goal</span></div>`;sgr.addEventListener('click',()=>openGoalSheet());legend.appendChild(sgr);}}sorted.forEach((item,i)=>{const r=GOAL_R-RING_GAP-i*RING_GAP;if(r<10)return;const sw=Math.max(MIN_SW,BASE_SW-i*SW_STEP),color=getBrand(item.name).color,fraction=Math.min(1,item.amount/goalTarget);const arc=drawArc(svg,ns,r,fraction,color,sw,0.08+i*0.1,'ring-arc');if(arc){arc.setAttribute('data-idx',i);arc.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});arc.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});arc.addEventListener('click',()=>pinRing(i));arc.addEventListener('touchend',e=>{e.preventDefault();pinRing(i);});}const allCircles=svg.querySelectorAll('circle'),lastDot=allCircles[allCircles.length-1];if(lastDot&&lastDot.getAttribute('fill')===color){lastDot.setAttribute('data-dot',i);}});const ca=document.createElementNS(ns,'text');ca.setAttribute('id','ring-center-amt');ca.setAttribute('x',CX);ca.setAttribute('y',CY-8);ca.setAttribute('text-anchor','middle');ca.setAttribute('dominant-baseline','middle');ca.setAttribute('font-size','15');ca.setAttribute('font-weight','700');ca.setAttribute('fill','#222');ca.setAttribute('font-family',"'Inter Tight',-apple-system,sans-serif");ca.textContent='$'+total.toLocaleString();svg.appendChild(ca);const cl=document.createElementNS(ns,'text');cl.setAttribute('id','ring-center-lbl');cl.setAttribute('x',CX);cl.setAttribute('y',CY+10);cl.setAttribute('text-anchor','middle');cl.setAttribute('dominant-baseline','middle');cl.setAttribute('font-size','9');cl.setAttribute('fill','#aaa');cl.setAttribute('font-family',"'Inter Tight',-apple-system,sans-serif");cl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';svg.appendChild(cl);sorted.forEach((item,i)=>{const pct=Math.round((item.amount/(activeGoal?activeGoal.target:total))*100);const row=document.createElement('div');row.className='legend-item';row.dataset.idx=i;row.innerHTML=`${iconHTML(item.name,22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${activeGoal?pct+'% of goal':pct+'%'}</span></div><span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;row.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});row.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});row.addEventListener('click',()=>pinRing(i));legend.appendChild(row);}); }
+  function renderRings(items,total){ const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend'),empty=document.getElementById('empty-state'),ringsCol=document.getElementById('rings-col');svg.innerHTML='';legend.innerHTML='';const ns='http://www.w3.org/2000/svg';if(!items.length||total===0){ringsCol.style.display='none';legend.style.display='none';empty.style.display='flex';return;}ringsCol.style.display='';legend.style.display='';empty.style.display='none';const sorted=[...items].sort((a,b)=>b.amount-a.amount);_ringSorted=sorted;pinnedIdx=-1;const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;_ringGoal=activeGoal?activeGoal.target:0;const goalTarget=_ringGoal||total;if(mode==='income'){if(activeGoal){const gf=Math.min(1,total/activeGoal.target);const gArc=drawArc(svg,ns,GOAL_R,gf,'#e8b84b',GOAL_SW,0,'ring-arc goal-arc');if(gArc){gArc.setAttribute('data-idx','goal');gArc.style.filter='drop-shadow(0 0 3px rgba(232,184,75,0.5))';}const gPct=Math.round((total/activeGoal.target)*100);const gRow=document.createElement('div');gRow.className='legend-goal-row';gRow.innerHTML=`<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 ${activeGoal.name}</span><div class="legend-goal-right"><span class="legend-goal-pct">${gPct}%</span><span class="legend-goal-sub">of $${activeGoal.target.toLocaleString()}</span></div>`;gRow.addEventListener('click',()=>openGoalSheet());legend.appendChild(gRow);}else{const et=document.createElementNS(ns,'circle');et.setAttribute('cx',CX);et.setAttribute('cy',CY);et.setAttribute('r',GOAL_R);et.setAttribute('fill','none');et.setAttribute('stroke','rgba(0,0,0,0.12)');et.setAttribute('stroke-width',GOAL_SW);et.setAttribute('class','goal-ring-empty');et.setAttribute('stroke-dasharray',`${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);et.setAttribute('stroke-dashoffset',`${2*Math.PI*GOAL_R*0.25}`);et.setAttribute('stroke-linecap','round');et.addEventListener('click',()=>openGoalSheet());et.addEventListener('touchend',e=>{e.preventDefault();openGoalSheet();});svg.appendChild(et);const sgr=document.createElement('div');sgr.className='legend-goal-row';sgr.style.opacity='0.6';sgr.innerHTML=`<div class="legend-goal-swatch" style="background:#ccc;"></div><span class="legend-goal-name" style="color:#aaa;">Set income goal</span><div class="legend-goal-right"><span class="legend-goal-pct" style="color:#ccc;">+ Goal</span></div>`;sgr.addEventListener('click',()=>openGoalSheet());legend.appendChild(sgr);}}sorted.forEach((item,i)=>{const r=GOAL_R-RING_GAP-i*RING_GAP;if(r<10)return;const sw=Math.max(MIN_SW,BASE_SW-i*SW_STEP),color=getBrand(item.name).color,fraction=Math.min(1,item.amount/goalTarget);const arc=drawArc(svg,ns,r,fraction,color,sw,0.08+i*0.1,'ring-arc');if(arc){arc.setAttribute('data-idx',i);arc.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});arc.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});arc.addEventListener('click',()=>pinRing(i));arc.addEventListener('touchend',e=>{e.preventDefault();pinRing(i);});}const allCircles=svg.querySelectorAll('circle'),lastDot=allCircles[allCircles.length-1];if(lastDot&&lastDot.getAttribute('fill')===color){lastDot.setAttribute('data-dot',i);}});const ca=document.createElementNS(ns,'text');ca.setAttribute('id','ring-center-amt');ca.setAttribute('x',CX);ca.setAttribute('y',CY-8);ca.setAttribute('text-anchor','middle');ca.setAttribute('dominant-baseline','middle');ca.setAttribute('font-size','15');ca.setAttribute('font-weight','700');ca.setAttribute('fill','#222');ca.setAttribute('font-family',"'Inter Tight',-apple-system,sans-serif");ca.textContent='$'+total.toLocaleString();svg.appendChild(ca);const cl=document.createElementNS(ns,'text');cl.setAttribute('id','ring-center-lbl');cl.setAttribute('x',CX);cl.setAttribute('y',CY+10);cl.setAttribute('text-anchor','middle');cl.setAttribute('dominant-baseline','middle');cl.setAttribute('font-size','9');cl.setAttribute('fill','#aaa');cl.setAttribute('font-family',"'Inter Tight',-apple-system,sans-serif");cl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';svg.appendChild(cl);sorted.forEach((item,i)=>{const pct=Math.round((item.amount/(activeGoal?activeGoal.target:total))*100);const row=document.createElement('div');row.className='legend-item';row.dataset.idx=i;row.innerHTML=`${iconHTML(item.name,22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span></div><span class="legend-del" onclick="event.stopPropagation();deleteItem('${item.name}')">&#215;</span>`;row.addEventListener('mouseenter',()=>{if(pinnedIdx<0)setRingState(i);});row.addEventListener('mouseleave',()=>{if(pinnedIdx<0)setRingState(-1);});row.addEventListener('click',()=>pinRing(i));legend.appendChild(row);}); }
   function setRingState(activeIdx){ const svg=document.getElementById('rings-svg'),legend=document.getElementById('rings-legend');svg.querySelectorAll('.ring-arc:not(.goal-arc)').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);el.classList.toggle('highlighted',activeIdx!==-1&&i===activeIdx);});svg.querySelectorAll('[data-dot]').forEach(el=>{const i=parseInt(el.dataset.dot);el.style.opacity=(activeIdx===-1||i===activeIdx)?'1':'0.2';});legend.querySelectorAll('.legend-item').forEach(el=>{const i=parseInt(el.dataset.idx);el.classList.toggle('dimmed',activeIdx!==-1&&i!==activeIdx);});const amtEl=document.getElementById('ring-center-amt'),lblEl=document.getElementById('ring-center-lbl');if(!amtEl)return;const activeGoal=(mode==='income'&&goals.length>0)?goals[0]:null;const total=getTotal((months[String(offset)]||{income:{items:[]},expense:{items:[]}})[mode].items);if(activeIdx===-1){amtEl.textContent='$'+total.toLocaleString();lblEl.textContent=activeGoal?Math.round((total/activeGoal.target)*100)+'% of goal':'total';}else{const item=_ringSorted[activeIdx];amtEl.textContent='$'+item.amount.toLocaleString();lblEl.textContent=item.name;} }
   function pinRing(idx){ if(pinnedIdx===idx){pinnedIdx=-1;setRingState(-1);}else{pinnedIdx=idx;setRingState(idx);} }
 
@@ -1105,6 +1122,7 @@
   // Initial render of home
   document.getElementById('daily-view').style.display='';
   document.getElementById('monthly-view').style.display='none';
+  updateSegment(homeView || 'daily');
   renderDaily();
   updateNavIcons('home');
 
