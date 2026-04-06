@@ -23,11 +23,7 @@
     .splash-fallback { font-size: 56px; font-weight: 700; color: #e8b84b; letter-spacing: -2px; animation: logoPop 0.7s ease forwards; display: none; }
     @keyframes logoPop { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
 
-    #onboarding-overlay {
-      position: fixed; inset: 0; background: #fffdf7; z-index: 9998;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; padding: 2rem; animation: fadeInAnim 0.4s ease;
-    }
+    #onboarding-overlay { position: fixed; inset: 0; background: #fffdf7; z-index: 9998; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 2rem; animation: fadeInAnim 0.4s ease; }
     #onboarding-overlay.hide { opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
     .onb-logo { margin-bottom: 1.5rem; }
     .onb-title { font-size: 26px; font-weight: 700; color: #222; margin-bottom: 8px; text-align: center; }
@@ -43,12 +39,7 @@
 
     #page-viewport { position: fixed; inset: 0 0 72px 0; overflow: hidden; }
 
-    .page {
-      position: absolute; inset: 0; padding: 1.5vh 4vw 0;
-      max-width: 480px; margin: 0 auto; overflow: hidden;
-      display: flex; flex-direction: column;
-      transform: translateX(100%); will-change: transform; background: #fffdf7;
-    }
+    .page { position: absolute; inset: 0; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; transform: translateX(100%); will-change: transform; background: #fffdf7; }
     .page.page-active { transform: translateX(0); }
     .page.slide-transition { transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
     #page-trends, #page-goals, #page-settings, #page-transactions { overflow-y: auto; padding-bottom: 24px; }
@@ -65,15 +56,11 @@
 
     .streak-badge { display: flex; align-items: center; gap: 5px; background: linear-gradient(135deg,#fff8e6,#fff3d0); border: 1.5px solid #e8c96a; border-radius: 999px; padding: 5px 12px; cursor: pointer; transition: transform 0.1s; flex-shrink: 0; }
     .streak-badge:active { transform: scale(0.95); }
-    .streak-badge .streak-fire { width: 16px; height: 16px; flex-shrink: 0; }
     .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
     .streak-badge .streak-label { font-size: 10px; font-weight: 600; color: #c49a3a; }
     .streak-badge.streak-zero { background: #f5f5f5; border-color: #e0e0e0; }
-    .streak-badge.streak-zero .streak-fire { filter: grayscale(1); opacity: 0.4; }
     .streak-badge.streak-zero .streak-count { color: #bbb; }
     .streak-badge.streak-zero .streak-label { color: #ccc; }
-
-    .view-toggle-pill { display: none; }
 
     .home-view-toggle { display: flex; background: #efefef; border: 1px solid #ddd; border-radius: 999px; padding: 3px; gap: 0; flex-shrink: 0; align-self: flex-end; margin-bottom: 1vh; }
     .home-view-toggle .hvt-btn { padding: 5px 16px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #888; cursor: pointer; border: none; background: transparent; font-family: inherit; transition: background 0.2s, color 0.2s; white-space: nowrap; }
@@ -126,8 +113,31 @@
     .tip-val { font-size:13px; font-weight:700; color:#fff; }
     .tip-divider { height:0.5px; background:rgba(255,255,255,0.1); margin:6px 0; }
 
-    .add-btn { position:absolute; bottom:-16px; right:16px; width:34px; height:34px; border-radius:50%; background:#fff; border:2px solid #e8b84b; color:#e8b84b; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(232,184,75,0.3); transition:background 0.15s,transform 0.1s; z-index:10; line-height:1; }
-    .add-btn:active { transform:scale(0.93); background:#fff8e6; }
+    /* ── OLD inline add-btn (hidden — replaced by FAB) ── */
+    .add-btn { display: none; }
+
+    /* ── FAB — fixed bottom-right above nav ── */
+    .fab {
+      position: fixed;
+      bottom: 84px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #e8b84b;
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(232,184,75,0.45), 0 2px 6px rgba(0,0,0,0.12);
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+      z-index: 290;
+    }
+    .fab:active { transform: scale(0.92); background: #c49a3a; box-shadow: 0 2px 8px rgba(232,184,75,0.3); }
 
     .goal-banner { background:linear-gradient(135deg,#fff8e6,#fff3d0); border:1.5px solid #d4b84a; border-radius:16px; padding:9px 14px; margin-bottom:1vh; flex-shrink:0; display:flex; align-items:center; gap:10px; }
     .goal-banner.hidden { display:none; }
@@ -158,12 +168,40 @@
     .legend-pct { font-size:clamp(9px,1.1vh,10px); color:#bbb; }
     .legend-del { font-size:clamp(13px,1.8vh,16px); color:#a0622a; margin-left:4px; opacity:0; transition:opacity 0.15s; cursor:pointer; padding:2px; flex-shrink:0; }
     .legend-item:hover .legend-del { opacity:1; }
-    #empty-state { flex:1; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; text-align:center; }
 
-    .net-card { display:flex; justify-content:space-between; align-items:center; background:#f7f7f7; border-radius:16px; border:1.5px solid #e0e0e0; padding:clamp(7px,1vh,12px) clamp(12px,3vw,18px); margin-top:clamp(5px,0.8vh,10px); margin-bottom:1vh; flex-shrink:0; }
-    .net-label { font-size:clamp(11px,1.4vh,13px); color:#aaa; }
-    .net-positive { color:#6a9e40; font-size:clamp(14px,2.2vh,20px); font-weight:700; }
-    .net-negative { color:#a0622a; font-size:clamp(14px,2.2vh,20px); font-weight:700; }
+    /* ── Empty states — no mascot, just a + circle ── */
+    #empty-state {
+      flex:1; display:none; flex-direction:column; align-items:center;
+      justify-content:center; gap:10px; padding:1.5rem; text-align:center;
+      cursor:pointer;
+    }
+    .empty-plus-circle {
+      width: 52px; height: 52px; border-radius: 50%;
+      border: 2.5px dashed #d4c8b0;
+      display: flex; align-items: center; justify-content: center;
+      color: #c8bba0; font-size: 28px; font-weight: 300; line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    #empty-state:hover .empty-plus-circle,
+    #donut-empty:hover .empty-plus-circle { border-color: #e8b84b; color: #e8b84b; }
+    .empty-label { font-size: 13px; font-weight: 500; color: #c8bba0; }
+
+    #donut-empty {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:10px; padding:1.5rem; cursor:pointer;
+      text-align:center;
+    }
+
+    /* ── Net card — smaller ── */
+    .net-card {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #f7f7f7; border-radius: 12px; border: 1.5px solid #e0e0e0;
+      padding: 6px 14px;
+      margin-top: 6px; margin-bottom: 6px; flex-shrink: 0;
+    }
+    .net-label    { font-size: 11px; color: #aaa; }
+    .net-positive { color: #6a9e40; font-size: clamp(13px,1.9vh,17px); font-weight: 700; }
+    .net-negative { color: #a0622a; font-size: clamp(13px,1.9vh,17px); font-weight: 700; }
 
     .donut-section { flex:1; min-height:0; background:#f7f2e8; border-radius:22px; border:1.5px solid #e0d8c8; display:flex; flex-direction:row; align-items:center; overflow:hidden; padding:0; }
     .donut-col { flex-shrink:0; width:clamp(130px,38vw,190px); height:100%; display:flex; align-items:center; justify-content:center; padding:clamp(10px,2vh,18px); }
@@ -176,7 +214,6 @@
     .donut-name { font-size:clamp(10px,1.4vh,13px); color:#333; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .donut-amt { font-size:clamp(10px,1.4vh,13px); font-weight:600; color:#222; white-space:nowrap; }
     .donut-pct { font-size:clamp(9px,1.1vh,10px); color:#bbb; display:block; text-align:right; }
-    #donut-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; text-align:center; cursor:pointer; }
 
     .daily-stats-row { display:flex; gap:8px; margin-bottom:1vh; flex-shrink:0; }
     .daily-stat-chip { flex:1; background:#f7f2e8; border:1.5px solid #e0d8c8; border-radius:16px; padding:8px 10px; text-align:center; }
@@ -253,15 +290,12 @@
     .streak-popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.25); z-index:9400; display:none; }
     .streak-popup-overlay.show { display:block; }
 
-    /* ── Bottom nav ── */
     .bottom-nav { position:fixed; bottom:0; left:0; right:0; height:72px; background:#fff; border-top:1.5px solid #e0e0e0; display:flex; justify-content:space-around; align-items:center; z-index:300; padding-bottom:env(safe-area-inset-bottom,0px); }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0 24px 0; transition:transform 0.1s; }
     .nav-item:active { transform:scale(0.9); }
     .nav-icon { width:24px; height:24px; display:flex; align-items:center; justify-content:center; }
     .nav-label { font-size:9px; font-weight:500; color:#ccc; }
     .nav-item.active .nav-label { color:#e8b84b; font-weight:700; }
-
-    /* Each nav item has two SVG wrappers: .nav-ic-off (unselected) and .nav-ic-on (selected) */
     .nav-ic-off { display:block; }
     .nav-ic-on  { display:none; }
     .nav-item.active .nav-ic-off { display:none; }
@@ -292,9 +326,7 @@
     .source-chip.custom-chip { border-style:dashed; color:#bbb; justify-content:center; font-size:13px; }
     .custom-input-row { display:none; margin-bottom:10px; }
     .custom-input-row.show { display:block; }
-    .form-row input[type="number"],
-    .form-row input[type="text"],
-    .form-row input[type="date"] { width:100%; padding:14px; border:0.5px solid #e0e0e0; border-radius:16px; font-size:17px; color:#222; background:#fafafa; outline:none; font-family:inherit; }
+    .form-row input[type="number"], .form-row input[type="text"], .form-row input[type="date"] { width:100%; padding:14px; border:0.5px solid #e0e0e0; border-radius:16px; font-size:17px; color:#222; background:#fafafa; outline:none; font-family:inherit; }
     .form-row input[type="date"] { font-size:15px; }
     .form-row input:focus { border-color:#e8b84b; background:#fff; }
     .sheet-actions { display:flex; gap:8px; margin-top:1.25rem; }
@@ -322,8 +354,6 @@
       .rings-col,.donut-col { width:220px; }
       .trends-chart-wrap { height:320px; }
     }
-
-    .mascot-empty { width:100px; height:100px; object-fit:contain; margin-bottom:-24px; }
   </style>
 </head>
 <body>
@@ -358,6 +388,9 @@
     <button class="streak-popup-close" onclick="closeStreakPopup()">Nice!</button>
   </div>
 
+  <!-- FAB — always visible above nav -->
+  <button class="fab" onclick="openSheet()" aria-label="Add transaction">+</button>
+
   <div id="page-viewport">
 
     <div class="page page-active" id="page-home">
@@ -373,7 +406,7 @@
         </div>
         <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
           <div class="streak-badge" id="streak-badge" onclick="openStreakPopup()">
-            <span class="streak-fire"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="16" height="16"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="16" height="16"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg></span>
             <span class="streak-count" id="streak-count">0</span>
             <span class="streak-label">day streak</span>
           </div>
@@ -384,6 +417,7 @@
         </div>
       </div>
 
+      <!-- DAILY VIEW -->
       <div id="daily-view">
         <div class="day-nav">
           <button onclick="changeDay(-1)">&#8592;</button>
@@ -407,7 +441,6 @@
             </div>
             <div class="total-card-chart"><canvas id="daily-spark-canvas"></canvas></div>
           </div>
-          <button class="add-btn" onclick="openSheet()">+</button>
         </div>
         <div class="goal-banner hidden" id="daily-goal-banner">
           <span class="banner-emoji" id="daily-banner-emoji">🎯</span>
@@ -422,18 +455,19 @@
         <div class="donut-section" id="donut-section">
           <div class="donut-col" id="donut-col"><canvas id="donut-canvas"></canvas></div>
           <div class="donut-legend" id="donut-legend"></div>
+          <!-- empty state: + circle, no mascot -->
           <div id="donut-empty" style="display:none;" onclick="openSheet()">
-            <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
-            <div style="font-size:14px;font-weight:600;color:#555;">Nothing today</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add a transaction</div>
+            <div class="empty-plus-circle">+</div>
+            <div class="empty-label">Nothing today</div>
           </div>
         </div>
         <div class="net-card">
-          <span class="net-label" id="daily-net-month-label">Net this month so far</span>
+          <span class="net-label" id="daily-net-month-label">Net this month</span>
           <span class="net-positive" id="daily-net-month">$0</span>
         </div>
       </div>
 
+      <!-- MONTHLY VIEW -->
       <div id="monthly-view" style="display:none; flex-direction:column; flex:1; min-height:0;">
         <div class="month-nav">
           <button onclick="changeMonth(-1)">&#8592;</button>
@@ -456,7 +490,6 @@
             </div>
             <div class="total-card-chart"><canvas id="mini-bar-canvas"></canvas></div>
           </div>
-          <button class="add-btn" onclick="openSheet()">+</button>
         </div>
         <div id="bar-tooltip"><div class="tip-inner" id="tip-inner"></div></div>
         <div class="goal-banner hidden" id="goal-banner">
@@ -469,10 +502,10 @@
             <svg id="rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
           </div>
           <div class="rings-legend" id="rings-legend"></div>
+          <!-- empty state: + circle, no mascot -->
           <div id="empty-state" onclick="openSheet()" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1; cursor:pointer;">
-            <img src="Phyllip.png" class="mascot-empty" alt="Phyllip"/>
-            <div style="font-size:14px;font-weight:600;color:#555;">No transactions yet</div>
-            <div style="font-size:12px;color:#bbb;text-align:center;line-height:1.5;">Tap to add your first transaction</div>
+            <div class="empty-plus-circle">+</div>
+            <div class="empty-label">No transactions</div>
           </div>
         </div>
         <div class="net-card">
@@ -482,6 +515,7 @@
       </div>
     </div>
 
+    <!-- TRENDS -->
     <div class="page" id="page-trends">
       <div class="page-title">Trends</div>
       <div class="page-subtitle">Last 90 days</div>
@@ -496,6 +530,7 @@
       <div class="stat-cards" id="stat-cards"></div>
     </div>
 
+    <!-- TRANSACTIONS -->
     <div class="page" id="page-transactions">
       <div class="page-title">Transactions</div>
       <div class="page-subtitle">Every transaction, all in one place</div>
@@ -507,6 +542,7 @@
       <div id="tx-list"></div>
     </div>
 
+    <!-- GOALS -->
     <div class="page" id="page-goals">
       <div class="page-title">Goals</div>
       <div class="page-subtitle">Set targets, track progress</div>
@@ -514,6 +550,7 @@
       <button class="add-goal-btn" onclick="openGoalSheet()">+ Add a goal</button>
     </div>
 
+    <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="page-title">Settings</div>
       <div class="page-subtitle">Manage your Filo</div>
@@ -537,101 +574,50 @@
       </div>
     </div>
 
-  </div>
+  </div><!-- /page-viewport -->
 
-  <!-- BOTTOM NAV — each item has .nav-ic-off (unselected) and .nav-ic-on (selected, gold fill) -->
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-
     <div class="nav-item active" id="nav-home" onclick="switchPage('home')">
       <div class="nav-icon">
-        <!-- unselected -->
-        <span class="nav-ic-off">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-          </svg>
-        </span>
-        <!-- selected -->
-        <span class="nav-ic-on">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24">
-            <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-            <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-          </svg>
-        </span>
+        <span class="nav-ic-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg></span>
+        <span class="nav-ic-on"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24"><path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" /><path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" /></svg></span>
       </div>
       <span class="nav-label">Home</span>
     </div>
-
     <div class="nav-item" id="nav-trends" onclick="switchPage('trends')">
       <div class="nav-icon">
-        <span class="nav-ic-off">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
-          </svg>
-        </span>
-        <span class="nav-ic-on">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24">
-            <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 0 1-1.875-1.875V8.625ZM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 0 1 3 19.875v-6.75Z" />
-          </svg>
-        </span>
+        <span class="nav-ic-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg></span>
+        <span class="nav-ic-on"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24"><path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 0 1-1.875-1.875V8.625ZM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 0 1 3 19.875v-6.75Z" /></svg></span>
       </div>
       <span class="nav-label">Trends</span>
     </div>
-
     <div class="nav-item" id="nav-transactions" onclick="switchPage('transactions')">
       <div class="nav-icon">
-        <span class="nav-ic-off">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
-          </svg>
-        </span>
-        <span class="nav-ic-on">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24">
-            <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-            <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
-            <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
-          </svg>
-        </span>
+        <span class="nav-ic-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" /></svg></span>
+        <span class="nav-ic-on"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24"><path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" /><path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" /><path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" /></svg></span>
       </div>
       <span class="nav-label">Transactions</span>
     </div>
-
     <div class="nav-item" id="nav-goals" onclick="switchPage('goals')">
       <div class="nav-icon">
-        <span class="nav-ic-off">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-        </span>
-        <span class="nav-ic-on">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24">
-            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-          </svg>
-        </span>
+        <span class="nav-ic-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg></span>
+        <span class="nav-ic-on"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" /></svg></span>
       </div>
       <span class="nav-label">Goals</span>
     </div>
-
     <div class="nav-item" id="nav-settings" onclick="switchPage('settings')">
       <div class="nav-icon">
-        <span class="nav-ic-off">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-          </svg>
-        </span>
-        <span class="nav-ic-on">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24">
-            <path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clip-rule="evenodd" />
-          </svg>
-        </span>
+        <span class="nav-ic-off"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ccc" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg></span>
+        <span class="nav-ic-on"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="24" height="24"><path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clip-rule="evenodd" /></svg></span>
       </div>
       <span class="nav-label">Settings</span>
     </div>
-
   </nav>
 
   <div class="toast" id="toast"></div>
 
+  <!-- ADD TRANSACTION SHEET -->
   <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
     <div class="sheet" id="sheet-main">
       <div class="sheet-handle" id="sheet-handle-main"></div>
@@ -662,6 +648,7 @@
     </div>
   </div>
 
+  <!-- EDIT TRANSACTION SHEET -->
   <div class="overlay" id="edit-overlay" onclick="closeEditIfOutside(event)">
     <div class="sheet" id="sheet-edit">
       <div class="sheet-handle" id="sheet-handle-edit"></div>
@@ -684,6 +671,7 @@
     </div>
   </div>
 
+  <!-- ADD GOAL SHEET -->
   <div class="overlay" id="goal-overlay" onclick="closeGoalIfOutside(event)">
     <div class="sheet" id="sheet-goal">
       <div class="sheet-handle" id="sheet-handle-goal"></div>
@@ -745,8 +733,6 @@
     slideTo(page, dir);
   }
 
-  // updateNavIcons is now purely CSS-driven via .active class — no JS needed
-  // but keep stub for swipe calls
   function updateNavIcons(activePage) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('nav-' + activePage).classList.add('active');
@@ -841,9 +827,9 @@
     const yesterday=dateToDayKey(Date.now()-86400000);
     const dayNum=d.getDate();
     const mon=d.toLocaleString('default',{month:'short'});
-    const dateStr=`${dayNum}/ ${mon}`;
-    if(dk===today)    return `Today (${dateStr})`;
-    if(dk===yesterday) return `Yesterday (${dateStr})`;
+    const dateStr=`${dayNum} ${mon}`;
+    if(dk===today)    return `Today · ${dateStr}`;
+    if(dk===yesterday) return `Yesterday · ${dateStr}`;
     return d.toLocaleDateString('default',{weekday:'short',month:'short',day:'numeric'});
   }
 
@@ -898,10 +884,9 @@
   function openStreakPopup(){
     const s=loadStreak();
     const fireSVG=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e8b84b" width="52" height="52"><path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 0 0-1.071-.136 9.742 9.742 0 0 0-3.539 6.176 7.547 7.547 0 0 1-1.705-1.715.75.75 0 0 0-1.152-.082A9 9 0 1 0 15.68 4.534a7.46 7.46 0 0 1-2.717-2.248ZM15.75 14.25a3.75 3.75 0 1 1-7.313-1.172c.628.465 1.35.81 2.133 1a5.99 5.99 0 0 1 1.925-3.546 3.75 3.75 0 0 1 3.255 3.718Z" clip-rule="evenodd" /></svg>`;
-    const fire=fireSVG;
     const title=s.count===0?'No streak yet':s.count===1?'1-day streak!':s.count+'-day streak!';
     const sub=s.count===0?'Open Filo every day to build your streak!':s.count>=30?`Incredible! ${s.count} days in a row 🏆`:s.count>=7?`${s.count} days in a row! 💪`:`${s.count} day${s.count>1?'s':''} in a row. Keep going!`;
-    document.getElementById('streak-popup-fire').innerHTML=fire;
+    document.getElementById('streak-popup-fire').innerHTML=fireSVG;
     document.getElementById('streak-popup-title').textContent=title;
     document.getElementById('streak-popup-sub').textContent=sub;
     document.getElementById('streak-overlay').classList.add('show');
@@ -946,7 +931,7 @@
 
   function getNetForMonthOffset(mo){ const d=months[String(mo)];if(!d)return 0;return getTotal(d.income.items)-getTotal(d.expense.items); }
 
-  function renderDaily(){ const today=dateToDayKey(Date.now()),isTodayKey=currentDayKey===today; document.getElementById('day-label').textContent=formatDayLabel(currentDayKey); document.getElementById('today-btn').style.display=isTodayKey?'none':'block'; const incItems=getDayItems(currentDayKey,'income'),expItems=getDayItems(currentDayKey,'expense'); const dayInc=getTotal(incItems),dayExp=getTotal(expItems),dayNet=dayInc-dayExp; const dayItems=dailyMode==='income'?incItems:expItems,dayTotal=dailyMode==='income'?dayInc:dayExp; const prevDk=offsetDayKey(currentDayKey,-1),prevTotal=getTotal(getDayItems(prevDk,dailyMode)); document.getElementById('daily-total-card').className='total-card '+dailyMode; document.getElementById('daily-total-label').textContent=dailyMode==='income'?'Income':'Expenses'; document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString(); const pill=document.getElementById('daily-change-pill'),lbl=document.getElementById('daily-change-label'); if(prevTotal>0){const ch=calcChange(dayTotal,prevTotal,dailyMode);if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs yesterday';}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';} document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); const netEl=document.getElementById('dsc-net');netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString();netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey),moNet=getNetForMonthOffset(viewedMonthOff); const netMonEl=document.getElementById('daily-net-month');netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();netMonEl.className=moNet>=0?'net-positive':'net-negative'; const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month so far':`Net in ${moLabel}`; const moData=months[String(viewedMonthOff)],moInc=moData?getTotal(moData.income.items):0; updateDailyGoalBanner(moInc); requestAnimationFrame(()=>{renderDailySparkChart();renderDonutChart(dayItems,dayTotal);}); }
+  function renderDaily(){ const today=dateToDayKey(Date.now()),isTodayKey=currentDayKey===today; document.getElementById('day-label').textContent=formatDayLabel(currentDayKey); document.getElementById('today-btn').style.display=isTodayKey?'none':'block'; const incItems=getDayItems(currentDayKey,'income'),expItems=getDayItems(currentDayKey,'expense'); const dayInc=getTotal(incItems),dayExp=getTotal(expItems),dayNet=dayInc-dayExp; const dayItems=dailyMode==='income'?incItems:expItems,dayTotal=dailyMode==='income'?dayInc:dayExp; const prevDk=offsetDayKey(currentDayKey,-1),prevTotal=getTotal(getDayItems(prevDk,dailyMode)); document.getElementById('daily-total-card').className='total-card '+dailyMode; document.getElementById('daily-total-label').textContent=dailyMode==='income'?'Income':'Expenses'; document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString(); const pill=document.getElementById('daily-change-pill'),lbl=document.getElementById('daily-change-label'); if(prevTotal>0){const ch=calcChange(dayTotal,prevTotal,dailyMode);if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs yesterday';}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';} document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); const netEl=document.getElementById('dsc-net');netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString();netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey),moNet=getNetForMonthOffset(viewedMonthOff); const netMonEl=document.getElementById('daily-net-month');netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();netMonEl.className=moNet>=0?'net-positive':'net-negative'; const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month':'Net · '+moLabel; const moData=months[String(viewedMonthOff)],moInc=moData?getTotal(moData.income.items):0; updateDailyGoalBanner(moInc); requestAnimationFrame(()=>{renderDailySparkChart();renderDonutChart(dayItems,dayTotal);}); }
 
   function updateDailyGoalBanner(moInc){ const banner=document.getElementById('daily-goal-banner'),bt=document.getElementById('daily-banner-text'),be=document.getElementById('daily-banner-emoji'); if(!goals.length){banner.classList.add('hidden');return;} const g=goals[0],pct=Math.round((moInc/g.target)*100); if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Monthly goal hit!</strong> $${g.target.toLocaleString()} reached.`;}else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to monthly goal</strong> — $${(g.target-moInc).toLocaleString()} away.`;}else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway to monthly goal!</strong> $${moInc.toLocaleString()} of $${g.target.toLocaleString()}.`;}else{banner.classList.add('hidden');} }
 
@@ -1054,4 +1039,3 @@
   </script>
 </body>
 </html>
-
