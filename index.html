@@ -49,61 +49,71 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* -- Modern Single-Row Global Header -- */
+/* -- Pro-Level 3-Column Header -- */
     .header { 
       margin-bottom: 2.5vh; 
       display: flex; 
-      flex-direction: row; /* Force horizontal */
+      flex-direction: row; 
       align-items: center; 
       justify-content: space-between; 
       padding: 12px 0;
-      gap: 8px;
+      width: 100%;
     }
 
+    /* Left: Icons */
     .header-left { 
       display: flex; 
       gap: 4px; 
       align-items: center; 
+      flex: 1; /* Takes up left space */
+      justify-content: flex-start;
     }
 
+    /* Center: Toggle */
+    .header-center {
+      display: flex;
+      justify-content: center;
+      flex: 1; /* Takes up center space */
+    }
+
+    /* Right: Streak */
     .header-right {
       display: flex;
-      flex-direction: row; /* Force horizontal */
       align-items: center;
-      gap: 10px;
+      justify-content: flex-end;
+      flex: 1; /* Takes up right space */
     }
 
     .icon-btn {
       background: none; border: none; padding: 6px; color: #222;
       cursor: pointer; display: flex; align-items: center; transition: all 0.2s;
     }
-    .icon-btn:active { opacity: 0.4; transform: scale(0.9); }
-    .icon-btn svg { width: 24px; height: 24px; }
+    .icon-btn svg { width: 22px; height: 22px; }
 
-    /* Streak Badge - Compact with text back */
+    /* Compact Streak Badge */
     .streak-badge { 
       display: flex; align-items: center; gap: 4px; 
       background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
-      border-radius: 999px; padding: 0 10px; height: 34px;
-      cursor: pointer; transition: transform 0.1s;
+      border-radius: 999px; padding: 0 10px; height: 32px;
+      cursor: pointer;
     }
-    .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
-    .streak-badge .streak-label { font-size: 10px; font-weight: 600; color: #c49a3a; margin-left: 2px; }
+    .streak-badge .streak-count { font-size: 13px; font-weight: 700; color: #a07010; }
+    .streak-badge .streak-label { font-size: 9px; font-weight: 600; color: #c49a3a; }
 
-    /* Slim View Toggle */
+    /* Centered Toggle */
     .home-view-toggle { 
       display: flex; background: rgba(0,0,0,0.05); 
-      border-radius: 999px; padding: 2px; height: 34px;
-      align-self: center; /* Ensures it doesn't drop down */
-      margin-bottom: 0 !important; /* Overriding your old margin */
+      border-radius: 999px; padding: 2px; height: 32px;
+      margin-bottom: 0 !important;
     }
     .home-view-toggle .hvt-btn { 
-      padding: 0 12px; border-radius: 999px; font-size: 11px; 
-      font-weight: 600; color: #888; cursor: pointer; border: none; 
+      padding: 0 10px; border-radius: 999px; font-size: 10px; 
+      font-weight: 600; color: #888; border: none; 
       background: transparent; transition: all 0.2s; 
     }
     .home-view-toggle .hvt-btn.active { 
       background: #fff; color: #222; box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
+    }
     }
     }
 .month-nav { 
