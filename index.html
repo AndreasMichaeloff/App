@@ -600,12 +600,13 @@
           <div class="daily-stat-chip"><div class="dsc-label">Expenses</div><div class="dsc-val dsc-exp" id="dsc-exp">$0</div></div>
           <div class="daily-stat-chip"><div class="dsc-label">Net</div><div class="dsc-val dsc-net-pos" id="dsc-net">$0</div></div>
         </div>
-        <div class="sources-title" id="daily-breakdown-title">Today's income</div>
-        <div class="donut-section" id="donut-section">
-          <div class="donut-col" id="donut-col"><canvas id="donut-canvas"></canvas></div>
-          <div class="donut-legend" id="donut-legend"></div>
-          <!-- empty state: + circle, no mascot -->
-          <div id="donut-empty" style="display:none;" onclick="openSheet()">
+       <div class="sources-title" id="daily-breakdown-title">Today's income</div>
+        <div class="chart-section" id="daily-chart-section">
+          <div class="rings-col" id="daily-rings-col">
+            <svg id="daily-rings-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="rings-legend" id="daily-rings-legend"></div>
+          <div id="daily-empty-state" onclick="openSheet()" style="display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:1.5rem; flex:1; cursor:pointer;">
             <div class="empty-plus-circle">+</div>
             <div class="empty-label">Nothing today</div>
           </div>
@@ -1080,8 +1081,95 @@
 
   function getNetForMonthOffset(mo){ const d=months[String(mo)];if(!d)return 0;return getTotal(d.income.items)-getTotal(d.expense.items); }
 
-  function renderDaily(){ const today=dateToDayKey(Date.now()),isTodayKey=currentDayKey===today; document.getElementById('day-label').textContent=formatDayLabel(currentDayKey); document.getElementById('today-btn').style.display=isTodayKey?'none':'block'; const incItems=getDayItems(currentDayKey,'income'),expItems=getDayItems(currentDayKey,'expense'); const dayInc=getTotal(incItems),dayExp=getTotal(expItems),dayNet=dayInc-dayExp; const dayItems=dailyMode==='income'?incItems:expItems,dayTotal=dailyMode==='income'?dayInc:dayExp; const prevDk=offsetDayKey(currentDayKey,-1),prevTotal=getTotal(getDayItems(prevDk,dailyMode)); document.getElementById('daily-total-card').className='total-card '+dailyMode; document.getElementById('daily-total-label').textContent=dailyMode==='income'?'Income':'Expenses'; document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString(); const pill=document.getElementById('daily-change-pill'),lbl=document.getElementById('daily-change-label'); if(prevTotal>0){const ch=calcChange(dayTotal,prevTotal,dailyMode);if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs yesterday';}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';}}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs yesterday';} document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); const netEl=document.getElementById('dsc-net');netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString();netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey),moNet=getNetForMonthOffset(viewedMonthOff); const netMonEl=document.getElementById('daily-net-month');netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();netMonEl.className=moNet>=0?'net-positive':'net-negative'; const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month':'Net · '+moLabel; const moData=months[String(viewedMonthOff)],moInc=moData?getTotal(moData.income.items):0; updateDailyGoalBanner(moInc); requestAnimationFrame(()=>{renderDailySparkChart();renderDonutChart(dayItems,dayTotal);}); }
+ function renderDaily(){ 
+    const today=dateToDayKey(Date.now()), isTodayKey=currentDayKey===today; 
+    document.getElementById('day-label').textContent=formatDayLabel(currentDayKey); 
+    document.getElementById('today-btn').style.display=isTodayKey?'none':'block'; 
+    
+    const incItems=getDayItems(currentDayKey,'income'), expItems=getDayItems(currentDayKey,'expense'); 
+    const dayInc=getTotal(incItems), dayExp=getTotal(expItems), dayNet=dayInc-dayExp; 
+    
+    const dayItems=dailyMode==='income'?incItems:expItems, dayTotal=dailyMode==='income'?dayInc:dayExp; 
+    const prevDk=offsetDayKey(currentDayKey,-1), prevTotal=getTotal(getDayItems(prevDk,dailyMode)); 
+    
+    document.getElementById('daily-total-card').className='total-card '+dailyMode; 
+    document.getElementById('daily-total-label').textContent=dailyMode==='income'?'Income':'Expenses'; 
+    document.getElementById('daily-total-amount').textContent='$'+dayTotal.toLocaleString(); 
+    
+    const pill=document.getElementById('daily-change-pill'), lbl=document.getElementById('daily-change-label'); 
+    if(prevTotal>0){
+      const ch=calcChange(dayTotal,prevTotal,dailyMode);
+      if(ch){pill.textContent=ch.text; pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad'); lbl.textContent='vs yesterday';}
+    } else {pill.textContent='—'; pill.className='change-pill pill-good'; lbl.textContent='vs yesterday';} 
+    
+    document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); 
+    document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); 
+    
+    const netEl=document.getElementById('dsc-net');
+    netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString(); // Fixed: changed netNet to dayNet
+    netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); 
+    
+    document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; 
+    
+    const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey), moNet=getNetForMonthOffset(viewedMonthOff); 
+    const netMonEl=document.getElementById('daily-net-month');
+    netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();
+    netMonEl.className=moNet>=0?'net-positive':'net-negative'; 
+    
+    const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); 
+    document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month':'Net · '+moLabel; 
+    
+    const moData=months[String(viewedMonthOff)], moInc=moData?getTotal(moData.income.items):0; 
+    updateDailyGoalBanner(moInc); 
+    
+    requestAnimationFrame(()=>{
+      renderDailySparkChart();
+      renderDailyRings(dayItems, dayTotal); 
+    }); 
+  }
 
+  function renderDailyRings(items, total) {
+    const svg = document.getElementById('daily-rings-svg'), legend = document.getElementById('daily-rings-legend'), empty = document.getElementById('daily-empty-state'), ringsCol = document.getElementById('daily-rings-col');
+    svg.innerHTML = ''; legend.innerHTML = ''; const ns = 'http://www.w3.org/2000/svg';
+    if (!items.length || total === 0) { ringsCol.style.display = 'none'; legend.style.display = 'none'; empty.style.display = 'flex'; return; }
+    ringsCol.style.display = ''; legend.style.display = ''; empty.style.display = 'none';
+    
+    const sorted = [...items].sort((a, b) => b.amount - a.amount);
+    _dailySorted = sorted; // Store for interactivity
+    
+    sorted.forEach((item, i) => {
+      const r = GOAL_R - RING_GAP - i * RING_GAP;
+      if (r < 10) return;
+      const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP), color = getBrand(item.name).color, fraction = Math.min(1, item.amount / total);
+      const arc = drawArc(svg, ns, r, fraction, color, sw, 0.08 + i * 0.1, 'ring-arc');
+      if(arc) {
+        arc.setAttribute('data-daily-idx', i);
+        arc.addEventListener('click', () => {
+          document.getElementById('daily-center-amt').textContent = '$' + item.amount.toLocaleString();
+          document.getElementById('daily-center-lbl').textContent = item.name;
+        });
+      }
+    });
+
+    const ca = document.createElementNS(ns, 'text'); 
+    ca.setAttribute('id', 'daily-center-amt');
+    ca.setAttribute('x', CX); ca.setAttribute('y', CY - 8); ca.setAttribute('text-anchor', 'middle'); ca.setAttribute('dominant-baseline', 'middle'); ca.setAttribute('font-size', '15'); ca.setAttribute('font-weight', '700'); ca.setAttribute('fill', '#222'); ca.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); ca.textContent = '$' + total.toLocaleString(); svg.appendChild(ca);
+    
+    const cl = document.createElementNS(ns, 'text'); 
+    cl.setAttribute('id', 'daily-center-lbl');
+    cl.setAttribute('x', CX); cl.setAttribute('y', CY + 10); cl.setAttribute('text-anchor', 'middle'); cl.setAttribute('dominant-baseline', 'middle'); cl.setAttribute('font-size', '9'); cl.setAttribute('fill', '#aaa'); cl.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); cl.textContent = 'today total'; svg.appendChild(cl);
+
+    sorted.forEach((item, i) => {
+      const pct = Math.round((item.amount / total) * 100);
+      const row = document.createElement('div'); row.className = 'legend-item';
+      row.innerHTML = `${iconHTML(item.name, 22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${pct}%</span></div>`;
+      row.onclick = () => {
+         document.getElementById('daily-center-amt').textContent = '$' + item.amount.toLocaleString();
+         document.getElementById('daily-center-lbl').textContent = item.name;
+      };
+      legend.appendChild(row);
+    });
+  }
   function updateDailyGoalBanner(moInc){ const banner=document.getElementById('daily-goal-banner'),bt=document.getElementById('daily-banner-text'),be=document.getElementById('daily-banner-emoji'); if(!goals.length){banner.classList.add('hidden');return;} const g=goals[0],pct=Math.round((moInc/g.target)*100); if(pct>=100){banner.classList.remove('hidden');be.textContent='🎉';bt.innerHTML=`<strong>Monthly goal hit!</strong> $${g.target.toLocaleString()} reached.`;}else if(pct>=80){banner.classList.remove('hidden');be.textContent='🔥';bt.innerHTML=`<strong>${pct}% to monthly goal</strong> — $${(g.target-moInc).toLocaleString()} away.`;}else if(pct>=50){banner.classList.remove('hidden');be.textContent='💪';bt.innerHTML=`<strong>Halfway to monthly goal!</strong> $${moInc.toLocaleString()} of $${g.target.toLocaleString()}.`;}else{banner.classList.add('hidden');} }
 
   let miniBarRects=[], tooltipTimer=null;
