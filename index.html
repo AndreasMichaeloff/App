@@ -601,11 +601,6 @@
           <span class="banner-emoji" id="daily-banner-emoji">🎯</span>
           <span class="banner-text"  id="daily-banner-text"></span>
         </div>
-        <div class="daily-stats-row">
-          <div class="daily-stat-chip"><div class="dsc-label">Income</div><div class="dsc-val dsc-inc" id="dsc-inc">$0</div></div>
-          <div class="daily-stat-chip"><div class="dsc-label">Expenses</div><div class="dsc-val dsc-exp" id="dsc-exp">$0</div></div>
-          <div class="daily-stat-chip"><div class="dsc-label">Net</div><div class="dsc-val dsc-net-pos" id="dsc-net">$0</div></div>
-        </div>
        <div class="sources-title" id="daily-breakdown-title">Today's income</div>
         <div class="chart-section" id="daily-chart-section">
           <div class="rings-col" id="daily-rings-col">
@@ -1107,13 +1102,6 @@
       const ch=calcChange(dayTotal,prevTotal,dailyMode);
       if(ch){pill.textContent=ch.text; pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad'); lbl.textContent='vs yesterday';}
     } else {pill.textContent='—'; pill.className='change-pill pill-good'; lbl.textContent='vs yesterday';} 
-    
-    document.getElementById('dsc-inc').textContent='$'+dayInc.toLocaleString(); 
-    document.getElementById('dsc-exp').textContent='$'+dayExp.toLocaleString(); 
-    
-    const netEl=document.getElementById('dsc-net');
-    netEl.textContent=(dayNet>=0?'+':'-')+'$'+Math.abs(dayNet).toLocaleString(); // Fixed: changed netNet to dayNet
-    netEl.className='dsc-val '+(dayNet>=0?'dsc-net-pos':'dsc-net-neg'); 
     
     document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; 
     
