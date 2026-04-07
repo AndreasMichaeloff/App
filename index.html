@@ -99,20 +99,18 @@
     }
     .icon-btn svg { width: 26px; height: 26px; }
 
-    /* Beefier Streak Badge - FIXED for Mobile Wrapping */
     .streak-badge { 
       display: flex; align-items: center; gap: 6px; 
       background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
       border-radius: 999px; padding: 0 12px; height: 40px;
-      white-space: nowrap; /* CRITICAL: Forces one single line */
-      flex-shrink: 0;      /* CRITICAL: Prevents it from squishing */
+      white-space: nowrap; 
+      flex-shrink: 0;      
       cursor: pointer;
     }
     .streak-badge svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
     .streak-badge .streak-count { font-size: 16px; font-weight: 700; color: #a07010; }
     .streak-badge .streak-label { font-size: 11px; font-weight: 600; color: #c49a3a; }
 
-    /* Longer & Taller Toggle */
     .home-view-toggle { 
       display: flex; background: rgba(0,0,0,0.05); 
       border-radius: 999px; padding: 3px; 
@@ -132,7 +130,7 @@
     .home-view-toggle .hvt-btn.active { 
       background: #fff; color: #222; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
     }
-}
+
 /* --- FIXED NAVIGATION CENTERING --- */
 .month-nav, .day-nav { 
   display: flex; 
@@ -152,7 +150,7 @@
 
 .month-nav span, .day-nav span { 
   font-size: clamp(17px,2.2vh,21px); font-weight: 700; 
-  flex: 1; /* This pushes the text to own the center */
+  flex: 1; 
   text-align: center; color: #222; 
 }
 
@@ -161,7 +159,8 @@
   border-radius: 999px !important; font-size: clamp(10px,1.3vh,12px) !important; 
   padding: clamp(5px,0.9vh,9px) clamp(10px,2vw,14px) !important; cursor: pointer; 
   font-family: inherit; font-weight: 600; transition: background 0.15s, transform 0.1s; 
-}    .today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
+}
+.today-btn:active { transform: scale(0.95); background: #c49a3a !important; }
 
     .toggle-row { display: flex; margin-bottom: 1vh; gap: 8px; flex-shrink: 0; }
     .toggle-btn { flex: 1; padding: clamp(7px,1vh,11px) 10px; font-size: clamp(13px,1.6vh,15px); font-weight: 600; border: 2px solid; border-radius: 999px; cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit; }
