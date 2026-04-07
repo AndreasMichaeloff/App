@@ -47,7 +47,6 @@
     .page { 
       position: absolute; 
       inset: 0; 
-      /* Reduced from 1.5vh to 0.5vh to pull everything UP */
       padding: 0.5vh 4vw 0; 
       max-width: 480px; 
       margin: 0 auto; 
@@ -56,8 +55,10 @@
       flex-direction: column; 
       transform: translateX(100%); 
       will-change: transform; 
-      background: #fffdf7; 
-    }    .page.page-active { transform: translateX(0); }
+      /* Removing solid background so the body gradient shines through */
+      background: transparent; 
+    }
+    .page.page-active { transform: translateX(0); }
     .page.slide-transition { transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
     #page-trends, #page-goals, #page-settings, #page-transactions { overflow-y: auto; padding-bottom: 24px; }
 
