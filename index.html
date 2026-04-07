@@ -247,8 +247,8 @@
     .sources-title { font-size:clamp(9px,1.1vh,11px); font-weight:600; color:#bbb; margin-bottom:clamp(4px,0.8vh,8px); margin-top:clamp(8px,1.2vh,14px); text-transform:uppercase; letter-spacing:0.06em; flex-shrink:0; }
 
 .chart-section { 
-      flex-shrink: 0; /* Prevents the section from collapsing to 0 height */
-      min-height: 180px; 
+      flex-shrink: 0; 
+      min-height: 200px; /* Forces visibility on mobile */
       background: #ffffff; 
       border-radius: 28px; 
       border: 1px solid rgba(0, 0, 0, 0.045);
@@ -256,7 +256,7 @@
       display: flex; 
       flex-direction: row; 
       align-items: center; 
-      overflow: visible; /* Changed from hidden so glow/shadows aren't clipped */
+      overflow: visible; 
       padding: 0; 
       margin-bottom: 1vh;
     }
@@ -1148,61 +1148,64 @@
   }
 
   function renderDailyRings(items, total) {
-    const svg = document.getElementById('daily-rings-svg'), legend = document.getElementById('daily-rings-legend'), empty = document.getElementById('daily-empty-state'), ringsCol = document.getElementById('daily-rings-col');
-    svg.innerHTML = ''; legend.innerHTML = ''; const ns = 'http://www.w3.org/2000/svg';
-    // Only hide if there are no items AND no goal is set
-    const activeGoal = (dailyMode === 'income' && goals.length > 0) ? goals[0] : null;
-    if (!items.length && !activeGoal) { 
-        ringsCol.style.display = 'none'; 
-        legend.style.display = 'none'; 
-        empty.style.display = 'flex'; 
-        return; 
-    }{ ringsCol.style.display = 'none'; legend.style.display = 'none'; empty.style.display = 'flex'; return; }
-    ringsCol.style.display = ''; legend.style.display = ''; empty.style.display = 'none';
+    const svg = document.getElementById('daily-rings-svg'), 
+          legend = document.getElementById('daily-rings-legend'), 
+          empty = document.getElementById('daily-empty-state'), 
+          ringsCol = document.getElementById('daily-rings-col');
     
-    const sorted = [...items].sort((a, b) => b.amount - a.amount);
+    svg.innerHTML = ''; 
+    legend.innerHTML = ''; 
+    const ns = 'http://www.w3.org/2000/svg';
     
-    // --- DAILY GOAL LOGIC ---
-    // 1. Get days in the current viewed month
+    // --- 1. GOAL CALCULATIONS ---
     const d = new Date(dayKeyToTs(currentDayKey));
     const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-    
-    // 2. Calculate daily target based on the first goal
     const activeGoal = (dailyMode === 'income' && goals.length > 0) ? goals[0] : null;
     const dailyTarget = activeGoal ? Math.round(activeGoal.target / daysInMonth) : 0;
+
+    // --- 2. VISIBILITY CHECK ---
+    // Only show empty state if there are no transactions AND no goal to track
+    if (!items.length && !activeGoal) {
+      ringsCol.style.display = 'none';
+      legend.style.display = 'none';
+      empty.style.display = 'flex';
+      return;
+    }
+    ringsCol.style.display = '';
+    legend.style.display = '';
+    empty.style.display = 'none';
+    
+    const sorted = [...items].sort((a, b) => b.amount - a.amount);
     const chartMax = dailyTarget || total;
 
-    if (dailyMode === 'income') {
-      if (activeGoal) {
-        // Draw the Gold Outer Ring (Daily version)
-        const gf = Math.min(1, total / dailyTarget);
-        const gArc = drawArc(svg, ns, GOAL_R, gf, '#e8b84b', GOAL_SW, 0, 'ring-arc goal-arc');
-        if (gArc) gArc.style.filter = 'drop-shadow(0 0 3px rgba(232,184,75,0.5))';
+    // --- 3. DRAW GOLD GOAL RING ---
+    if (dailyMode === 'income' && activeGoal) {
+      const gf = total / dailyTarget;
+      // 'goal-arc' class triggers the Victory Glow we built
+      drawArc(svg, ns, GOAL_R, gf, '#e8b84b', GOAL_SW, 0, 'ring-arc goal-arc');
 
-        const gPct = Math.round((total / dailyTarget) * 100);
-        const gRow = document.createElement('div');
-        gRow.className = 'legend-goal-row';
-        gRow.innerHTML = `<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 Daily Target</span><div class="legend-goal-right"><span class="legend-goal-pct">${gPct}%</span><span class="legend-goal-sub">of $${dailyTarget.toLocaleString()}</span></div>`;
-        legend.appendChild(gRow);
-      } else {
-        // Placeholder ring if no goal is set
-        const et = document.createElementNS(ns, 'circle');
-        et.setAttribute('cx', CX); et.setAttribute('cy', CY); et.setAttribute('r', GOAL_R);
-        et.setAttribute('fill', 'none'); et.setAttribute('stroke', 'rgba(0,0,0,0.12)');
-        et.setAttribute('stroke-width', GOAL_SW); et.setAttribute('class', 'goal-ring-empty');
-        et.setAttribute('stroke-dasharray', `${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);
-        et.addEventListener('click', () => openGoalSheet());
-        svg.appendChild(et);
-      }
+      const gPct = Math.round(gf * 100);
+      const gRow = document.createElement('div');
+      gRow.className = 'legend-goal-row';
+      gRow.innerHTML = `
+        <div class="legend-goal-swatch"></div>
+        <span class="legend-goal-name">🎯 Daily Target</span>
+        <div class="legend-goal-right">
+          <span class="legend-goal-pct">${gPct}%</span>
+          <span class="legend-goal-sub">of $${dailyTarget.toLocaleString()}</span>
+        </div>
+      `;
+      legend.appendChild(gRow);
     }
 
-    // --- DRAW DATA RINGS ---
+    // --- 4. DRAW DATA RINGS ---
     sorted.forEach((item, i) => {
       const r = GOAL_R - RING_GAP - i * RING_GAP;
       if (r < 10) return;
       const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
       const color = getBrand(item.name).color;
-      const fraction = Math.min(1, item.amount / chartMax);
+      const fraction = item.amount / chartMax;
+      
       const arc = drawArc(svg, ns, r, fraction, color, sw, 0.08 + i * 0.1, 'ring-arc');
       
       if(arc) {
@@ -1213,22 +1216,39 @@
       }
     });
 
-    // --- CENTER TEXT ---
+    // --- 5. CENTER TEXT ---
     const ca = document.createElementNS(ns, 'text'); 
     ca.setAttribute('id', 'daily-center-amt');
-    ca.setAttribute('x', CX); ca.setAttribute('y', CY - 8); ca.setAttribute('text-anchor', 'middle'); ca.setAttribute('dominant-baseline', 'middle'); ca.setAttribute('font-size', '15'); ca.setAttribute('font-weight', '700'); ca.setAttribute('fill', '#222'); ca.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); ca.textContent = '$' + total.toLocaleString(); svg.appendChild(ca);
+    ca.setAttribute('x', CX); ca.setAttribute('y', CY - 8); 
+    ca.setAttribute('text-anchor', 'middle'); ca.setAttribute('dominant-baseline', 'middle'); 
+    ca.setAttribute('font-size', '15'); ca.setAttribute('font-weight', '700'); 
+    ca.setAttribute('fill', '#222'); ca.setAttribute('font-family', "'Inter Tight', sans-serif"); 
+    ca.textContent = '$' + total.toLocaleString(); 
+    svg.appendChild(ca);
     
     const cl = document.createElementNS(ns, 'text'); 
     cl.setAttribute('id', 'daily-center-lbl');
-    cl.setAttribute('x', CX); cl.setAttribute('y', CY + 10); cl.setAttribute('text-anchor', 'middle'); cl.setAttribute('dominant-baseline', 'middle'); cl.setAttribute('font-size', '9'); cl.setAttribute('fill', '#aaa'); cl.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); 
+    cl.setAttribute('x', CX); cl.setAttribute('y', CY + 10); 
+    cl.setAttribute('text-anchor', 'middle'); cl.setAttribute('dominant-baseline', 'middle'); 
+    cl.setAttribute('font-size', '9'); ca.setAttribute('font-weight', '500');
+    cl.setAttribute('fill', '#aaa'); cl.setAttribute('font-family', "'Inter Tight', sans-serif"); 
     cl.textContent = activeGoal ? Math.round((total / dailyTarget) * 100) + '% of target' : 'total'; 
     svg.appendChild(cl);
 
-    // --- LEGEND ITEMS ---
+    // --- 6. LEGEND ITEMS (With Delete Support) ---
     sorted.forEach((item, i) => {
       const pct = Math.round((item.amount / chartMax) * 100);
-      const row = document.createElement('div'); row.className = 'legend-item';
-      row.innerHTML = `${iconHTML(item.name, 22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${activeGoal ? pct+'% of target' : pct+'%'}</span></div>`;
+      const row = document.createElement('div'); 
+      row.className = 'legend-item';
+      row.innerHTML = `
+        ${iconHTML(item.name, 22)}
+        <span class="legend-name">${item.name}</span>
+        <div class="legend-right">
+          <span class="legend-amt">$${item.amount.toLocaleString()}</span>
+          <span class="legend-pct">${activeGoal ? pct+'% of target' : pct+'%'}</span>
+        </div>
+        <span class="legend-del" onclick="event.stopPropagation(); deleteDailyItem('${item.name}')">&#215;</span>
+      `;
       row.onclick = () => {
          document.getElementById('daily-center-amt').textContent = '$' + item.amount.toLocaleString();
          document.getElementById('daily-center-lbl').textContent = item.name;
@@ -1329,8 +1349,22 @@ function drawArc(svg, ns, r, fraction, color, sw, delay, extraClass = '') {
 
   function buildSourceGrid(){ const sources=entryType==="income"?INCOME_SOURCES:EXPENSE_SOURCES;document.getElementById('source-label').textContent=entryType==="income"?"Source":"Category";selectedSource=null;document.getElementById('custom-input-row').classList.remove('show');document.getElementById('input-custom').value='';document.getElementById('source-grid').innerHTML=sources.map(s=>{const b=getBrand(s),isEmoji=/\p{Emoji}/u.test(b.initials);const icon=b.logo?`<div class="chip-icon"><img src="${b.logo}" onerror="this.parentElement.innerHTML='${b.initials}';this.parentElement.style.background='${b.color}';this.parentElement.style.fontSize='16px';"/></div>`:`<div class="chip-icon" style="background:${b.color};font-size:${isEmoji?'16px':'12px'};">${b.initials}</div>`;return `<div class="source-chip" onclick="selectSource('${s}',this)">${icon}${s}</div>`;}).join('')+`<div class="source-chip custom-chip" onclick="selectSource('__custom__',this)">+ Custom</div>`; }
   function selectSource(name,el){ selectedSource=name;document.querySelectorAll('.source-chip').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');if(name==='__custom__'){document.getElementById('custom-input-row').classList.add('show');document.getElementById('input-custom').focus();}else{document.getElementById('custom-input-row').classList.remove('show');} }
-  function deleteItem(name){ const d=months[String(offset)]||months['0'],list=d[mode].items,idx=list.findIndex(x=>x.name===name);if(idx>-1){list.splice(idx,1);saveData();render();showToast(name+' removed');} }
-
+  function deleteDailyItem(name) {
+      const moOff = getMonthOffsetForDayKey(currentDayKey);
+      const d = months[String(moOff)];
+      if (!d) return;
+      
+      // Find item on this specific day in the active mode (income/expense)
+      const list = d[dailyMode].items;
+      const idx = list.findIndex(x => x.name === name && dateToDayKey(x.date) === currentDayKey);
+      
+      if (idx > -1) {
+        list.splice(idx, 1);
+        saveData();
+        renderDaily();
+        showToast(name + ' removed');
+      }
+    }
   function render(){ const d=months[String(offset)];if(!d)return;const prev=months[String(offset-1)],data=d[mode],items=data.items,total=getTotal(items),net=getTotal(d.income.items)-getTotal(d.expense.items);document.getElementById('month-label').textContent=d.label;document.getElementById('total-amount').textContent='$'+total.toLocaleString();document.getElementById('total-card').className='total-card '+mode;document.getElementById('total-label').textContent=mode==='income'?'Total income':'Total expenses';document.getElementById('breakdown-title').textContent=mode==='income'?'Income breakdown':'Expense breakdown';const pill=document.getElementById('change-pill'),lbl=document.getElementById('change-label');if(prev){const ch=calcChange(total,getTotal(prev[mode].items),mode);if(ch){pill.textContent=ch.text;pill.className='change-pill '+(ch.isGood?'pill-good':'pill-bad');lbl.textContent='vs last month';}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='vs last month';}}else{pill.textContent='—';pill.className='change-pill pill-good';lbl.textContent='no prior data';}const netEl=document.getElementById('net-amount');netEl.textContent=(net>=0?'+':'-')+'$'+Math.abs(net).toLocaleString();netEl.className=net>=0?'net-positive':'net-negative';updateGoalBanner();requestAnimationFrame(()=>{renderMiniBarChart();renderRings(items,total);}); }
   function setMode(m){ mode=m;document.getElementById('btn-income').className='toggle-btn'+(m==='income'?' income-active':' inactive-income');document.getElementById('btn-expense').className='toggle-btn'+(m==='expense'?' expense-active':' inactive-expense');render(); }
   function changeMonth(dir){ const next=offset+dir;if(dir>0&&next>0)return;if(!months[String(next)]){months[String(next)]={label:getMonthLabelFull(next),income:{items:[]},expense:{items:[]}};saveData();}offset=next;render(); }
