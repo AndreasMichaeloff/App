@@ -49,31 +49,31 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* -- Pro-Level 3-Column Header -- */
+/* -- Pro-Level 3-Column Header (Upscaled) -- */
 .header { 
-  margin-bottom: 2.5vh; 
+  margin-bottom: 3vh; 
   display: flex; 
   flex-direction: row; 
   align-items: center; 
   justify-content: space-between; 
-  padding: 12px 0;
+  padding: 16px 0; /* More vertical padding */
   width: 100%;
 }
 
 /* Left: Icons */
 .header-left { 
   display: flex; 
-  gap: 4px; 
+  gap: 8px; 
   align-items: center; 
   flex: 1;
   justify-content: flex-start;
 }
 
-/* Center: Toggle */
+/* Center: Toggle (Wider) */
 .header-center {
   display: flex;
   justify-content: center;
-  flex: 1;
+  flex: 1.5; /* Give the center more proportional space */
 }
 
 /* Right: Streak */
@@ -85,36 +85,42 @@
 }
 
 .icon-btn {
-  background: none; border: none; padding: 6px; color: #222;
+  background: none; border: none; padding: 10px; color: #222;
   cursor: pointer; display: flex; align-items: center; transition: all 0.2s;
 }
-.icon-btn svg { width: 22px; height: 22px; }
+/* Icons are now 28px instead of 22px */
+.icon-btn svg { width: 28px; height: 28px; }
 
-/* Compact Streak Badge */
+/* Beefier Streak Badge */
 .streak-badge { 
-  display: flex; align-items: center; gap: 4px; 
+  display: flex; align-items: center; gap: 6px; 
   background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
-  border-radius: 999px; padding: 0 10px; height: 32px;
+  border-radius: 999px; padding: 0 14px; height: 40px; /* Taller badge */
   cursor: pointer;
 }
-.streak-badge .streak-count { font-size: 13px; font-weight: 700; color: #a07010; }
-.streak-badge .streak-label { font-size: 9px; font-weight: 600; color: #c49a3a; }
+.streak-badge .streak-count { font-size: 16px; font-weight: 700; color: #a07010; }
+.streak-badge .streak-label { font-size: 11px; font-weight: 600; color: #c49a3a; }
 
-/* Centered Toggle */
+/* Longer & Taller Toggle */
 .home-view-toggle { 
   display: flex; background: rgba(0,0,0,0.05); 
-  border-radius: 999px; padding: 2px; height: 32px;
+  border-radius: 999px; padding: 3px; 
+  height: 40px; /* Matching the streak height */
+  width: 100%; /* Spans the available center space */
+  max-width: 180px; /* Caps the width so it doesn't get TOO long */
   margin-bottom: 0 !important;
 }
 .home-view-toggle .hvt-btn { 
-  padding: 0 10px; border-radius: 999px; font-size: 10px; 
+  flex: 1; /* Makes both buttons equal width and fills the toggle */
+  padding: 0; 
+  border-radius: 999px; 
+  font-size: 13px; /* Bigger font */
   font-weight: 600; color: #888; border: none; 
   background: transparent; transition: all 0.2s; 
 }
 .home-view-toggle .hvt-btn.active { 
-  background: #fff; color: #222; box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
+  background: #fff; color: #222; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
 }
-
 /* --- FIXED NAVIGATION CENTERING --- */
 .month-nav, .day-nav { 
   display: flex; 
