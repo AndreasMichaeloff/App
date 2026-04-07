@@ -246,22 +246,38 @@
 
     .sources-title { font-size:clamp(9px,1.1vh,11px); font-weight:600; color:#bbb; margin-bottom:clamp(4px,0.8vh,8px); margin-top:clamp(8px,1.2vh,14px); text-transform:uppercase; letter-spacing:0.06em; flex-shrink:0; }
 
-    .chart-section { 
-          flex: 1; 
-          min-height: 0; 
-          background: #ffffff; 
-          border-radius: 28px; 
-          /* Apple-style Soft Layering */
-          border: 1px solid rgba(0, 0, 0, 0.045);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); 
-          display: flex; 
-          flex-direction: row; 
-          align-items: center; 
-          overflow: hidden; 
-          padding: 0;  }    
-    .rings-col { flex-shrink:0; width:clamp(130px,38vw,190px); height:100%; display:flex; align-items:center; justify-content:center; padding:clamp(10px,2vh,18px); }
-    #rings-svg { width:100%; height:100%; max-height:100%; display:block; overflow:visible; }
-    .rings-legend { flex:1; min-width:0; overflow:hidden; display:flex; flex-direction:column; justify-content:center; padding:clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0; }
+.chart-section { 
+      flex-shrink: 0; /* Prevents the section from collapsing to 0 height */
+      min-height: 180px; 
+      background: #ffffff; 
+      border-radius: 28px; 
+      border: 1px solid rgba(0, 0, 0, 0.045);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); 
+      display: flex; 
+      flex-direction: row; 
+      align-items: center; 
+      overflow: visible; /* Changed from hidden so glow/shadows aren't clipped */
+      padding: 0; 
+      margin-bottom: 1vh;
+    }
+
+    .rings-col { 
+      flex-shrink: 0; 
+      width: clamp(140px, 40vw, 200px); /* Slightly wider for better mobile fit */
+      height: 100%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 10px; 
+    }
+
+    #rings-svg, #daily-rings-svg { 
+      width: 100%; 
+      height: auto; 
+      aspect-ratio: 1 / 1; /* Forces it to stay a square */
+      display: block; 
+      overflow: visible; 
+    }    .rings-legend { flex:1; min-width:0; overflow:hidden; display:flex; flex-direction:column; justify-content:center; padding:clamp(10px,2vh,18px) clamp(10px,3vw,18px) clamp(10px,2vh,18px) 0; }
     .legend-goal-row { display:flex; align-items:center; gap:8px; padding:clamp(4px,0.7vh,8px) 0; border-bottom:1px solid rgba(0,0,0,0.1); margin-bottom:2px; cursor:pointer; }
     .legend-goal-swatch { width:clamp(8px,1.2vh,11px); height:clamp(8px,1.2vh,11px); border-radius:50%; flex-shrink:0; background:#e8b84b; }
     .legend-goal-name { font-size:clamp(10px,1.4vh,13px); font-weight:700; color:#a07010; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -303,7 +319,7 @@
       text-align:center;
     }
 
-   /* -- Compact Centered Net Card -- */
+   /* -- Updated Left-Aligned Net Card -- */
     .net-card {
       display: flex;
       justify-content: center;
@@ -313,9 +329,10 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border-radius: 999px;
-      border: 1px solid rgba(0, 0, 0, 0.045); /* Same thin border */
+      border: 1px solid rgba(0, 0, 0, 0.045);
       padding: 10px 24px;
-      margin: 20px auto; 
+      /* Changed 'auto' to '0' to align left */
+      margin: 20px 0; 
       width: fit-content; 
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
       flex-shrink: 0;
@@ -1133,7 +1150,14 @@
   function renderDailyRings(items, total) {
     const svg = document.getElementById('daily-rings-svg'), legend = document.getElementById('daily-rings-legend'), empty = document.getElementById('daily-empty-state'), ringsCol = document.getElementById('daily-rings-col');
     svg.innerHTML = ''; legend.innerHTML = ''; const ns = 'http://www.w3.org/2000/svg';
-    if (!items.length || total === 0) { ringsCol.style.display = 'none'; legend.style.display = 'none'; empty.style.display = 'flex'; return; }
+    // Only hide if there are no items AND no goal is set
+    const activeGoal = (dailyMode === 'income' && goals.length > 0) ? goals[0] : null;
+    if (!items.length && !activeGoal) { 
+        ringsCol.style.display = 'none'; 
+        legend.style.display = 'none'; 
+        empty.style.display = 'flex'; 
+        return; 
+    }{ ringsCol.style.display = 'none'; legend.style.display = 'none'; empty.style.display = 'flex'; return; }
     ringsCol.style.display = ''; legend.style.display = ''; empty.style.display = 'none';
     
     const sorted = [...items].sort((a, b) => b.amount - a.amount);
