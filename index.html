@@ -1135,15 +1135,51 @@
     ringsCol.style.display = ''; legend.style.display = ''; empty.style.display = 'none';
     
     const sorted = [...items].sort((a, b) => b.amount - a.amount);
-    _dailySorted = sorted; // Store for interactivity
     
+    // --- DAILY GOAL LOGIC ---
+    // 1. Get days in the current viewed month
+    const d = new Date(dayKeyToTs(currentDayKey));
+    const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    
+    // 2. Calculate daily target based on the first goal
+    const activeGoal = (dailyMode === 'income' && goals.length > 0) ? goals[0] : null;
+    const dailyTarget = activeGoal ? Math.round(activeGoal.target / daysInMonth) : 0;
+    const chartMax = dailyTarget || total;
+
+    if (dailyMode === 'income') {
+      if (activeGoal) {
+        // Draw the Gold Outer Ring (Daily version)
+        const gf = Math.min(1, total / dailyTarget);
+        const gArc = drawArc(svg, ns, GOAL_R, gf, '#e8b84b', GOAL_SW, 0, 'ring-arc goal-arc');
+        if (gArc) gArc.style.filter = 'drop-shadow(0 0 3px rgba(232,184,75,0.5))';
+
+        const gPct = Math.round((total / dailyTarget) * 100);
+        const gRow = document.createElement('div');
+        gRow.className = 'legend-goal-row';
+        gRow.innerHTML = `<div class="legend-goal-swatch"></div><span class="legend-goal-name">🎯 Daily Target</span><div class="legend-goal-right"><span class="legend-goal-pct">${gPct}%</span><span class="legend-goal-sub">of $${dailyTarget.toLocaleString()}</span></div>`;
+        legend.appendChild(gRow);
+      } else {
+        // Placeholder ring if no goal is set
+        const et = document.createElementNS(ns, 'circle');
+        et.setAttribute('cx', CX); et.setAttribute('cy', CY); et.setAttribute('r', GOAL_R);
+        et.setAttribute('fill', 'none'); et.setAttribute('stroke', 'rgba(0,0,0,0.12)');
+        et.setAttribute('stroke-width', GOAL_SW); et.setAttribute('class', 'goal-ring-empty');
+        et.setAttribute('stroke-dasharray', `${2*Math.PI*GOAL_R*0.6} ${2*Math.PI*GOAL_R*0.4}`);
+        et.addEventListener('click', () => openGoalSheet());
+        svg.appendChild(et);
+      }
+    }
+
+    // --- DRAW DATA RINGS ---
     sorted.forEach((item, i) => {
       const r = GOAL_R - RING_GAP - i * RING_GAP;
       if (r < 10) return;
-      const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP), color = getBrand(item.name).color, fraction = Math.min(1, item.amount / total);
+      const sw = Math.max(MIN_SW, BASE_SW - i * SW_STEP);
+      const color = getBrand(item.name).color;
+      const fraction = Math.min(1, item.amount / chartMax);
       const arc = drawArc(svg, ns, r, fraction, color, sw, 0.08 + i * 0.1, 'ring-arc');
+      
       if(arc) {
-        arc.setAttribute('data-daily-idx', i);
         arc.addEventListener('click', () => {
           document.getElementById('daily-center-amt').textContent = '$' + item.amount.toLocaleString();
           document.getElementById('daily-center-lbl').textContent = item.name;
@@ -1151,18 +1187,22 @@
       }
     });
 
+    // --- CENTER TEXT ---
     const ca = document.createElementNS(ns, 'text'); 
     ca.setAttribute('id', 'daily-center-amt');
     ca.setAttribute('x', CX); ca.setAttribute('y', CY - 8); ca.setAttribute('text-anchor', 'middle'); ca.setAttribute('dominant-baseline', 'middle'); ca.setAttribute('font-size', '15'); ca.setAttribute('font-weight', '700'); ca.setAttribute('fill', '#222'); ca.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); ca.textContent = '$' + total.toLocaleString(); svg.appendChild(ca);
     
     const cl = document.createElementNS(ns, 'text'); 
     cl.setAttribute('id', 'daily-center-lbl');
-    cl.setAttribute('x', CX); cl.setAttribute('y', CY + 10); cl.setAttribute('text-anchor', 'middle'); cl.setAttribute('dominant-baseline', 'middle'); cl.setAttribute('font-size', '9'); cl.setAttribute('fill', '#aaa'); cl.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); cl.textContent = 'today total'; svg.appendChild(cl);
+    cl.setAttribute('x', CX); cl.setAttribute('y', CY + 10); cl.setAttribute('text-anchor', 'middle'); cl.setAttribute('dominant-baseline', 'middle'); cl.setAttribute('font-size', '9'); cl.setAttribute('fill', '#aaa'); cl.setAttribute('font-family', "'Inter Tight',-apple-system,sans-serif"); 
+    cl.textContent = activeGoal ? Math.round((total / dailyTarget) * 100) + '% of target' : 'total'; 
+    svg.appendChild(cl);
 
+    // --- LEGEND ITEMS ---
     sorted.forEach((item, i) => {
-      const pct = Math.round((item.amount / total) * 100);
+      const pct = Math.round((item.amount / chartMax) * 100);
       const row = document.createElement('div'); row.className = 'legend-item';
-      row.innerHTML = `${iconHTML(item.name, 22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${pct}%</span></div>`;
+      row.innerHTML = `${iconHTML(item.name, 22)}<span class="legend-name">${item.name}</span><div class="legend-right"><span class="legend-amt">$${item.amount.toLocaleString()}</span><span class="legend-pct">${activeGoal ? pct+'% of target' : pct+'%'}</span></div>`;
       row.onclick = () => {
          document.getElementById('daily-center-amt').textContent = '$' + item.amount.toLocaleString();
          document.getElementById('daily-center-lbl').textContent = item.name;
