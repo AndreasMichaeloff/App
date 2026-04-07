@@ -61,7 +61,7 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* -- Locked Center 3-Column Header -- */
+/* -- Perfectly Symmetrical 3-Column Header -- */
     .header { 
       margin-bottom: 1.5vh; 
       display: flex; 
@@ -72,60 +72,59 @@
       width: 100%;
     }
 
-    /* Left and Right flex: 1 creates a perfect center for the middle */
+    /* Set fixed, equal widths for the side containers to force true center */
     .header-left { 
       display: flex; 
       gap: 6px; 
       align-items: center; 
-      flex: 1; 
+      width: 100px; /* Equal to right side */
       justify-content: flex-start;
-      min-width: 0;
     }
 
     .header-center {
       display: flex;
       justify-content: center;
       align-items: center;
-      flex: 0 0 auto;
+      flex: 1; /* Center takes up all remaining middle space */
     }
 
     .header-right {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      flex: 1; 
-      min-width: 0;
+      width: 100px; /* Equal to left side */
     }
 
     .icon-btn {
-      background: none; border: none; padding: 8px; color: #222;
+      background: none; border: none; padding: 6px; color: #222;
       cursor: pointer; display: flex; align-items: center; transition: all 0.2s;
     }
     .icon-btn svg { width: 26px; height: 26px; }
 
+    /* Streak Badge - Pushed to right edge */
     .streak-badge { 
       display: flex; align-items: center; gap: 4px; 
       background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
-      border-radius: 999px; padding: 0 10px; height: 40px;
+      border-radius: 999px; padding: 0 10px; height: 36px;
       white-space: nowrap; 
-      flex-shrink: 1; /* Allows subtle shrinking to keep center toggle centered */
-      overflow: hidden;
       cursor: pointer;
     }
-    .streak-badge svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
-    .streak-badge .streak-count { font-size: 15px; font-weight: 700; color: #a07010; }
-    .streak-badge .streak-label { font-size: 10px; font-weight: 600; color: #c49a3a; }
+    .streak-badge svg { width: 16px !important; height: 16px !important; flex-shrink: 0; }
+    .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
+    .streak-badge .streak-label { font-size: 9px; font-weight: 600; color: #c49a3a; }
 
+    /* Centered Toggle */
     .home-view-toggle { 
       display: flex; background: rgba(0,0,0,0.05); 
       border-radius: 999px; padding: 3px; 
       height: 40px; 
-      width: 160px; /* Fixed width ensures it stays centered */
+      width: 160px; 
       margin-bottom: 0 !important;
     }
     .home-view-toggle .hvt-btn { 
       flex: 1; padding: 0; border-radius: 999px; 
-      font-size: 12px; font-weight: 600; color: #888; border: none; 
+      font-size: 11px; /* Slightly smaller to fit fixed width comfortably */
+      font-weight: 600; color: #888; border: none; 
       background: transparent; transition: all 0.2s; 
     }
     .home-view-toggle .hvt-btn.active { 
