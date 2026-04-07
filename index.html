@@ -61,7 +61,7 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* -- Pro-Level 3-Column Header (Lifted & Tightened) -- */
+/* -- Locked Center 3-Column Header -- */
     .header { 
       margin-bottom: 1.5vh; 
       display: flex; 
@@ -72,25 +72,29 @@
       width: 100%;
     }
 
+    /* CRITICAL: Left and Right must have the exact same flex-basis */
     .header-left { 
       display: flex; 
       gap: 6px; 
       align-items: center; 
-      flex: 1;
+      flex: 1; /* Takes up 1 unit of space */
       justify-content: flex-start;
+      min-width: 0;
     }
 
     .header-center {
       display: flex;
       justify-content: center;
-      flex: 1.2; 
+      align-items: center;
+      flex: 0 0 auto; /* DOES NOT GROW, stays centered between the two flex-1 sides */
     }
 
     .header-right {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      flex: 1.3; 
+      flex: 1; /* Takes up 1 unit of space, matching the left */
+      min-width: 0;
     }
 
     .icon-btn {
@@ -99,38 +103,39 @@
     }
     .icon-btn svg { width: 26px; height: 26px; }
 
+    /* Streak Badge - Compacted to ensure it fits the 'flex: 1' side */
     .streak-badge { 
-      display: flex; align-items: center; gap: 6px; 
+      display: flex; align-items: center; gap: 4px; 
       background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
-      border-radius: 999px; padding: 0 12px; height: 40px;
+      border-radius: 999px; padding: 0 10px; height: 40px;
       white-space: nowrap; 
-      flex-shrink: 0;      
+      flex-shrink: 1; /* Allows it to shrink slightly if screen is tiny */
+      overflow: hidden;
       cursor: pointer;
     }
-    .streak-badge svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
-    .streak-badge .streak-count { font-size: 16px; font-weight: 700; color: #a07010; }
-    .streak-badge .streak-label { font-size: 11px; font-weight: 600; color: #c49a3a; }
+    .streak-badge svg { width: 16px !important; height: 16px !important; flex-shrink: 0; }
+    .streak-badge .streak-count { font-size: 14px; font-weight: 700; color: #a07010; }
+    .streak-badge .streak-label { font-size: 9px; font-weight: 600; color: #c49a3a; }
 
+    /* Centered Toggle - Width set to ensure it feels substantial */
     .home-view-toggle { 
       display: flex; background: rgba(0,0,0,0.05); 
       border-radius: 999px; padding: 3px; 
       height: 40px; 
-      width: 100%; 
-      max-width: 180px; 
+      width: 160px; /* Fixed width ensures perfect centering */
       margin-bottom: 0 !important;
     }
     .home-view-toggle .hvt-btn { 
       flex: 1; 
       padding: 0; 
       border-radius: 999px; 
-      font-size: 13px; 
+      font-size: 12px; 
       font-weight: 600; color: #888; border: none; 
       background: transparent; transition: all 0.2s; 
     }
     .home-view-toggle .hvt-btn.active { 
       background: #fff; color: #222; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
     }
-
 /* --- FIXED NAVIGATION CENTERING --- */
 .month-nav, .day-nav { 
   display: flex; 
