@@ -39,8 +39,20 @@
 
     #page-viewport { position: fixed; inset: 0 0 72px 0; overflow: hidden; }
 
-    .page { position: absolute; inset: 0; padding: 1.5vh 4vw 0; max-width: 480px; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; transform: translateX(100%); will-change: transform; background: #fffdf7; }
-    .page.page-active { transform: translateX(0); }
+    .page { 
+      position: absolute; 
+      inset: 0; 
+      /* Reduced from 1.5vh to 0.5vh to pull everything UP */
+      padding: 0.5vh 4vw 0; 
+      max-width: 480px; 
+      margin: 0 auto; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      transform: translateX(100%); 
+      will-change: transform; 
+      background: #fffdf7; 
+    }    .page.page-active { transform: translateX(0); }
     .page.slide-transition { transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
     #page-trends, #page-goals, #page-settings, #page-transactions { overflow-y: auto; padding-bottom: 24px; }
 
@@ -49,77 +61,77 @@
     .pull-spinner { width: 18px; height: 18px; border: 2px solid #e8c96a; border-top-color: #e8b84b; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-/* -- Pro-Level 3-Column Header (Upscaled) -- */
-.header { 
-  margin-bottom: 3vh; 
-  display: flex; 
-  flex-direction: row; 
-  align-items: center; 
-  justify-content: space-between; 
-  padding: 16px 0; /* More vertical padding */
-  width: 100%;
-}
+/* -- Pro-Level 3-Column Header (Lifted & Tightened) -- */
+    .header { 
+      margin-bottom: 1.5vh; 
+      display: flex; 
+      flex-direction: row; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 8px 0; 
+      width: 100%;
+    }
 
-/* Left: Icons */
-.header-left { 
-  display: flex; 
-  gap: 8px; 
-  align-items: center; 
-  flex: 1;
-  justify-content: flex-start;
-}
+    .header-left { 
+      display: flex; 
+      gap: 6px; 
+      align-items: center; 
+      flex: 1;
+      justify-content: flex-start;
+    }
 
-/* Center: Toggle (Wider) */
-.header-center {
-  display: flex;
-  justify-content: center;
-  flex: 1.5; /* Give the center more proportional space */
-}
+    .header-center {
+      display: flex;
+      justify-content: center;
+      flex: 1.2; 
+    }
 
-/* Right: Streak */
-.header-right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 1;
-}
+    .header-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1.3; 
+    }
 
-.icon-btn {
-  background: none; border: none; padding: 10px; color: #222;
-  cursor: pointer; display: flex; align-items: center; transition: all 0.2s;
-}
-/* Icons are now 28px instead of 22px */
-.icon-btn svg { width: 28px; height: 28px; }
+    .icon-btn {
+      background: none; border: none; padding: 8px; color: #222;
+      cursor: pointer; display: flex; align-items: center; transition: all 0.2s;
+    }
+    .icon-btn svg { width: 26px; height: 26px; }
 
-/* Beefier Streak Badge */
-.streak-badge { 
-  display: flex; align-items: center; gap: 6px; 
-  background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
-  border-radius: 999px; padding: 0 14px; height: 40px; /* Taller badge */
-  cursor: pointer;
-}
-.streak-badge .streak-count { font-size: 16px; font-weight: 700; color: #a07010; }
-.streak-badge .streak-label { font-size: 11px; font-weight: 600; color: #c49a3a; }
+    /* Beefier Streak Badge - FIXED for Mobile Wrapping */
+    .streak-badge { 
+      display: flex; align-items: center; gap: 6px; 
+      background: rgba(232,184,75,0.08); border: 1px solid rgba(232,184,75,0.2); 
+      border-radius: 999px; padding: 0 12px; height: 40px;
+      white-space: nowrap; /* CRITICAL: Forces one single line */
+      flex-shrink: 0;      /* CRITICAL: Prevents it from squishing */
+      cursor: pointer;
+    }
+    .streak-badge svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
+    .streak-badge .streak-count { font-size: 16px; font-weight: 700; color: #a07010; }
+    .streak-badge .streak-label { font-size: 11px; font-weight: 600; color: #c49a3a; }
 
-/* Longer & Taller Toggle */
-.home-view-toggle { 
-  display: flex; background: rgba(0,0,0,0.05); 
-  border-radius: 999px; padding: 3px; 
-  height: 40px; /* Matching the streak height */
-  width: 100%; /* Spans the available center space */
-  max-width: 180px; /* Caps the width so it doesn't get TOO long */
-  margin-bottom: 0 !important;
-}
-.home-view-toggle .hvt-btn { 
-  flex: 1; /* Makes both buttons equal width and fills the toggle */
-  padding: 0; 
-  border-radius: 999px; 
-  font-size: 13px; /* Bigger font */
-  font-weight: 600; color: #888; border: none; 
-  background: transparent; transition: all 0.2s; 
-}
-.home-view-toggle .hvt-btn.active { 
-  background: #fff; color: #222; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
+    /* Longer & Taller Toggle */
+    .home-view-toggle { 
+      display: flex; background: rgba(0,0,0,0.05); 
+      border-radius: 999px; padding: 3px; 
+      height: 40px; 
+      width: 100%; 
+      max-width: 180px; 
+      margin-bottom: 0 !important;
+    }
+    .home-view-toggle .hvt-btn { 
+      flex: 1; 
+      padding: 0; 
+      border-radius: 999px; 
+      font-size: 13px; 
+      font-weight: 600; color: #888; border: none; 
+      background: transparent; transition: all 0.2s; 
+    }
+    .home-view-toggle .hvt-btn.active { 
+      background: #fff; color: #222; box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
+    }
 }
 /* --- FIXED NAVIGATION CENTERING --- */
 .month-nav, .day-nav { 
