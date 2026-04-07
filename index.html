@@ -931,7 +931,7 @@
 
   const SOURCE_BRANDS = {
     "YouTube":        {color:"#FF0000",initials:"YT",logo:"https://www.google.com/s2/favicons?domain=youtube.com&sz=64"},
-    "Venmo":          {color:"#3D95CE",initials:"V", logo:"https://www.google.com/s2/favicons?domain=venmo.com&sz=64"},
+    "Venmo":          {color:"#ffffff",initials:"V", logo:"https://www.google.com/s2/favicons?domain=venmo.com&sz=64"},
     "Cash App":       {color:"#00D632",initials:"CA",logo:"https://www.google.com/s2/favicons?domain=cash.app&sz=64"},
     "PayPal":         {color:"#003087",initials:"PP",logo:"https://www.google.com/s2/favicons?domain=paypal.com&sz=64"},
     "Stripe":         {color:"#635BFF",initials:"S", logo:"https://www.google.com/s2/favicons?domain=stripe.com&sz=64"},
@@ -1111,18 +1111,26 @@
     
     document.getElementById('daily-breakdown-title').textContent=dailyMode==='income'?'Income breakdown':'Expense breakdown'; 
     
-    const viewedMonthOff=getMonthOffsetForDayKey(currentDayKey), moNet=getNetForMonthOffset(viewedMonthOff); 
-    const netMonEl=document.getElementById('daily-net-month');
-    netMonEl.textContent=(moNet>=0?'+':'-')+'$'+Math.abs(moNet).toLocaleString();
-    netMonEl.className=moNet>=0?'net-positive':'net-negative'; 
+    document.getElementById('daily-breakdown-title').textContent = dailyMode === 'income' ? 'Income breakdown' : 'Expense breakdown'; 
     
-    const moLabel=getMonthLabelFull(viewedMonthOff).replace(/ \d{4}$/,''); 
-    document.getElementById('daily-net-month-label').textContent=viewedMonthOff===0?'Net this month':'Net · '+moLabel; 
+    // --- UPDATED DAILY NET LOGIC ---
+    const todayKey = dateToDayKey(Date.now());
+    const netLabelEl = document.getElementById('daily-net-month-label');
+    const netAmtEl = document.getElementById('daily-net-month');
+
+    // Set label based on current day view
+    netLabelEl.textContent = (currentDayKey === todayKey) ? "Net today" : "Net this day";
     
-    const moData=months[String(viewedMonthOff)], moInc=moData?getTotal(moData.income.items):0; 
+    // Set amount and color based on the day's net
+    netAmtEl.textContent = (dayNet >= 0 ? '+' : '-') + '$' + Math.abs(dayNet).toLocaleString();
+    netAmtEl.className = dayNet >= 0 ? 'net-positive' : 'net-negative';
+
+    // Goal Banner still tracks Monthly progress
+    const viewedMonthOff = getMonthOffsetForDayKey(currentDayKey);
+    const moData = months[String(viewedMonthOff)], moInc = moData ? getTotal(moData.income.items) : 0; 
     updateDailyGoalBanner(moInc); 
     
-    requestAnimationFrame(()=>{
+    requestAnimationFrame(() => {
       renderDailySparkChart();
       renderDailyRings(dayItems, dayTotal); 
     }); 
